@@ -1,0 +1,22 @@
+﻿@model TimeSheetMobileWeb.Models.UpdateTasksView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+<div data-role='page' id='updatesummary' class='wrapper' data-theme='a' data-title="@SiteResources.HomeMenuRecallDelete" data-leave-application='@SiteResources.ConfirmRecallSubmit'>
+    <div>
+        <div class='header' >
+            <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
+            <h2>@SiteResources.TaskSummaryTitle</h2>
+        </div>
+        <div data-role='content' class='content' data-theme='a' >
+            <div data-theme='b' style="min-height:100px;">
+               
+                        <p><span class='ui-bar-a updateerrormessage-d'></span></p>
+
+            </div>
+            <input id="btnDone" type="button" value="@SiteResources.OK" class='main-submit cancel' data-button-target='updatesummary' />   
+        </div>
+        <div class='footer'>
+            <hr />
+        </div>
+    </div>
+</div>

@@ -1,0 +1,296 @@
+
+div,
+fieldset,
+table,
+thead,
+tbody,
+tr,
+td,
+th
+ {
+    padding:0 0 0 0;
+    margin: 0 0 0 0;
+    border-style:none;
+    font-weight:normal;
+}
+p
+{
+   margin: 3px 0 3px 0 !important;
+   padding:2px 0px 2px 0px !important;
+   font-size:inherit;
+}
+body
+{
+    font-size: 12pt;
+}
+div.wrapper
+{
+    margin: 0 0 0 0 !important;
+    padding: 0 0 0 0 !important;
+}
+div.wrapper>div
+{
+    padding: 0 0 0 0 !important;
+    margin: 5px 5px 5px 5px !important;
+}
+div.content
+{
+    margin: 0 0 0 0 !important;
+    padding: 0 0 0 0 !important;
+}
+div.periodHeader
+{
+    font-size:0.8em;
+    line-height:1.8;
+    margin: 4px 5px 4px 5px !important;
+    padding: 0 0 0 0 !important;
+}
+div.maininfo
+{
+    margin: 5px 5px 5px 5px !important;
+    padding: 0 0 0 0 !important;
+    
+}
+div.maininfoheader
+{
+    margin: 5px 0 5px 0 !important;
+    padding:0 5px 0 5px !important;
+}
+div.maininfocontent
+{
+   margin: 5px 0 5px 0 !important;
+   padding:2px 5px 2px 5px !important;
+   font-size:.9em;
+   min-height: 200px;
+}
+p.description
+{
+   margin: 3px 0 3px 0 !important;
+   padding:2px 5px 2px 5px !important;
+   font-size:.8em;
+}
+p.maincontent
+{
+   margin: 3px 0 3px 0 !important;
+   padding:2px 5px 2px 5px !important;
+   font-size:inherit;
+}
+div.detailTitle
+{ 
+    font-size:.8em;
+}
+div.maininfoshortcontent
+{
+   margin: 5px 0 5px 0 !important;
+   padding:2px 5px 2px 5px !important;
+   font-size:.9em;
+}
+.header
+{
+    background-color:black;
+}
+.header div
+{
+    width:100%;
+    background-color:transparent;
+    height: 40px;
+    background-image: url('images/logo-home.png');
+    background-position:top;
+    background-repeat:no-repeat;
+}
+.header h2 
+{
+    font-weight:bold;
+    font-size:1.2em;
+    line-height:1.5;
+    color:Black;
+    width:100%;
+    text-align:center;
+    background-color: #D9D9D9;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0; 
+    display:block;
+}
+div.footer
+{
+    margin: 40px 0px 40px 0px !important;
+   
+}
+.footer>hr
+{
+    width:100%;
+    height:5px;
+    background-color:White;
+    margin: 5px 0 5px 0;
+}
+div.footer-dynamic
+{
+    margin: 5px 0px 5px 0px !important;
+   
+}
+.footer-dynamic>hr
+{
+    width:100%;
+    height:5px;
+    background-color:White;
+    margin: 5px 0 5px 0;
+}
+.main-submit
+{
+    border-style:none ;
+    color:#FFCC00 ;
+    background-color:#57575A ;
+    display:block ;
+    margin: 4px 0px 4px 0px ;
+    width: 100%;
+    font-size:1.4em;
+    
+}
+.main-select
+{
+    margin: 4px 0px 4px 0px !important;
+    width: 100% !important;
+    font-size:20pt !important;
+    
+}
+.main-submit[disabled=disabled], .main-submit:disabled
+{ 
+     color: #C0C0C0; 
+}
+.main-icon-submit
+{
+    border: 1px solid Black;
+    color:#FFCC00 ;
+    background-color:#57575A ;
+    display:block ;
+    margin: 4px 0px 4px 0px ;
+    width: 100%;
+    height: 30px;  
+    background-position:center center;
+    background-repeat:no-repeat;
+   
+}
+.main-icon-submit[disabled=disabled], .main-icon-submit:disabled
+{
+     color: #C0C0C0; 
+}
+.main-icon-save
+{
+    background-image: url('images/2Save-3.png');
+}
+.main-icon-send
+{
+    background-image: url('images/3Send-1.png');
+}
+.main-icon-add
+{
+    background-image: url('images/1Add-2.png');
+}
+.main-icon-view
+{
+    background-image: url('images/4View-1.png');
+}
+.main-icon-delete
+{
+    background-image: url('images/5Delete-1.png');
+}
+.main-icon-cancel
+{
+    background-image: url('images/6Cancel-1.png');
+}
+.main-icon-save[disabled=disabled], .main-icon-save:disabled
+{
+    background-image: none;
+}
+.main-icon-send[disabled=disabled], .main-icon-send:disabled
+{
+    background-image: none;
+}
+.main-icon-add[disabled=disabled], .main-icon-add:disabled
+{
+    background-image: none;
+}
+.main-icon-view[disabled=disabled], .main-icon-view:disabled
+{
+    background-image: none;
+}
+.main-icon-delete[disabled=disabled], .main-icon-delete:disabled
+{
+    background-image: none;
+}
+.main-icon-cancel[disabled=disabled], .main-icon-cancel:disabled
+{
+    background-image: none;
+}
+
+div.rowContainer
+{
+    margin: 0 0 5px 0;
+}
+.datapickerwidget
+{
+    font-size: .8em; 
+    margin: auto; 
+    text-align: center; 
+    width: 250px;
+}
+.lowEnf
+{
+    font-weight: normal !important; 
+    border-style: none !important;
+}
+.middleEnf
+{ 
+    border-style: none !important;
+}
+.workBox
+{
+    width: 10ex;
+}
+.dayBox
+{
+    width: 7ex;
+}
+textarea.fullscreen
+{
+    width: 95% !important;
+    height: 5em !important;
+}
+input.fullscreen
+{
+    width: 95% !important;
+    
+}
+.row_choice, .timephasedvalues
+{
+    margin:5px 0px 5px 0px !important;
+    line-height: 1.8em !important;
+}
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}

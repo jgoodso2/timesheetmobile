@@ -1,0 +1,17 @@
+﻿@model TimeSheetMobileWeb.Models.RowType[]
+@using TimeSheetMobileWeb.Models
+<div data-role='page' data-theme='a' class = 'wrapper' id='rowchoice' data-title="@SiteResources.HomeMenuTimesheet" >
+    <div>
+       <div class='header' >
+            <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
+            <h2>@SiteResources.HomeMenuPeriods</h2>
+        </div>
+        <div data-role="controlgroup">
+            @foreach (RowType rt in Model)
+            {
+                <input id="@("btn"+rt)" type="button" value="@rt.DisplayValue" class='mobilegadget goto' data-button-target='taskselection' data-button-selection="@rt.Code"/>
+            }
+        </div>
+        <input id="btnCancelTask" type="button" value="@SiteResources.Cancel" class='main-submit cancel' data-button-target='taskselection' />
+    </div>
+</div>

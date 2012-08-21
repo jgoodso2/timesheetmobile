@@ -1,0 +1,87 @@
+﻿@model TimeSheetMobileWeb.Models.UpdateTasksView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+@{
+    ViewBag.Title = SiteResources.HomeMenuTasks;
+}
+@section head{
+<script src="@Url.Content("~/Scripts/TasksScripts-1.0.js")" type="text/javascript"></script>
+}
+<div data-role='page' id='tasks' data-title="@SiteResources.HomeMenuTasks" data-theme='a' data-leave-application='@SiteResources.LeaveApplication' class = 'ajaxLoader'>
+    <div data-role='header'class='wrapper updatemainlayout' data-theme='a' data-position='fixed'>
+        <div>
+            <div class='header' >
+                <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")"></div>
+                <h2>@SiteResources.HomeMenuTasks</h2>
+            </div>
+            <div data-role='content' data-theme='b' class='periodHeader'><span class='currenttimesheet'>period of time</span>
+                &nbsp;<a href="#" class='goto' data-button-target='periodselection'>@SiteResources.ChangePeriod</a>
+               
+            </div>
+
+            <div class="ui-grid-c">
+                <div class="ui-block-a" ><input id="btnAdd" type="button" value="" class='main-icon-submit main-icon-add goto' data-button-target='taskselection' data-button-selection="@Model.RowTypes[0].Code"/></div>
+                <div class="ui-block-b" ><input id="Button1" type="button" value="" class='main-icon-submit main-icon-save submit csubmit-mainform submit-mainform' data-action-confirm ="@SiteResources.ConfirmSave"
+                    data-action-value='False' data-action-container='@Html.PrefixedId(m => m.Submit)'/></div>
+                <div class="ui-block-c" ><input id="Button2" type="button" value="" class='main-icon-submit main-icon-send submit fsubmit-mainform submit-mainform' data-action-confirm ="@SiteResources.ConfirmSubmit"
+                    data-action-value='True' data-action-container='@Html.PrefixedId(m => m.Submit)'/></div>
+                <div class="ui-block-d" ><input  type="button" class='main-icon-submit main-icon-view goto' data-button-target='viewselection'/></div>
+            </div>
+            <div class='maininfo'>
+                <div class ='maininfoheader' data-role='content' data-theme='a'>         
+                    @if (ViewConfigurationTask.Default.ActualWorkA)
+                    {
+                        @(ViewConfigurationTask.Default.ActualWorkA_Name+":")
+                        <span id='@(UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code+"_header")' class='combinedValue'></span>
+                                                                           
+                                                                           
+                    }
+                    &nbsp;
+                    @if (ViewConfigurationTask.Default.ActualOvertimeWorkA)
+                    {
+                        @(ViewConfigurationTask.Default.ActualOvertimeWorkA_Name+":")
+                        <span id='@(UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code+"_header")' class='combinedValue'></span>
+                                                                                                                                  
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-role='content' class='wrapper' data-theme='a'>
+        <div>
+            <div class='maininfo'>
+                <div class='maininfocontent allrowsContainer' data-role='content' data-theme='c' id="allTimesheetsEdit">
+                @if (Model != null && Model.Period != null)
+                {
+                    @Html.Partial("Edit", Model)
+                }
+    
+                </div>
+            </div>
+        </div>
+    </div>
+     <div data-role='footer' data-position='fixed' class='wrapper updatemainlayout' data-theme='a'>
+        <div>
+            
+            
+            <div>
+                <div class='footer-dynamic'>
+                <hr />
+                </div>
+            </div>
+        </div>
+    </div>  
+</div>
+@Html.Action("TaskSelection", "Tasks");
+@Html.Partial("PeriodSelection", new ViewDataDictionary<PeriodSelectionView>(Model.PeriodSelectionInfos));
+@Html.Partial("ViewSelection", new ViewDataDictionary<ViewSelectionView>(
+    new ViewSelectionView {TaskUpdatorViewId=ViewConfigurationTask.Default.Id,  TimesheetViewId=ViewConfigurationRow.Default.Id, IsTask=true}));
+@Html.Partial("UpdateSummary")
+@Html.Partial("Detail", new ViewDataDictionary<BaseRowView>(new BaseRowView {TaskRow=true, Title = SiteResources.HomeMenuTaskDetail, PeriodLength=Model.PeriodLength }))
+@if (Model != null && Model.RowTypes != null && Model.RowTypes.Length > 1)
+{
+    @Html.Partial("RowChoice", new ViewDataDictionary<RowType[]>(Model.RowTypes))
+}
+@Html.Partial("TimeInput", new ViewDataDictionary<TimeInputView>())
+
+

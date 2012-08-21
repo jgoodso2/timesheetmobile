@@ -1,0 +1,58 @@
+﻿@model TimeSheetMobileWeb.Models.PeriodSelectionView
+@using TimeSheetMobileWeb.Models
+
+<div data-role='page' id='periodselection' class='wrapper' data-title="@SiteResources.HomeMenuPeriods" data-theme='a' >
+    <div>
+        <div class='header' >
+            <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
+            <h2>@SiteResources.HomeMenuPeriods</h2>
+        </div>
+        <div data-role='content' class='content' data-theme='a' >
+                <div data-role='content' data-theme='b' class='periodHeader'><span class='currenttimesheet'>period of time</span></div>
+                <div data-role='content' data-theme='b' >
+                    
+                    @Html.DropDownListFor(m => m.TimesheetSet,
+                                           new Dictionary<string, object> 
+                                           { { "class", "mobilegadget updatetimesheets" }, 
+                                           { "data-native-menu", "false" },
+                                           {"data-action", Url.Action("Timesheets", "Timesheet")}},
+                    ChoiceListHelper.Create(
+                        Model.AllTimesheetsSets,
+                        m => m.Key,
+                        m => m.Value,
+                        usePrompt: false))
+                    
+                        @Html.LabelFor(m => m.TimesheetId, SiteResources.HomeMenuPeriods)
+                        @Html.DropDownListFor(m => m.TimesheetId,
+                                               new Dictionary<string, object> 
+                                               { { "class", "mobilegadget dynamicperiods" }, 
+                                               { "data-native-menu", "false" },
+                                               {"data-novalue-message", SiteResources.NoPeriodSelected}, },
+                        ChoiceListHelper.Create(
+                            Model.TimesheetsSets,
+                            m => m.Value,
+                            m => m.Description,
+                            usePrompt: false))
+                        <div class='maininfo'>
+                            <div class='maininfoshortcontent' data-role='content' data-theme='c' >
+                                <p><span class='ui-bar-c'>@SiteResources.CurrentTimesheet</span><br /><span class="currenttimesheet"></span></p>
+                                <p><span class='ui-bar-c'>@SiteResources.NewTimesheet</span><br /><span class="newtimesheet"></span></p>
+                            </div>
+                        </div>
+                    <form id="periodform" action = '@Url.Action("Index", (Model.IsTask ? "Tasks":"Timesheet"))' data-ajax-url='@Url.Action("Refresh", (Model.IsTask ? "Tasks":"Timesheet"))' data-ajax-target='allTimesheetsEdit' data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
+                        <input id="SelectedPeriodStart" name="SelectedPeriodStart" class = 'currentperiodstart' type="hidden" />
+                        <input id="SelectedPeriodStop" name="SelectedPeriodStop"  class = 'currentperiodstop' type="hidden" />
+                        <input id="SelectedPeriodId" name="SelectedPeriodId" class = 'currentperiodid' type="hidden" />
+                        <input id="SelectedPeriodSet" name="SelectedPeriodSet" class = 'currentperiodSet' type="hidden" />
+                    </form>
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a" ><input id="btnConfirmPeriod" type="button" value="" class='main-icon-submit main-icon-save loadConfirm' data-button-target='periodselection' /></div>
+                        <div class="ui-block-b" ><input id="btnCancelPeriod" type="button" value="" class='main-icon-submit main-icon-cancel cancel' data-button-target='periodselection' /></div>
+                    </div>
+                </div>
+        </div>
+        <div class='footer'>
+            <hr />
+        </div>
+    </div>
+</div>
