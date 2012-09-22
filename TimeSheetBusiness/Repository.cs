@@ -14,8 +14,10 @@ namespace TimeSheetBusiness
     
     public class Repository: IRepository
     {
+        private static string bindingConfiguration = "basicHttpConf";
         public UserConfigurationInfo UserConfiguration(WindowsIdentity user, string rowField, string taskField)
         {
+            string adress = ViewConfigurationBase.BaseUrl;
             using (WindowsImpersonationContext impersonatedUser = user.Impersonate())
             {
                 Guid defaultTimesheetViewUID = ViewConfigurationRow.ViewFieldGuid;
@@ -26,7 +28,7 @@ namespace TimeSheetBusiness
                     //this code gets the name of default views stored on the server.
                     //get the list of custom fields first
                     SvcCustomFields.CustomFieldDataSet cds = new SvcCustomFields.CustomFieldDataSet();
-                    SvcCustomFields.CustomFieldsClient custFieldsClient = new SvcCustomFields.CustomFieldsClient();
+                    SvcCustomFields.CustomFieldsClient custFieldsClient = new SvcCustomFields.CustomFieldsClient("basicHttp_CustomFields", adress);
                     /*I dont think we need a filter, but if we did, this is a good example
                      * http://www.epmfaq.com/ssanderlin/project-server-2007/retrieve-the-guid-of-a-custom-field-using-its-name  */
                     cds = custFieldsClient.ReadCustomFields(string.Empty, false);
@@ -51,7 +53,7 @@ namespace TimeSheetBusiness
                 {
                     //now read the values of the custom fields.
                     SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
-                    SvcResource.ResourceClient resClient = new SvcResource.ResourceClient();
+                    SvcResource.ResourceClient resClient = new SvcResource.ResourceClient("basicHttp_Resource", adress);
                     Guid resUID = resClient.GetCurrentUserUid();
                     rds = resClient.ReadResource(resUID);
                     if (defaultTimesheetViewUID != null && defaultTimesheetViewUID != Guid.Empty)
@@ -77,6 +79,7 @@ namespace TimeSheetBusiness
        
         public void ChangeUserConfiguration(WindowsIdentity user, UserConfigurationInfo conf, string rowField, string taskField)
         {
+            string adress = ViewConfigurationBase.BaseUrl;
             using (WindowsImpersonationContext impersonatedUser = user.Impersonate())
             {
                 Guid defaultTimesheetViewUID = ViewConfigurationRow.ViewFieldGuid;
@@ -87,7 +90,7 @@ namespace TimeSheetBusiness
                     //this code gets the name of default views stored on the server.
                     //get the list of custom fields first
                     SvcCustomFields.CustomFieldDataSet cds = new SvcCustomFields.CustomFieldDataSet();
-                    SvcCustomFields.CustomFieldsClient custFieldsClient = new SvcCustomFields.CustomFieldsClient();
+                    SvcCustomFields.CustomFieldsClient custFieldsClient = new SvcCustomFields.CustomFieldsClient("basicHttp_CustomFields", adress);
                     /*I dont think we need a filter, but if we did, this is a good example
                      * http://www.epmfaq.com/ssanderlin/project-server-2007/retrieve-the-guid-of-a-custom-field-using-its-name  */
                     cds = custFieldsClient.ReadCustomFields(string.Empty, false);
@@ -112,7 +115,7 @@ namespace TimeSheetBusiness
                     //now read the values of the custom fields.
 
                     SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
-                    SvcResource.ResourceClient resClient = new SvcResource.ResourceClient();
+                    SvcResource.ResourceClient resClient = new SvcResource.ResourceClient("basicHttp_Resource", adress);
                     Guid resUID = resClient.GetCurrentUserUid();
                     rds = resClient.ReadResource(resUID);
                     try
@@ -178,16 +181,18 @@ namespace TimeSheetBusiness
         }
         protected Guid LoggedUser()
         {
-            SvcResource.ResourceClient rsClient = new SvcResource.ResourceClient();
+            string adress=ViewConfigurationBase.BaseUrl;
+            SvcResource.ResourceClient rsClient = new SvcResource.ResourceClient("basicHttp_Resource", adress);
             Guid resUID = rsClient.GetCurrentUserUid();
             return resUID;
         }
         private SvcResource.ResourceAssignmentDataSet GetResourceAssignmentDataSet()
         {
 
+            string adress = ViewConfigurationBase.BaseUrl;
             Guid[] resourceUids = new Guid[1];
 
-            SvcResource.ResourceClient resourceClient = new SvcResource.ResourceClient();
+            SvcResource.ResourceClient resourceClient = new SvcResource.ResourceClient("basicHttp_Resource", adress);
             resourceUids[0] = resourceClient.GetCurrentUserUid();
 
             PSLib.Filter resourceAssignmentFilter = GetResourceAssignmentFilter(resourceUids);
@@ -223,7 +228,8 @@ namespace TimeSheetBusiness
         }
         private TimesheetHeaderInfos GetTimesheetStatus(Guid periodUID, Guid resUID, out Guid tuid, out SvcTimeSheet.TimesheetDataSet tsDS)
         {
-            SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient();
+            string adress = ViewConfigurationBase.BaseUrl;
+            SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient("basicHttp_TimeSheet", adress);
             tsDS = tsClient.ReadTimesheetByPeriod(resUID, periodUID, SvcTimeSheet.Navigation.Current);
 
             if (tsDS.Headers.Rows.Count > 0)
@@ -309,6 +315,7 @@ namespace TimeSheetBusiness
         }
         private void createRow(WholeLine group, ref SvcTimeSheet.TimesheetDataSet _tsDS, SvcResource.ResourceAssignmentDataSet _resAssDS, SvcTimeSheet.TimesheetDataSet.LinesRow y, ViewConfigurationBase configuration, DateTime Start, DateTime Stop, string assignementId)
         {
+            string adress = ViewConfigurationBase.BaseUrl;
             bool isAdmin = group.Actuals != null && group.Actuals.Count > 0 && group.Actuals[0].Values != null &&
                             ((group.Actuals[0].Values.Value != null && group.Actuals[0].Values.Value is AdministrativeRow) ||
                             (group.Actuals[0].Values.OldValue != null && group.Actuals[0].Values.OldValue is AdministrativeRow));
@@ -317,13 +324,13 @@ namespace TimeSheetBusiness
             {
                 try
                 {
-                                      
-                    SvcAdmin.AdminClient adminSvc = new SvcAdmin.AdminClient();
+
+                    SvcAdmin.AdminClient adminSvc = new SvcAdmin.AdminClient("basicHttp_Admin", adress);
                     SvcAdmin.TimesheetLineClassDataSet tsLineClassDs = adminSvc.ReadLineClasses(SvcAdmin.LineClassType.All, SvcAdmin.LineClassState.Enabled);
 
                     Guid timeSheetUID = new Guid(_tsDS.Headers.Rows[0].ItemArray[0].ToString());
 
-                    SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient();
+                    SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient("basicHttp_TimeSheet", adress);
 
 
                     SvcTimeSheet.TimesheetDataSet.LinesRow line = _tsDS.Lines.NewLinesRow();  //Create a new row for the timesheet
@@ -410,7 +417,8 @@ namespace TimeSheetBusiness
         }
         private bool GetAllSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string projectId, string assignementId, ActualWorkRow ar, ActualOvertimeWorkRow aor, SingleValuesRow sv=null)
         {
-            SvcStatusing.StatusingClient proxy=new SvcStatusing.StatusingClient();
+            string adress = ViewConfigurationBase.BaseUrl;
+            SvcStatusing.StatusingClient proxy = new SvcStatusing.StatusingClient("basicHttp_Statusing", adress);
             //SvcStatusing.StatusingDataSet res = proxy.ReadStatusForResource(LoggedUser(), new Guid(assignementId), start, stop);
             SvcStatusing.StatusingDataSet res = proxy.ReadStatus(new Guid(assignementId), start, stop);
             bool result = false;
@@ -537,6 +545,7 @@ namespace TimeSheetBusiness
 
         public IEnumerable<AssignementInfo> ProjectAssignements(System.Security.Principal.WindowsIdentity user, string ProjectId)
         {
+            string adress = ViewConfigurationBase.BaseUrl;
             List<AssignementInfo> res = new List<AssignementInfo>();
             if (string.IsNullOrWhiteSpace(ProjectId))
             {
@@ -547,7 +556,7 @@ namespace TimeSheetBusiness
                 using (WindowsImpersonationContext impersonatedUser = user.Impersonate())
                 {
                     SvcAdmin.TimesheetLineClassDataSet tslineclassDS = new SvcAdmin.TimesheetLineClassDataSet();
-                    SvcAdmin.AdminClient admClient = new SvcAdmin.AdminClient();
+                    SvcAdmin.AdminClient admClient = new SvcAdmin.AdminClient("basicHttp_Admin", adress);
                     tslineclassDS = admClient.ReadLineClasses(SvcAdmin.LineClassType.AllNonProject, SvcAdmin.LineClassState.Enabled);
                     foreach (var x in tslineclassDS.LineClasses)
                     {
@@ -587,6 +596,7 @@ namespace TimeSheetBusiness
 
         public IEnumerable<Timesheet> SelectTimesheets(System.Security.Principal.WindowsIdentity user, TimesheetsSets set)
         {
+            string adress = ViewConfigurationBase.BaseUrl;
             using (WindowsImpersonationContext impersonatedUser = user.Impersonate())
             {
                 
@@ -613,8 +623,8 @@ namespace TimeSheetBusiness
                     default: selection = 32; break; //all existing
 
                 }
-                
-                SvcTimeSheet.TimeSheetClient  client = new SvcTimeSheet.TimeSheetClient();
+
+                SvcTimeSheet.TimeSheetClient client = new SvcTimeSheet.TimeSheetClient("basicHttp_TimeSheet", adress);
                 SvcTimeSheet.TimesheetListDataSet res = client.ReadTimesheetList(LoggedUser(), Start, End, selection);
                 List<Timesheet> fres = new List<Timesheet>();
                 foreach (var t in res.Timesheets)
@@ -628,6 +638,7 @@ namespace TimeSheetBusiness
         {
             using (WindowsImpersonationContext impersonatedUser = user.Impersonate())
             {
+                string adress = ViewConfigurationBase.BaseUrl;
                 Guid ruid = LoggedUser();
                 Guid periodUID = new Guid(periodId);
                 Guid tuid;
@@ -640,8 +651,8 @@ namespace TimeSheetBusiness
                     SingleValuesRow onlySingleValues = null;
                     decimal?[] actualArray = null;
                     decimal?[] overtimeArray = null;
-                    var tres = new List<BaseRow>(); 
-                        SvcStatusing.StatusingClient proxy = new SvcStatusing.StatusingClient();
+                    var tres = new List<BaseRow>();
+                    SvcStatusing.StatusingClient proxy = new SvcStatusing.StatusingClient("basicHttp_Statusing", adress);
                         /// Reading Assignements //////
                         /// 
 
@@ -736,7 +747,7 @@ namespace TimeSheetBusiness
                         headersRow.TS_ENTRY_MODE_ENUM = (byte)PSLib.TimesheetEnum.EntryMode.Daily;
                         tsDs.Headers.AddHeadersRow(headersRow);
                         status = 0;
-                        SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient();
+                        SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient("basicHttp_TimeSheet", adress);
                         tsClient.CreateTimesheet(tsDs, SvcTimeSheet.PreloadType.Default);  //default load type is to use the server settings
                         GetTimesheetAction(status, out canDelete, out canRecall);
                     }
@@ -917,6 +928,7 @@ namespace TimeSheetBusiness
         }
         public void UpdateRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit)
         {
+            string adress = ViewConfigurationBase.BaseUrl;
             if (rows == null) return;
             using (WindowsImpersonationContext impersonatedUser = user.Impersonate())
             {
@@ -957,7 +969,7 @@ namespace TimeSheetBusiness
                         try
                         {
                             Guid jobGuid=Guid.NewGuid();
-                            SvcTimeSheet.TimeSheetClient tsclient = new SvcTimeSheet.TimeSheetClient();
+                            SvcTimeSheet.TimeSheetClient tsclient = new SvcTimeSheet.TimeSheetClient("basicHttp_TimeSheet", adress);
                             var tsGuid = (Guid)(tsDs.Headers.Rows[0].ItemArray[0]);
                             tsclient.QueueSubmitTimesheet(jobGuid, tsGuid, (Guid)tsDs.Headers.Rows[0].ItemArray[8], BusisnessResources.ApprovalComment);
                             bool res = QueueHelper.WaitForQueueJobCompletion(jobGuid, (int)SvcQueueSystem.QueueMsgType.TimesheetSubmit);
@@ -1020,7 +1032,7 @@ namespace TimeSheetBusiness
                             row.Delete();
                             
                         }
-                            SvcTimeSheet.TimeSheetClient tsclient = new SvcTimeSheet.TimeSheetClient();
+                        SvcTimeSheet.TimeSheetClient tsclient = new SvcTimeSheet.TimeSheetClient("basicHttp_TimeSheet", adress);
                             var tsGuid = (Guid)(tsDs.Headers.Rows[0].ItemArray[0]);
                             try
                             {
@@ -1050,9 +1062,9 @@ namespace TimeSheetBusiness
                 ///////
 
                 ////xml Processing //////
-                
-                
-                SvcStatusing.StatusingClient statusingClient = new SvcStatusing.StatusingClient();
+
+
+                SvcStatusing.StatusingClient statusingClient = new SvcStatusing.StatusingClient("basicHttp_Statusing", adress);
                 if (!noChange) 
                 {
                     try
@@ -1090,6 +1102,7 @@ namespace TimeSheetBusiness
         }
         public void RecallDelete(WindowsIdentity user, string periodId, DateTime start, DateTime stop, bool isRecall)
         {
+            string adress = ViewConfigurationBase.BaseUrl;
             using (WindowsImpersonationContext impersonatedUser = user.Impersonate())
             {
                 Guid ruid = LoggedUser();
@@ -1106,7 +1119,7 @@ namespace TimeSheetBusiness
                 {
                     try
                     {
-                        SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient();
+                        SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient("basicHttp_TimeSheet", adress);
                         Guid jobUID = Guid.NewGuid();
                         tsClient.QueueRecallTimesheet(jobUID, tuid);
                         bool res = QueueHelper.WaitForQueueJobCompletion(jobUID, (int)SvcQueueSystem.QueueMsgType.TimesheetRecall);
@@ -1122,7 +1135,7 @@ namespace TimeSheetBusiness
                 {
                     try
                     {
-                        SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient();
+                        SvcTimeSheet.TimeSheetClient tsClient = new SvcTimeSheet.TimeSheetClient("basicHttp_TimeSheet", adress);
                         Guid jobUID = Guid.NewGuid();
                         tsClient.QueueDeleteTimesheet(jobUID, tuid);
                         bool res = QueueHelper.WaitForQueueJobCompletion(jobUID, (int)SvcQueueSystem.QueueMsgType.TimesheetDelete);

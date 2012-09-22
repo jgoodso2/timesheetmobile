@@ -4,7 +4,7 @@
 @using System.Globalization
 
 <div data-role='page' data-theme='a' id='basedetail' data-title="@SiteResources.HomeMenuTimesheetDetail" data-leave-application='@SiteResources.LeaveApplication'>
-    <div data-role='header'class='wrapper' data-theme='a' data-position='fixed'>
+    <div data-role='header'class='detailtoolbar wrapper' data-theme='a' data-position='fixed' >
         <div>
             <div class='header' >
                 <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
@@ -554,10 +554,10 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
-            $("input:text, textarea").focus(function () { $(this).select(); });
+            $("input:text, textarea").focus(function () { $(".detailtoolbar").fixedtoolbar('hide'); var This = this; setTimeout(function () { $(This).select(); }); });
         });
     </script>
-    <div data-role='footer' data-position='fixed' class='wrapper' data-theme='a'>
+    <div data-role='footer' data-position='fixed' class='wrapper detailtoolbar' data-fullscreen="true">
         <div>
                 <div class="ui-grid-a">
                     <div class="ui-block-a" ><input id="btnConfirmRow" type="button" value="" class='main-icon-submit main-icon-save confirm' data-button-target='basedetail'/></div>

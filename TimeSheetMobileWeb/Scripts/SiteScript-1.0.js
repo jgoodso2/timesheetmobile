@@ -701,7 +701,7 @@ function TSM_PrepareDays(start, dur) {
     }
     $(toBuild).appendTo(container);
     $.validator.unobtrusive.parseExt('#dayContainer');
-    $(document).ready(function () { container.find("input:text").focus(function () { $(this).select(); }); });
+    $(document).ready(function () { container.find("input:text").focus(function () { $(".detailtoolbar").fixedtoolbar('hide'); var This = this; setTimeout(function () { $(This).select(); }); }); });
     container.data('oldStart', start);
     container.data('olddur', dur);
 }

@@ -15,6 +15,7 @@ namespace TimeSheetMobileWeb
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new TimeSheetMobileWeb.Filters.ServerUrlAttribute());
         }
 
         public static void RegisterRoutes(RouteCollection routes)
