@@ -1,0 +1,32 @@
+﻿@model TimeSheetMobileWeb.Models.UpdateTimesheetsView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+<div data-role='page' id='updatesummary' class='wrapper' data-theme='a' data-title="@SiteResources.HomeMenuRecallDelete" data-leave-application='@SiteResources.ConfirmRecallSubmit'>
+    <div>
+        <div class='header' >
+            <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
+            <h2>@SiteResources.TimesheetSummaryTitle</h2>
+        </div>
+        <div data-role='content' class='content' data-theme='a' >
+            <div data-theme='b' style="min-height:100px;">
+               
+                        <p><span class='ui-bar-a updateerrormessage-d'></span></p>
+                        <p>
+                         <span class='ui-bar-a'>@SiteResources.TimesheetNameLabel</span><span class='currname-d'></span><br />
+                         <span class='ui-bar-a'>@SiteResources.TimesheetStatusLabel</span><span class='currstatus-d'></span><br />
+                         <span class='ui-bar-a'>@SiteResources.TotalActualWorkLabel</span><span class='currtotalact-d' data-format="@Html.ClientFormatting(m => m.HeaderInfos.TotalActualWork)"></span><br />
+                         <span class='ui-bar-a'>@SiteResources.TotalOvertimeWorkLabel</span><span class='currtotalovertime-d' data-format="@Html.ClientFormatting(m => m.HeaderInfos.TotalOverTimeWork)"></span><br />
+                         <span class='ui-bar-a'>@SiteResources.TotalNonBillableLabel</span><span class='currtotalnonbill-d' data-format="@Html.ClientFormatting(m => m.HeaderInfos.TotalNonBillable)"></span><br />
+                         <span class='ui-bar-a'>@SiteResources.TotalOvertimeNonBillableLabel</span><span class='currtotalovertimenonbill-d' data-format="@Html.ClientFormatting(m => m.HeaderInfos.TotalNonBillableOvertime)"></span><br />
+                         <span class='ui-bar-a'>@SiteResources.TimesheetCommentsLabel</span><span class='currcomments-d'></span>
+                        </p>
+
+                
+            </div>
+            <input id="btnDone" type="button" value="@SiteResources.OK" class='main-submit cancel' data-button-target='updatesummary' />   
+        </div>
+        <div class='footer'>
+            <hr />
+        </div>
+    </div>
+</div>

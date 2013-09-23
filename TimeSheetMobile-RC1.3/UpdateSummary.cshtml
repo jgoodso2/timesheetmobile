@@ -1,0 +1,26 @@
+﻿@model TimeSheetMobileWeb.Models.UpdateTimesheetsView
+@using TimeSheetMobileWeb.Models
+<div data-role='page' id='updatesummary' class='wrapper' data-theme='a' data-title="@SiteResources.HomeMenuRecallDelete" data-leave-application='@SiteResources.ConfirmRecallSubmit'>
+    <div>
+        <div class='header' >
+            <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
+            <h2>Timesheet Summary</h2>
+        </div>
+        <div data-role='content' class='content' data-theme='a' >
+            <div data-theme='b' style="min-height:100px;">
+               <form id="rDRequest" data-ajax-url='@Url.Action("RecallDelete", "Timesheet")' data-ajax-oncomplete='TSM_CompleteRD'> 
+                        <p><span class='ui-bar-a'>Succesfully submitted</span></p>
+                        <p>
+                         <span class='ui-bar-a'>label1:</span><span>value1</span><br />
+                         <span class='ui-bar-a'>label2:</span><span>value2</span><br />
+                        </p>
+
+                </form>
+            </div>
+            <input id="btnDone" type="button" value="@SiteResources.OK" class='main-submit cancel' data-button-target='updatesummary' />   
+        </div>
+        <div class='footer'>
+            <hr />
+        </div>
+    </div>
+</div>

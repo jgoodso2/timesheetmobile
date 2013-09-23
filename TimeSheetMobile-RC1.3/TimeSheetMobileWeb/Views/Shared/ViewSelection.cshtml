@@ -1,0 +1,78 @@
+﻿@model TimeSheetMobileWeb.Models.ViewSelectionView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+
+<div data-role='page' id='viewselection' class='wrapper' data-title="@SiteResources.ChangeViewTitle" data-theme='a' >
+    <div>
+        <div class='header' >
+            <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
+            <h2>@SiteResources.ChangeViewTitle</h2>
+        </div>
+        <div data-role='content' class='content' data-theme='a' >
+                <div data-role='content' data-theme='b' >
+                @if (!Model.IsTask)
+                {
+                    <label for='@Html.PrefixedId(m => m.TimesheetViewId)'><strong>@SiteResources.RowViewLabel</strong></label>
+                    @Html.DropDownListFor(m => m.TimesheetViewId,
+                                           new Dictionary<string, object> 
+                                           { { "class", "mobilegadget updaterowview" }, 
+                                           { "data-native-menu", "false" }},
+                    ChoiceListHelper.Create(
+                        ViewConfigurationRow.All,
+                        m => m.Id,
+                        m => m.Name,
+                        usePrompt: false))
+                    <script type="text/javascript">
+                        var _rowViewDescriptions_ = {};
+                        @foreach (var x in ViewConfigurationRow.All)
+                        {
+                            <text>_rowViewDescriptions_['@x.Id']='@x.Description';</text>
+                        }
+                    </script>
+                    <p class="description rowViewDescription"></p>
+                }
+                else
+                {
+                      <label for='@Html.PrefixedId(m => m.TaskUpdatorViewId)'><strong>@SiteResources.TaskViewLabel</strong></label>
+                      @Html.DropDownListFor(m => m.TaskUpdatorViewId,
+                                           new Dictionary<string, object> 
+                                           { { "class", "mobilegadget updatetaskview" }, 
+                                           { "data-native-menu", "false" }},
+                    ChoiceListHelper.Create(
+                        ViewConfigurationTask.All,
+                        m => m.Id,
+                        m => m.Name,
+                        usePrompt: false))
+                        <script type="text/javascript">
+                        var _taskViewDescriptions_ = {};
+                        @foreach (var x in ViewConfigurationTask.All)
+                        {
+                            <text>_taskViewDescriptions_['@x.Id']='@x.Description';</text>
+                        }
+                    </script>
+                        <p class="description taskViewDescription"></p>
+                }
+                        
+                @if (Model.IsTask)
+                {
+                    <p><strong><span >@SiteResources.CurrentTaskView</span></strong></p><p class="maincontent"><strong><span class="currenttaskview"></span></strong></p>
+                    <p class="description taskViewDescription-o"></p>
+                }
+                else
+                {
+                    <p><strong><span >@SiteResources.CurrentRowView</span></strong></p><p class="maincontent"><strong><span class="currentrowview"></span></strong></p>
+                    <p class="description rowViewDescription-o"></p>
+                }
+                    <form id="periodform" action = '@Url.Action("Index", "Timesheet")' 
+                     data-ajax-url='@Url.Action("Refresh", "Timesheet")' data-ajax-target='allTimesheetsEdit' 
+                                            data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
+                    <input id="btnConfirmView" type="button" value="@SiteResources.ChangeViewDone" class='main-submit loadConfirm' data-button-target='viewselection' />
+                    <input id="btnCancelView" type="button" value="@SiteResources.Cancel" class='main-submit cancel' data-button-target='viewselection' />
+                    </form>
+                </div>
+        </div>
+        <div class='footer'>
+            <hr />
+        </div>
+    </div>
+</div>

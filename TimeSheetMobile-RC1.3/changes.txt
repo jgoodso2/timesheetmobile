@@ -1,0 +1,17 @@
+M ViewConfigurationBase.cs
++ Helpers folder
++ ConfigurationHelper.cs
+M IRepository
+M Repository (fake)
+M Repository (Business)
++ UserConfigurationInfo.cs
+M GlobalViewsConfiguration.cs
++ cookies.js
+M SiteScripts.js
++ ViselectionView.cshatml
+M SiteResources.rsx
+M TaskScripts.js
+M TimesheetScript.js
+M Detail.cshtml
++ DateHelpers
+M RowBase

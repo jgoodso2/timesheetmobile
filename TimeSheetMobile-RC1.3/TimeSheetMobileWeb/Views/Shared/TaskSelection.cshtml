@@ -1,0 +1,83 @@
+﻿@model TimeSheetMobileWeb.Models.TaskSelectionView
+@using TimeSheetMobileWeb.Models
+@{var h = Html.CrossHelper(new RowSelectionInfosView());}
+
+<div data-role='page' id='taskselection' class='wrapper' data-title="@Model.Title" data-theme='a'>
+<div>
+    <div class='header' >
+        <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
+        <h2>@Model.Title</h2>
+    </div>
+    <div data-role='content' class='content' data-theme='a' >
+    <div data-role='content' data-theme='b' class='periodHeader'><span class='currenttimesheet'>period of time</span></div>
+    <div data-role='content' data-theme='b' >
+    <form id="rowRequest" data-ajax-url='@Url.Action("RowSingleValues", (Model.IsInTask ? "Tasks" : "Timesheet"))' data-ajax-oncomplete='TSM_CompleteAddRow' data-duplicate-message='@SiteResources.DuplicateTask'>
+        @h.LabelFor(m => m.RequiredProgectId, SiteResources.WorkTimeProject)
+        @h.DropDownListFor(m => m.RequiredProgectId,
+                                       new Dictionary<string, object> 
+                                       { { "class", "mobilegadget updatetasks" }, 
+                                       { "data-native-menu", "false" },
+                                       {"data-action", Url.Action("ProjectTasks", "Tasks")},
+                                       {"data-prompt", SiteResources.AssignementPrompt}},
+            ChoiceListHelper.Create(
+                Model.Projects,
+                m => m.Id,
+                m => m.Name,
+                usePrompt: true,
+                overridePrompt: SiteResources.ProjectPrompt))
+        
+        
+        @if (!Model.IsProjectlineType)
+        {
+            @h.LabelFor(m => m.RequiredAssignementId, SiteResources.WorkTimeAssignement)
+            <select id='@h.PrefixedId(m => m.RequiredAssignementName)', name='@h.PrefixedName(m => m.RequiredAssignementId)' class='mobilegadget dynamictasks' 
+            data-native-menu="false"  ><option value=''>@SiteResources.AssignementPrompt</option></select>
+        }
+        else
+        {
+             @h.LabelFor(m => m.RequiredAssignementId, SiteResources.WorkTimeAssignement)
+            <select id='@h.PrefixedId(m => m.RequiredAssignementName)', name='@h.PrefixedName(m => m.RequiredAssignementId)' class='mobilegadget dynamictasks' 
+            data-native-menu="false" disabled="disabled" ><option value=''>@SiteResources.AssignementPrompt</option></select>
+        }
+        @h.HiddenFor(m => m.RequiredPeriodId, new { @class = "currentperiodid" })
+        @h.HiddenFor(m => m.RequiredPeriodIStart, new { @class = "currentperiodstart" })
+        @h.HiddenFor(m => m.RequiredPeriodIStop, new { @class = "currentperiodstop" })
+        @h.HiddenFor(m => m.RequiredRowType, new { @class = "currentrowtype" })
+        @h.HiddenFor(m => m.RequiredAssignementName, new { @class = "currentassname" })
+        @h.HiddenFor(m => m.RequiredProjectName, new { @class = "currentprojname" })
+        </form>
+        
+        @if (Model != null && Model.RowTypes != null && Model.RowTypes.Length > 0)
+        {
+            <div data-role='content' >
+               @* @if (!Model.IsProjectlineType)
+                {*@
+                <div data-role="controlgroup" class="normalRows" data-theme='c'>
+                    @foreach (RowType rt in Model.RowTypes)
+                    {
+                        <input id="@("btn_sel" + rt)" type="button" value="@rt.DisplayValue" class='mobilegadget confirm rowlist' data-button-target='taskselection' data-button-selection="@rt.Code"/>
+                
+                    }
+                    <input id="btnCancelTask" type="button" value="@SiteResources.Cancel" class='mobilegadget cancel' data-button-target='taskselection' />
+                </div>
+               @* }*@
+                @if (Model != null && !Model.IsInTask && Model.Admin != null)
+                {
+                       <div data-role="controlgroup" class="adminRows" style="display:none">
+                        <input id="btnConfirmTaskA" type="button" value="@SiteResources.AddTaskConfirmed" class='mobilegadget confirm rowlist' data-button-target='taskselection' data-button-selection="@Model.Admin.Code"/>
+                        <input id="btnCancelTaskA" type="button" value="@SiteResources.Cancel" class='mobilegadget cancel' data-button-target='taskselection' />
+                       </div>
+                }
+            
+            </div>
+        }
+        </div>
+       
+     
+        
+    </div>
+    <div class='footer'>
+    <hr />
+    </div>
+</div>
+</div>

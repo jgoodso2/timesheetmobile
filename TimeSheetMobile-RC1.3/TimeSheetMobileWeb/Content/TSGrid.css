@@ -1,0 +1,33 @@
+﻿table.timesheet{
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    border: 1px solid #080808;
+    font-family : Verdana
+   
+}
+table.timesheet thead.fixed{
+    position: fixed;
+}
+table.timesheet thead tr{
+    background: #f0ac00;
+    color:white
+    
+}
+table.timesheet thead th, table.timesheet td{
+    border: 1px solid #080808;
+    padding: 5px 10px;
+    text-align: left;
+    
+    font: normal normal .8em/1.4 verdana
+}
+table.timesheet thead th{
+    font-weight: bold;
+    font: normal normal 1.2em/1.4 verdana
+}
+table.timesheet tbody tr {
+   background-color: #fcf1e6;
+}
+table.timesheet tbody tr:nth-child(odd) {
+   background-color: #f8e3cb;
+}

@@ -1,0 +1,121 @@
+﻿@using TimeSheetMobileWeb.Models
+@using MVCControlsToolkit.Controls
+@using MVCControlsToolkit.Core
+@model CustomFieldsView
+@{
+    string nam = "";
+    List<object> ltemplates = new List<object>();
+
+    ltemplates.Add(_S.H<TimeSheetIBusiness.CustomFieldItem>(
+    @<text>
+    @item.HiddenFor(mbox => mbox.FullName)
+    @item.HiddenFor(mbox => mbox.Name)
+    @if (!((string.IsNullOrEmpty(item.ValueFor(mbox => mbox.LookupTableGuid.Value))) 
+        && item.ValueFor(mbox => mbox.LookupTableGuid) != Guid.Empty.ToString()))
+    {
+       @item.HiddenFor(mbox => mbox.DataType, new { @class = "datatype", field = "Lookup", lookuptable = item.ValueFor(mbox => mbox.Name) })
+    }
+    else
+    {
+        
+         @item.HiddenFor(mbox => mbox.DataType, new { @class = "datatype", field = item.ValueFor(mbox => mbox.Name) })
+    }
+    @*  @item.HiddenFor(m => (m.CustomFieldItems[i] as CustomFieldItem).FullName)
+                                    @item.HiddenFor(m => (m.CustomFieldItems[i] as CustomFieldItem).Name)*@
+    <span class="ui-bar-c lowEnf">@item.ValueFor(mbox => mbox.FullName)</span>
+    @item.HiddenFor(mbox => mbox.DateValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Date" })
+    @item.HiddenFor(mbox => mbox.CostValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Cost" })
+    @item.HiddenFor(mbox => mbox.DurationValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Duration" })
+    @item.HiddenFor(mbox => mbox.FlagValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Flag" })
+    @item.HiddenFor(mbox => mbox.NumValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Number" })
+    @item.HiddenFor(mbox => mbox.TextTValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Text" })
+    @item.HiddenFor(mbox => mbox.LookupID, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Lookupid" })
+    @item.HiddenFor(mbox => mbox.LookupValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Lookupvalue" })
+    @item.HiddenFor(mbox => mbox.LookupTableGuid)
+    @item.HiddenFor(mbox => mbox.CustomFieldGuid)
+
+   
+   
+    
+    @if (!string.IsNullOrEmpty(item.ValueFor(mbox => mbox.LookupTableGuid)) && item.ValueFor(mbox => mbox.LookupTableGuid) != Guid.Empty.ToString())
+    {
+        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype="Lookup" data-format="@item.ClientFormatting(m => m.LookupValue)" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.LookupValue)</span>
+        
+        int count = 0;
+        if (Int32.TryParse(item.ValueFor(mbox => mbox.LookupTableItems.Count), out count))
+        {
+            List<TimeSheetIBusiness.LookupTableDisplayItem> list = new List<TimeSheetIBusiness.LookupTableDisplayItem>();
+            for (int i = 0; i < count; i++)
+            {
+                TimeSheetIBusiness.LookupTableDisplayItem lookupItem = new TimeSheetIBusiness.LookupTableDisplayItem(
+                    new Guid(item.ValueFor(mbox => mbox.LookupTableItems[i].ValueMember)), item.ValueFor(mbox => mbox.LookupTableItems[i].DisplayMember)
+                    , item.ValueFor(mbox => mbox.LookupTableItems[i].DataType), item.ValueFor(mbox => mbox.LookupTableItems[i].BoxedValue));
+                list.Add(lookupItem);
+                  @item.HiddenFor(mbox => mbox.LookupTableItems[i].BoxedValue)
+               @item.HiddenFor(mbox => mbox.LookupTableItems[i].DataType)
+               @item.HiddenFor(mbox => mbox.LookupTableItems[i].DisplayMember)
+               @item.HiddenFor(mbox => mbox.LookupTableItems[i].ValueMember)
+
+            }
+        <span class='@(item.ValueFor(mbox => mbox.Name) + "_display Lookup")' style="display: none">
+            @Html.Partial("LookupTableItemsDisplay", new LookupTableDisplayItemsView() { LookupTableItems = list, Name = item.ValueFor(mbox => mbox.Name) })
+        </span>
+        }
+    }
+    else
+    {
+        switch (item.ValueFor(mbox => mbox.DataType))
+        {
+            case "Date":
+        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype="Date" data-format="@item.ClientFormatting(m => m.DateValue)" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.DateValue)</span>
+                                    
+                                                                                                                                                                                      break;
+            case "Cost":
+        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Cost" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.CostValue)
+        </span>
+                                                                                                                                 break;
+            case "Duration":
+        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Duration" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.DurationValue)
+        </span>
+                                                                                                                                     break;
+            case "Flag":
+        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Flag" name="@item.ValueFor(mbox => mbox.Name)">@(item.ValueFor(mbox => mbox.FlagValue) == "True" ? "Yes" : "No")
+        </span> break;
+            case "Number":
+        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Number" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.NumValue)
+        </span>
+                                                                                                                                   break;
+            case "Text":
+        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Text" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.TextTValue)
+        </span>
+                                                                                                                                 break;
+        }
+
+
+
+    }
+    </text>
+));
+
+
+    object[] templates = ltemplates.ToArray();
+            
+    @Html.SortableListFor(m => m.CustomFieldItems,
+        templates,
+        canSort: false,
+        allItemsContainer: ExternalContainerType.span,
+        itemContainer: ExternalContainerType.span,
+                                  htmlAttributesContainer: new RouteValueDictionary { { "data-rows-prefix", @Html.PrefixedId(m => m.CustomFieldItems) }, { "class", "innerRowsContainer" } },
+                htmlAttributesItems: new RouteValueDictionary { { "class", "rowContainer" } }
+        )
+
+     
+                     
+                         
+                    
+           
+                                           
+                
+         
+           
+}
