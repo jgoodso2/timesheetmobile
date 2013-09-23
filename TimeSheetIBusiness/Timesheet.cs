@@ -12,6 +12,10 @@ namespace TimeSheetIBusiness
         public string Name { get; set; }
         public DateTime Start { get; set; }
         public DateTime Stop { get; set; }
+        public string Period { get; set; }
+        public string Status { get; set; }
+        public string Hours { get; set; }
+        public bool IsCreated { get; set; }
         public string Description
         {
             get

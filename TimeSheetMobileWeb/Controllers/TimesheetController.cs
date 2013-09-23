@@ -15,6 +15,8 @@ namespace TimeSheetMobileWeb.Controllers
         // GET: /Timesheet/
         protected IRepository repository;
         public static KeyValuePair<int, string>[] AllTimesheetSets;
+        public string PWAURL { get; set; }
+        public IRepository Repository { get { return repository; } }
         static TimesheetController()
         {
             AllTimesheetSets = new KeyValuePair<int, string>[6];
@@ -28,16 +30,45 @@ namespace TimeSheetMobileWeb.Controllers
         public TimesheetController(IRepository r)
         {
             repository = r;
+           
         }
-
-        public ActionResult Index(PeriodSelectedView period)
+        [HttpGet()]
+        public ActionResult Index(string speriod)
         {
+            PeriodSelectedView period = new PeriodSelectedView();
+            if (!string.IsNullOrEmpty(speriod))
+            {
+                string[] dataeArray = speriod.Replace("(", "").Replace(")", "").Split("-".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                if (dataeArray.Length > 2)
+                {
+                    period.SelectedPeriodStart = Convert.ToDateTime(dataeArray[1]);
+                    period.SelectedPeriodStop = Convert.ToDateTime(dataeArray[2]);
+                    period.SelectedPeriodId = Repository.GetPeriodID(period.SelectedPeriodStart, period.SelectedPeriodStop);
+                    speriod = string.Format("({0} - {1})",  period.SelectedPeriodStart.ToShortDateString(),period.SelectedPeriodStop.ToShortDateString());
+                    Session["period"] = speriod;
+                }
+            }
+            else
+            {
+                if (Session["period"] != null)
+                {
+                    speriod = Session["period"].ToString();
+                    string[] dataeArray = speriod.Replace("(", "").Replace(")", "").Split("-".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                    period.SelectedPeriodStart = Convert.ToDateTime(dataeArray[0]);
+                    period.SelectedPeriodStop = Convert.ToDateTime(dataeArray[1]);
+                    period.SelectedPeriodId = Repository.GetPeriodID(period.SelectedPeriodStart, period.SelectedPeriodStop);
+                    speriod = string.Format("({0} - {1})", period.SelectedPeriodStart.ToShortDateString(), period.SelectedPeriodStop.ToShortDateString());
+                    Session["period"] = speriod;
+                }
+            }
+
             this.HttpContext.Trace.Warn("Starting Index of TimesheetController");
             ConfigurationHelper.UserConfiguration(repository, User.Identity as System.Security.Principal.WindowsIdentity);
             UpdateTimesheetsView model = new UpdateTimesheetsView();
             model.PrepareRowTypes();
             Timesheet selection = null;
-            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, User.Identity as System.Security.Principal.WindowsIdentity, out selection);
+            model.PeriodString = speriod;
+            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, User.Identity as System.Security.Principal.WindowsIdentity, out selection,TimesheetsSets.Default);
             if (period != null && period.SelectedPeriodId != null)
             {
                 selection = new Timesheet();
@@ -58,27 +89,128 @@ namespace TimeSheetMobileWeb.Controllers
                 bool canDelete;
                 bool canRecall;
                 TimesheetHeaderInfos tInfos;
+                decimal[] totals;
                 model.ReceiveRows(repository.GetRows(
                     User.Identity as System.Security.Principal.WindowsIdentity,
                     ViewConfigurationRow.Default,
                     model.Period,
                     model.CurrentPeriodStart,
                     model.CurrentPeriodStop,
-                    out status, out canDelete, out canRecall, out tInfos));
+                    out status, out canDelete, out canRecall, out tInfos,out totals));
+               
                 model.Status = model.TimesheetStatusString(status);
                 model.HeaderInfos = tInfos;
                 model.CanDelete = canDelete;
                 model.CanRecall = canRecall;
+                model.Totals = totals;
 
 
             }
             this.HttpContext.Trace.Warn("Returning from Index of TimesheetController");
             return View(model);
         }
+
+        public ActionResult TimesheetHistory(string speriod)
+        {
+            this.HttpContext.Trace.Warn("Starting Index of TimesheetController");
+            ConfigurationHelper.UserConfiguration(repository, User.Identity as System.Security.Principal.WindowsIdentity);
+            PeriodSelectedView period = new PeriodSelectedView();
+            TimeSheetHistoryView model = new TimeSheetHistoryView();
+            Timesheet selection = null;
+            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, User.Identity as System.Security.Principal.WindowsIdentity, out selection,TimesheetsSets.Default);
+            if (period != null && period.SelectedPeriodId != null)
+            {
+                selection = new Timesheet();
+                selection.Start = period.SelectedPeriodStart;
+                selection.Stop = period.SelectedPeriodStop;
+            }
+
+            model.PeriodString = speriod;
+            if (selection != null)
+            {
+                model.CurrentPeriodStart = selection.Start;
+                model.CurrentPeriodStop = selection.Stop;
+                model.Period = selection.Id;
+                model.PeriodLength = Convert.ToInt32(selection.Stop.Subtract(selection.Start).TotalDays);
+
+                DateTime start, end;
+                model.ReceiveRows(repository.SelectTimesheets(
+                      User.Identity as System.Security.Principal.WindowsIdentity,
+                     TimesheetsSets.Last3,out start,out end));
+                selection.Start = start;
+                selection.Stop = end;
+
+            }
+            this.HttpContext.Trace.Warn("Returning from Index of TimesheetController");
+            return View("TimesheetHistory", model);
+        }
+
         [HttpPost]
-        public ActionResult Refresh(PeriodSelectedView pmodel)
+        public ActionResult TimesheetHistoryRefresh(string speriod)
+        {
+            this.HttpContext.Trace.Warn("Starting Index of TimesheetController");
+            ConfigurationHelper.UserConfiguration(repository, User.Identity as System.Security.Principal.WindowsIdentity);
+            PeriodSelectedView period = new PeriodSelectedView();
+            TimeSheetHistoryView model = new TimeSheetHistoryView();
+            Timesheet selection = null;
+            int selctedset = Convert.ToInt32(speriod);
+            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, User.Identity as System.Security.Principal.WindowsIdentity, out selection,TimesheetsSets.Default);
+            if (period != null && period.SelectedPeriodId != null)
+            {
+                selection = new Timesheet();
+                selection.Start = period.SelectedPeriodStart;
+                selection.Stop = period.SelectedPeriodStop;
+            }
+
+            model.PeriodString = speriod;
+            if (selection != null)
+            {
+                model.CurrentPeriodStart = selection.Start;
+                model.CurrentPeriodStop = selection.Stop;
+                model.Period = selection.Id;
+                model.PeriodLength = Convert.ToInt32(selection.Stop.Subtract(selection.Start).TotalDays);
+
+                DateTime start, end;
+                model.ReceiveRows(repository.SelectTimesheets(
+                      User.Identity as System.Security.Principal.WindowsIdentity,
+                     (TimesheetsSets) selctedset, out start, out end));
+                selection.Start = start;
+                selection.Stop = end;
+
+            }
+            this.HttpContext.Trace.Warn("Returning from Index of TimesheetController");
+            return PartialView("TSGridTemplate", model);
+        }
+        [HttpPost]
+        public ActionResult Refresh(string speriod)
         {
             ConfigurationHelper.UserConfiguration(repository, User.Identity as System.Security.Principal.WindowsIdentity);
+            PeriodSelectedView pmodel = new PeriodSelectedView();
+            if (!string.IsNullOrEmpty(speriod))
+            {
+                string[] dataeArray = speriod.Replace("(", "").Replace(")", "").Split("-".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                if (dataeArray.Length > 2)
+                {
+                    pmodel.SelectedPeriodStart = Convert.ToDateTime(dataeArray[0]);
+                    pmodel.SelectedPeriodStop = Convert.ToDateTime(dataeArray[1]);
+                    pmodel.SelectedPeriodId = Repository.GetPeriodID(pmodel.SelectedPeriodStart, pmodel.SelectedPeriodStop);
+                    speriod = string.Format("({0} - {1})",  pmodel.SelectedPeriodStart.ToShortDateString(), pmodel.SelectedPeriodStop.ToShortDateString());
+                    Session["period"] = speriod;
+                }
+            }
+            else
+            {
+                if (Session["period"] != null)
+                {
+                    speriod = Session["period"].ToString();
+                    string[] dataeArray = speriod.Replace("(", "").Replace(")", "").Split("-".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                    pmodel.SelectedPeriodStart = Convert.ToDateTime(dataeArray[0]);
+                    pmodel.SelectedPeriodStop = Convert.ToDateTime(dataeArray[1]);
+                    pmodel.SelectedPeriodId = Repository.GetPeriodID(pmodel.SelectedPeriodStart, pmodel.SelectedPeriodStop);
+                    speriod = string.Format("({0} - {1})", pmodel.SelectedPeriodStart.ToShortDateString(), pmodel.SelectedPeriodStop.ToShortDateString());
+                    Session["period"] = speriod;
+                }
+            }
             this.HttpContext.Trace.Warn("Starting Refresh of TimesheetController");
             UpdateTimesheetsView model = new UpdateTimesheetsView();
             model.CurrentPeriodStart = pmodel.SelectedPeriodStart;
@@ -88,13 +220,16 @@ namespace TimeSheetMobileWeb.Controllers
             bool canDelete;
             bool canRecall;
             TimesheetHeaderInfos tInfos;
+            decimal[] totals;
             model.ReceiveRows(repository.GetRows(
                 User.Identity as System.Security.Principal.WindowsIdentity,
                 ViewConfigurationRow.Default,
                 model.Period,
                 model.CurrentPeriodStart,
                 model.CurrentPeriodStop,
-                out status, out canDelete, out canRecall, out tInfos));
+                out status, out canDelete, out canRecall, out tInfos,out totals));
+            
+            model.Totals = totals;
             model.HeaderInfos = tInfos;
             model.Status = model.TimesheetStatusString(status);
             model.CanDelete = canDelete;
@@ -122,9 +257,10 @@ namespace TimeSheetMobileWeb.Controllers
             this.HttpContext.Trace.Warn("Starting Timesheets of TimesheetController");
             TimesheetsSets set = TimesheetsSets.Default;
             if (iset.HasValue) set = (TimesheetsSets)iset.Value;
+            DateTime start, end;
             var res = MVCControlsToolkit.Controls.ChoiceListHelper.Create(repository.SelectTimesheets(
                     User.Identity as System.Security.Principal.WindowsIdentity,
-                    set).OrderByDescending(m => m.Start),
+                    set,out start,out end).OrderByDescending(m => m.Start),
                                 m => m.Value,
                                 m => m.Description).PrepareForJson();
             this.HttpContext.Trace.Warn("Returning from Timesheets of TimesheetController");
@@ -132,16 +268,16 @@ namespace TimeSheetMobileWeb.Controllers
                 res,
                 JsonRequestBehavior.AllowGet);
         }
-        
+
         [ChildActionOnly]
+        [HttpGet]
         public ActionResult RecallDelete()
         {
             return PartialView();
         }
 
 
-
-
+        
         [HttpPost]
         public ActionResult Edit(UpdateTimesheetsView model)
         {
@@ -183,18 +319,20 @@ namespace TimeSheetMobileWeb.Controllers
                     bool canDelete;
                     bool canRecall;
                     TimesheetHeaderInfos tInfos;
+                    decimal[] totals;
                     model.ReceiveRows(repository.GetRows(
                         User.Identity as System.Security.Principal.WindowsIdentity,
                         ViewConfigurationRow.Default,
                         model.Period,
                         model.CurrentPeriodStart,
                         model.CurrentPeriodStop,
-                        out status, out canDelete, out canRecall, out tInfos));
+                        out status, out canDelete, out canRecall, out tInfos,out totals));
+                   
                     model.HeaderInfos = tInfos;
                     model.Status = model.TimesheetStatusString(status);
                     model.CanDelete = canDelete;
                     model.CanRecall = canRecall;
-                    
+                    model.Totals = totals;
                 }
                 catch
                 {
@@ -232,8 +370,32 @@ namespace TimeSheetMobileWeb.Controllers
                     res.DayTimes.Add(0);
                 }
             }
+            if (res is ActualWorkRow)
+            {
+                ActualWorkRow row = res as ActualWorkRow;
+                row.CustomFieldItems = new List<CustomFieldItem>();
+                row.CustomFieldItems = repository.GetCustomFields(ViewConfigurationRow.Default.CustomFields, selection.RequiredAssignementId, selection.RequiredPeriodIStart, selection.RequiredPeriodIStop);
+            }
+            if (res is SingleValuesRow)
+            {
+                SingleValuesRow row = res as SingleValuesRow;
+                row.CustomFieldItems = new List<CustomFieldItem>();
+                row.CustomFieldItems = repository.GetCustomFields(ViewConfigurationTask.Default.CustomFields, selection.RequiredAssignementId, selection.RequiredPeriodIStart, selection.RequiredPeriodIStop);
+            }
             this.HttpContext.Trace.Warn("Returning from RowSingleValues of TimesheetController");    
             return Json(res);
+        }
+
+        [HttpPost]
+        public ActionResult CustomFields(IList<CustomFieldItem> selection)
+        {
+
+            if (selection != null)
+            {
+                CustomFieldsView model = new CustomFieldsView() { CustomFieldItems = selection.ToList() };
+                return PartialView("CustomFieldDetail", model);
+            }
+            return PartialView();
         }
         [HttpPost]
         public ActionResult RecallDelete(RecallDeleteView model)

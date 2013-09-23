@@ -16,11 +16,8 @@ namespace TimeSheetBusiness
 {
     public  static class QueueHelper
     {
-        private static string bindingConfiguration = "basicHttpConf";
         private static List<int> CheckStatusRowErrors(string errorInfo)
         {
-            
-            
             List<int> errorList = new List<int>();
             bool containsError = false;
 
@@ -48,11 +45,9 @@ namespace TimeSheetBusiness
             }
             return errorList;
         }
-        public static bool WaitForQueueJobCompletion(Guid trackingGuid, int messageType)
+        public static bool WaitForQueueJobCompletion(Guid trackingGuid, int messageType, SvcQueueSystem.QueueSystemClient queueSystemClient)
         {
-            string adress = ViewConfigurationBase.BaseUrl;
             //System.Threading.Thread.Sleep(2000);
-            SvcQueueSystem.QueueSystemClient queueSystemClient = new SvcQueueSystem.QueueSystemClient("basicHttp_QueueSystem", adress);
             SvcQueueSystem.QueueStatusDataSet queueStatusDataSet = new SvcQueueSystem.QueueStatusDataSet();
             SvcQueueSystem.QueueStatusRequestDataSet queueStatusRequestDataSet =
                 new SvcQueueSystem.QueueStatusRequestDataSet();

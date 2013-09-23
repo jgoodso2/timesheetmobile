@@ -14,13 +14,38 @@ namespace TimeSheetFakeBusiness
         {
             return new UserConfigurationInfo { TaskViewId = null, RowViewId = "RComplete" };
         }
+        public CustomFieldInfo GetCustomFieldType(string property)
+        {
+            return null;
+        }
+        public LookupTableDisplayItem[] GetLookupTableValuesAsItems(Guid tableUid, string dataType)
+        {
+            return null;
+        }
+        public List<CustomFieldItem> GetCustomFields(List<CustomField> fields, string assignementId, DateTime start, DateTime stop)
+        {
+            return null;
+        }
+        public bool SetClientEndpointsProg(string pwaUrl)
+        {
+            return true;
+        }
         public void ChangeUserConfiguration(WindowsIdentity user, UserConfigurationInfo conf, string rowField, string taskField)
         {
             string dummy = rowField;
         }
-        public List<BaseRow> GetRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, out int status, out bool canDelete, out bool canRecall, out TimesheetHeaderInfos tInfos)
+
+        public bool IsProjectlineType
+        {
+            get
+            {
+                return false;
+            }
+        }
+        public List<BaseRow> GetRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, out int status, out bool canDelete, out bool canRecall, out TimesheetHeaderInfos tInfos,out decimal[] totals)
         {
             tInfos = null;
+            totals = null;
             List<BaseRow> res = new List<BaseRow>();
             if (periodId == "asss-qwesat-w345-swer") status = 0;
             else status = 1;
@@ -156,8 +181,15 @@ namespace TimeSheetFakeBusiness
         {
         }
         public TimesheetsSets DefaultTimesheetSet {get {return TimesheetsSets.Last3;}}
-        public IEnumerable<Timesheet> SelectTimesheets(System.Security.Principal.WindowsIdentity user, TimesheetsSets set)
+
+        public string GetPeriodID(DateTime start, DateTime end)
         {
+            throw new Exception();
+        }
+        public IEnumerable<Timesheet> SelectTimesheets(System.Security.Principal.WindowsIdentity user, TimesheetsSets set, out DateTime start, out DateTime end)
+        {
+            start = DateTime.MinValue;
+            end = DateTime.MaxValue;
             if (set == TimesheetsSets.Default) set = DefaultTimesheetSet;
             List<Timesheet> res = new List<Timesheet>();
             //if (set == TimesheetsSets.Last3 ) return res;
@@ -245,6 +277,12 @@ namespace TimeSheetFakeBusiness
                 });
             }
             return res;
+        }
+
+
+        public bool IsAdminproject(string projectName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

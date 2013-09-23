@@ -53,9 +53,9 @@
 
 /* Component containers
 ----------------------------------*/
-.ui-widget { font-family: Verdana, Arial, sans-serif; font-size: 1.1em; }
+.ui-widget { font-family: Verdana; font-size: 1.1em; }
 .ui-widget .ui-widget { font-size: 1em; }
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Verdana, Arial, sans-serif; font-size: 1em; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Verdana; font-size: 1em; }
 .ui-widget-content { border: 1px solid #555555; background: #000000 url(images/ui-bg_loop_25_000000_21x21.png) 50% 50% repeat; color: #ffffff; }
 .ui-widget-content a { color: #ffffff; }
 .ui-widget-header { border: 1px solid #333333; background: #444444 url(images/ui-bg_highlight-soft_44_444444_1x100.png) 50% 50% repeat-x; color: #ffffff; font-weight: bold; }
@@ -94,6 +94,7 @@
 .ui-state-active .ui-icon {background-image: url(images/ui-icons_222222_256x240.png); }
 .ui-state-highlight .ui-icon {background-image: url(images/ui-icons_4b8e0b_256x240.png); }
 .ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url(images/ui-icons_a83300_256x240.png); }
+.ui-calendar { margin-right:50px; float:right;width: 25px; height: 25px; background-image: url(images/calendar.png); }
 
 /* positioning */
 .ui-icon-carat-1-n { background-position: 0 0; }

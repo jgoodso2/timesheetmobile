@@ -12,7 +12,9 @@ namespace TimeSheetMobileWeb.Models
         public IEnumerable<ProjectInfo> Projects { get; set; }
         public bool IsInTask { get; set; }
         public RowType[] RowTypes {get; set;}
-        public RowType Admin { get; set; } 
+        public RowType Admin { get; set; }
+        public bool IsProjectlineType { get; set; }
+       
         public void PrepareRowTypes()
         {
             List<RowType> res = new List<RowType>();

@@ -63,10 +63,12 @@
                     <p><strong><span >@SiteResources.CurrentRowView</span></strong></p><p class="maincontent"><strong><span class="currentrowview"></span></strong></p>
                     <p class="description rowViewDescription-o"></p>
                 }
-                    
-                    
+                    <form id="periodform" action = '@Url.Action("Index", "Timesheet")' 
+                     data-ajax-url='@Url.Action("Refresh", "Timesheet")' data-ajax-target='allTimesheetsEdit' 
+                                            data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
                     <input id="btnConfirmView" type="button" value="@SiteResources.ChangeViewDone" class='main-submit loadConfirm' data-button-target='viewselection' />
                     <input id="btnCancelView" type="button" value="@SiteResources.Cancel" class='main-submit cancel' data-button-target='viewselection' />
+                    </form>
                 </div>
         </div>
         <div class='footer'>

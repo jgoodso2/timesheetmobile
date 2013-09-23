@@ -18,6 +18,7 @@ namespace TimeSheetMobileWeb.Models
         public PeriodSelectionView PeriodSelectionInfos;
         [Display(ResourceType = typeof(SiteResources), Name = "HomeMenuPeriods")]
         public string Period { get; set; }
+        public string PeriodString { get;set;}
         public DateTime CurrentPeriodStart { get; set; }
         public DateTime CurrentPeriodStop { get; set; }
         public int PeriodLength { get; set; }
@@ -29,6 +30,8 @@ namespace TimeSheetMobileWeb.Models
         public bool CanRecall { get; set; }
         public TimesheetHeaderInfos HeaderInfos { get; set; }
         public string ErrorMessage { get; set; }
+        public decimal[] Totals { get; set; }
+        
         public static RowType GetRowType(Type rowClass)
         {
             if (rowClass == typeof(NonBillableActualWorkRow))
@@ -72,6 +75,8 @@ namespace TimeSheetMobileWeb.Models
             }
             PeriodRows = res;
         }
+
+
         public void PrepareRowTypes()
         {
             List<RowType> res= new List<RowType>();
@@ -91,6 +96,34 @@ namespace TimeSheetMobileWeb.Models
                 res.Add(GetRowType(typeof(AdministrativeRow)));
             }
             RowTypes = res.ToArray();
+        }
+
+        public CustomFieldItem GetCustomField(string assignmentId, string customFieldName)
+        {
+            if (PeriodRows == null || string.IsNullOrEmpty(assignmentId) || string.IsNullOrEmpty(customFieldName))
+            {
+                return null;
+            }
+            else 
+            {
+                 var periodRow =PeriodRows.First(m=>m.Value.AssignementId == assignmentId).Value;
+                 if (periodRow.RowType == 1)
+                 {
+                     if((periodRow as ActualWorkRow).CustomFieldItems != null && (periodRow as ActualWorkRow).CustomFieldItems.Any(t=>t.Name == customFieldName))
+                     {
+                         return (periodRow as ActualWorkRow).CustomFieldItems.First(t => t.Name == customFieldName);
+                     }
+                 }
+
+                 if (periodRow.RowType == 6)
+                 {
+                     if ((periodRow as SingleValuesRow).CustomFieldItems != null && (periodRow as SingleValuesRow).CustomFieldItems.Any(t => t.Name == customFieldName))
+                     {
+                         return (periodRow as SingleValuesRow).CustomFieldItems.First(t => t.Name == customFieldName);
+                     }
+                 }
+            }
+            return null;
         }
     }
 }

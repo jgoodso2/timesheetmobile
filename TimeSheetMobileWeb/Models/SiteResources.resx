@@ -369,4 +369,10 @@
   <data name="TaskSummaryTitle" xml:space="preserve">
     <value>Updates Report</value>
   </data>
+  <data name="HomeTimesheets" xml:space="preserve">
+    <value>My Timesheets</value>
+  </data>
+  <data name="HomeMenuTimesheets" xml:space="preserve">
+    <value>My Timesheets</value>
+  </data>
 </root>

@@ -28,7 +28,7 @@ $(document).ready(function () {
         if (TSM_isFormDirty() && !window.confirm($('#tasks').attr('data-leave-application'))) data.cancel = true;
     })
     .bind('confirm', function () {
-        TSM_ConfirmPeriod();
+        TSM_ConfirmPeriod(null,null);
     });
     $('#viewselection').bind('gotoing', function (e, data) {
         if (TSM_isFormDirty() && !window.confirm($('#tasks').attr('data-leave-application'))) data.cancel = true;

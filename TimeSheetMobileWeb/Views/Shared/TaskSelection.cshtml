@@ -26,9 +26,19 @@
                 usePrompt: true,
                 overridePrompt: SiteResources.ProjectPrompt))
         
-        @h.LabelFor(m => m.RequiredAssignementId, SiteResources.WorkTimeAssignement)
-        <select id='@h.PrefixedId(m => m.RequiredAssignementId)', name='@h.PrefixedName(m => m.RequiredAssignementId)' class='mobilegadget dynamictasks' 
+        
+        @if (!Model.IsProjectlineType)
+        {
+            @h.LabelFor(m => m.RequiredAssignementId, SiteResources.WorkTimeAssignement)
+            <select id='@h.PrefixedId(m => m.RequiredAssignementName)', name='@h.PrefixedName(m => m.RequiredAssignementId)' class='mobilegadget dynamictasks' 
             data-native-menu="false"  ><option value=''>@SiteResources.AssignementPrompt</option></select>
+        }
+        else
+        {
+             @h.LabelFor(m => m.RequiredAssignementId, SiteResources.WorkTimeAssignement)
+            <select id='@h.PrefixedId(m => m.RequiredAssignementName)', name='@h.PrefixedName(m => m.RequiredAssignementId)' class='mobilegadget dynamictasks' 
+            data-native-menu="false" disabled="disabled" ><option value=''>@SiteResources.AssignementPrompt</option></select>
+        }
         @h.HiddenFor(m => m.RequiredPeriodId, new { @class = "currentperiodid" })
         @h.HiddenFor(m => m.RequiredPeriodIStart, new { @class = "currentperiodstart" })
         @h.HiddenFor(m => m.RequiredPeriodIStop, new { @class = "currentperiodstop" })
@@ -40,16 +50,18 @@
         @if (Model != null && Model.RowTypes != null && Model.RowTypes.Length > 0)
         {
             <div data-role='content' >
+               @* @if (!Model.IsProjectlineType)
+                {*@
                 <div data-role="controlgroup" class="normalRows" data-theme='c'>
                     @foreach (RowType rt in Model.RowTypes)
                     {
                         <input id="@("btn_sel" + rt)" type="button" value="@rt.DisplayValue" class='mobilegadget confirm rowlist' data-button-target='taskselection' data-button-selection="@rt.Code"/>
                 
                     }
-            
                     <input id="btnCancelTask" type="button" value="@SiteResources.Cancel" class='mobilegadget cancel' data-button-target='taskselection' />
                 </div>
-                @if (Model != null &&! Model.IsInTask && Model.Admin != null)
+               @* }*@
+                @if (Model != null && !Model.IsInTask && Model.Admin != null)
                 {
                        <div data-role="controlgroup" class="adminRows" style="display:none">
                         <input id="btnConfirmTaskA" type="button" value="@SiteResources.AddTaskConfirmed" class='mobilegadget confirm rowlist' data-button-target='taskselection' data-button-selection="@Model.Admin.Code"/>

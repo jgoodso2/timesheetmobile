@@ -15,7 +15,6 @@ namespace TimeSheetMobileWeb
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
-            filters.Add(new TimeSheetMobileWeb.Filters.ServerUrlAttribute());
         }
 
         public static void RegisterRoutes(RouteCollection routes)
@@ -34,9 +33,18 @@ namespace TimeSheetMobileWeb
         {
             AreaRegistration.RegisterAllAreas();
             TimeSheetMobileWeb.IoC.DependencyControllerFactory.InitIoC();
-            TimeSheetMobileWeb.Models.GlobalViewsConfiguration.Load();
+            
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+        }
+
+        protected void Session_Start()
+        {
+            string url = HttpContext.Current.Items["PWAURL"].ToString();
+            Uri  uri = new Uri(url);
+            string path = uri.Host + uri.AbsolutePath;
+            TimeSheetMobileWeb.Models.GlobalViewsConfiguration.Load(path);
+            
         }
     }
 }

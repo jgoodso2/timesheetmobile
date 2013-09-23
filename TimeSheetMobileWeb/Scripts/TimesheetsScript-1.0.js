@@ -4,16 +4,22 @@
     TSM_ChangePage('updatesummary', null, null);
 }
 function TSM_CompleteRD(data) {
-    if (data && data['IsRecall']) {
-        setTimeout(function(){TSM_partialSubmit($('#periodform'));},0);
-        return;
+    if (data) {
+        if (data['IsRecall']) {
+            setTimeout(function () { TSM_partialSubmit($('#periodform')); }, 0);
+            return;
+        }
+        else {
+            window.location.href = $('#returnUrl').attr('data-url');
+            return;
+        }
     }
-    //var jSelect = $('.dynamicperiods');
-    //jSelect.val('');
+    var jSelect = $('.updatetimesheets');
+    jSelect.val('');
     TSM_ConfirmPeriod(null, true);
     history.back();
     $.mobile.changePage('#periodselection', { changeHash: true });
-    //$('.updatetimesheets').trigger('change');
+    $('.updatetimesheets').trigger('change');
 }
 
 $(document).ready(function () {
@@ -37,11 +43,11 @@ $(document).ready(function () {
 
         }
         );
-    $('#periodselection').bind('gotoing', function (e, data) {
+        $('#periodselection').bind('gotoing', function (e, data) {
         if (TSM_isFormDirty() && !window.confirm($('#timesheet').attr('data-leave-application'))) data.cancel = true;
     })
     .bind('confirm', function () {
-        TSM_ConfirmPeriod();
+        TSM_ConfirmPeriod(null,null);
     });
     $('#viewselection').bind('gotoing', function (e, data) {
         if (TSM_isFormDirty() && !window.confirm($('#timesheet').attr('data-leave-application'))) data.cancel = true;

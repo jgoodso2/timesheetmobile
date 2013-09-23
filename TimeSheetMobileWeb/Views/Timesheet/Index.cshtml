@@ -9,15 +9,20 @@
 }
 
 <div data-role='page' data-theme='a' id='timesheet' data-title="@SiteResources.HomeMenuTimesheet" data-leave-application='@SiteResources.LeaveApplication' class = 'ajaxLoader'>
-    <div data-role='header'class='wrapper updatemainlayout' data-theme='a' data-position='fixed' >
+    <div data-role='header'class='wrapper updatemainlayout' data-theme='a' data-position='fixed'>
         <div>
             <div class='header' >
                 <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
                 <h2>@SiteResources.HomeMenuTimesheet</h2>
             </div>
-            <div data-role='content' data-theme='b' class='periodHeader'><span class='currenttimesheet'>period of time</span>
-                &nbsp;<a href="#" class='goto' data-button-target='periodselection'>@SiteResources.ChangePeriod</a>
+         
+                                           
+            <div data-role='content' data-theme='b' class='periodHeader'><b><span id="indexPeriod" class='currenttimesheet'>@Model.PeriodString</span>
+            <text>&nbsp;&nbsp;&nbsp;&nbsp</text>
+           </b>
+           <input id="btnCalendar" type="button" value="" class='ui-calendar' onclick= 'window.location.href="@Url.Action("TimesheetHistory", "Timesheet")";'/>
                 
+                <input id  = 'periodid' type = "hidden" value = '@Model.Period' />
             </div>
                 
                 <div class="ui-grid-d">
@@ -31,51 +36,38 @@
             </div>
             <div class='maininfo'>
                 <div class ='maininfoheader' data-role='content' data-theme='a'>
-                    @if (ViewConfigurationRow.Default.ActualWorkA)
+                    @if (Model.Totals != null)
                     {
-                        @(ViewConfigurationRow.Default.ActualWorkA_Name+":")
-                        <span id='@(UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code+"_header")' class='combinedValue'></span>
-                                                                           
-                                                                           
+                        int i=0;
+                        foreach( var value in Model.Totals)
+                        {
+                            <span class='combinedValue'>@Model.CurrentPeriodStart.AddDays(i).DayOfWeek.ToString().Substring(0,3)</span> <span>:</span>
+                            <span class='combinedValue grandtotals' id = '@string.Format("DayTimes_Total_{0}", i)'>@Math.Round(value,2)</span> <text>&nbsp;</text>
+                            i++;
+                        }
                     }
-                    &nbsp;
-                    @if (ViewConfigurationRow.Default.ActualOvertimeWorkA)
-                    {
-                        @(ViewConfigurationRow.Default.ActualOvertimeWorkA_Name+":")
-                        <span id='@(UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code+"_header")' class='combinedValue'></span>
-                                                                                                                                  
-                    }
-                    &nbsp;
-                    @if (ViewConfigurationRow.Default.ActualNonBillableWorkA)
-                    {
-                        @(ViewConfigurationRow.Default.ActualNonBillableWorkA_Name+":")
-                        <span id='@(UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code + "_header")' class='combinedValue'></span>
-                                                                                                                                  
-                    }
-                    &nbsp;
-                     @if (ViewConfigurationRow.Default.ActualNonBillableOvertimeWorkA)
-                    {
-                        @(ViewConfigurationRow.Default.ActualNonBillableOvertimeWorkA_Name+":")
-                        <span id='@(UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code + "_header")' class='combinedValue'></span>
-                                                                           
-                                                                           
-                    }
+                        
                 </div>
             </div>
+               <form id="periodform" action = '@Url.Action("Index", "Timesheet")' 
+                     data-ajax-url='@Url.Action("Refresh", "Timesheet")' data-ajax-target='allTimesheetsEdit' 
+                                            data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
+                                           @*<input id="SelectedPeriod" name="SelectedPeriod"  class = 'currentperiodstop' type="hidden" value='@string.Format("({0} -{1})", Model.CurrentPeriodStart.ToShortDateString(), Model.CurrentPeriodStop.ToShortDateString())'/>*@
+             </form>
         </div>   
     </div>
     <div data-role='content' class='wrapper' data-theme='a'>     
         <div>
             <div class='maininfo'>
                 <div class='maininfocontent allrowsContainer' data-role='content' data-theme='c' id='allTimesheetsEdit'>
-                @if (Model != null && Model.Period != null)
-                {
-                    @Html.Partial("Edit", Model)
-                }
+                  @Html.Partial("Edit", Model)
+                  <input type = "hidden" id="periodstart" value = '@Model.CurrentPeriodStart' />
+                  <input type = "hidden" id="periodend" value = '@Model.CurrentPeriodStop' />
     
                 </div>
             </div>
         </div>
+         
     </div>
     <div data-role='footer' data-position='fixed' class='wrapper updatemainlayout' data-theme='a'>
         <div>
@@ -84,17 +76,15 @@
             </div> 
         </div>
     </div>
-
+     
 </div>
 @Html.Action("TaskSelection", "Timesheet");
-@Html.Partial("PeriodSelection", new ViewDataDictionary<PeriodSelectionView>(Model.PeriodSelectionInfos));
 @Html.Partial("ViewSelection", new ViewDataDictionary<ViewSelectionView>(
-    new ViewSelectionView {TaskUpdatorViewId=ViewConfigurationTask.Default.Id,  TimesheetViewId=ViewConfigurationRow.Default.Id}));
+    new ViewSelectionView { TaskUpdatorViewId = ViewConfigurationTask.Default.Id, TimesheetViewId = ViewConfigurationRow.Default.Id }));
 @Html.Action("RecallDelete", "Timesheet");
 @Html.Partial("UpdateSummary")
 @Html.Partial("Detail", new ViewDataDictionary<BaseRowView>(new BaseRowView { TaskRow = false, Title = SiteResources.HomeMenuTimesheetDetail, PeriodLength = Model.PeriodLength })))
-@if (Model != null && Model.RowTypes != null && Model.RowTypes.Length > 1)
-{
+
     @Html.Partial("RowChoice", new ViewDataDictionary<RowType[]>(Model.RowTypes))
-}
+
 @Html.Partial("TimeInput", new ViewDataDictionary<TimeInputView>())

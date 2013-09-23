@@ -34,7 +34,20 @@ namespace TimeSheetMobileWeb.Models
         }
         public static void Load(string filename=null)
         {
-            if (filename == null) filename = HttpContext.Current.Server.MapPath("~/ViewsConfiguration.config");
+            if (filename == null) {
+                filename = HttpContext.Current.Server.MapPath("~/ViewsConfiguration.config");
+            }
+            else
+            {
+                if (File.Exists("~/Configuration/" + filename + "/ViewsConfiguration.config"))
+                {
+                    filename = HttpContext.Current.Server.MapPath("~/Configuration/" + filename + "/ViewsConfiguration.config");
+                }
+                else
+                {
+                    filename = HttpContext.Current.Server.MapPath("~/ViewsConfiguration.config");
+                }
+            }
             XmlSerializer serializer = new XmlSerializer(typeof(GlobalViewsConfiguration));
             FileStream stream =new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
             if (stream != null)

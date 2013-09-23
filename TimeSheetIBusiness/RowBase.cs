@@ -15,6 +15,8 @@ namespace TimeSheetIBusiness
         public string ProjectName { get; set; }
         public string AssignementName { get; set; }
         public int RowType { get; set; }
+        
+       
         public override bool Equals(object obj)
         {
             BaseRow other = obj as BaseRow;
@@ -45,8 +47,11 @@ namespace TimeSheetIBusiness
     }
     public class ActualWorkRow : BaseRow
     {
-        
-        public ActualWorkRow() { RowType = 1; }
+
+        public ActualWorkRow() 
+        { 
+            RowType = 1; CustomFieldItems = new List<CustomFieldItem>(); 
+        }
         [DynamicRange(typeof(decimal), SMinimum = "0.0")]
         public decimal? WorkA { get; set; }
         [DynamicRange(typeof(decimal), SMinimum = "0.0")]
@@ -101,10 +106,13 @@ namespace TimeSheetIBusiness
         public uint? PercentWorkCompleteT { get; set; }
         [Range(0, 100), Format(Postfix = "%")]
         public uint? PhysicalPercentCompleteT { get; set; }
+        public List<CustomFieldItem> CustomFieldItems { get; set; }
+        
+        
     }
     public class ActualOvertimeWorkRow : BaseRow
     {
-        public ActualOvertimeWorkRow() { RowType = 2; }
+        public ActualOvertimeWorkRow() { RowType = 2;  }
         [DynamicRange(typeof(decimal), SMinimum = "0.0")]
         public decimal? OvertimeWorkA { get; set; }
         [DynamicRange(typeof(decimal), SMinimum = "0.0")]
@@ -116,8 +124,14 @@ namespace TimeSheetIBusiness
 
     public class SingleValuesRow : BaseRow
     {
-
-        public SingleValuesRow() { RowType = 6; }
+        
+        public SingleValuesRow()
+            : base()
+        {
+           
+            RowType = 6;
+            CustomFieldItems = new List<CustomFieldItem>();
+        }
         [DynamicRange(typeof(decimal), SMinimum = "0.0")]
         public decimal? WorkA { get; set; }
         [DynamicRange(typeof(decimal), SMinimum = "0.0")]
@@ -180,5 +194,7 @@ namespace TimeSheetIBusiness
         public decimal? OvertimeWorkT { get; set; }
         [DynamicRange(typeof(decimal), SMinimum = "0.0")]
         public decimal? RemainingOvertimeWorkT { get; set; }
+        public List<CustomFieldItem> CustomFieldItems { get; set; }
+
     }
 }

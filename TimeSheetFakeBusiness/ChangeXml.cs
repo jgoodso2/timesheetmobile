@@ -23,15 +23,17 @@ namespace TimeSheetIBusiness
         }
         private List<WholeLine> groups;
         private ViewConfigurationBase configuration;
+        private IRepository repository;
         private DateTime start, end;
         private SvcResource.ResourceAssignmentDataSet _resAssDS;
-        internal ChangeXml(SvcResource.ResourceAssignmentDataSet _resAssDS, List<WholeLine> groups, ViewConfigurationBase configuration, DateTime start, DateTime end)
+        internal ChangeXml(SvcResource.ResourceAssignmentDataSet _resAssDS, List<WholeLine> groups, ViewConfigurationBase configuration, DateTime start, DateTime end, IRepository repsoitory)
         {
             this.groups = groups;
             this.configuration=configuration;
             this.start=start;
             this.end=end;
             this._resAssDS = _resAssDS;
+            this.repository = repsoitory;
         }
         private Guid GetTaskUID(string assn_uid, SvcResource.ResourceAssignmentDataSet _resAssDS)
         {
@@ -151,20 +153,95 @@ namespace TimeSheetIBusiness
                         }
                     }
                 }
-                if (x.VChanged && source != null){
+                if (x.CChanged && source != null){
+                    List<string> changedPropeties = null;
+                    
+                        changedPropeties = new List<string>();
+                        if(x.Values.Value is ActualWorkRow)
+                        foreach (var key in (x.Values.Value as ActualWorkRow).CustomFieldItems) changedPropeties.Add(key.FullName);
+                        if (x.Values.Value is SingleValuesRow)
+                            foreach (var key in (x.Values.Value as SingleValuesRow).CustomFieldItems) changedPropeties.Add(key.FullName);
+                    StringBuilder sbT = sb;
+                    foreach (string property in changedPropeties)
+                    {
+                        CustomFieldInfo info = repository.GetCustomFieldType(property);
+                        string type = info.DataType;
+                        
+                        string formattedValue= null;
+                        if (x.Values.Value is ActualWorkRow || x.Values.Value is SingleValuesRow)
+                        {
+                            object value = null;
+                            var csitem = x.Values.Value is ActualWorkRow ? (x.Values.Value as ActualWorkRow).CustomFieldItems.First(t => t.FullName == property)
+                                : (x.Values.Value as SingleValuesRow).CustomFieldItems.First(t => t.FullName == property);
+
+                            if (!csitem.LookupTableGuid.HasValue || csitem.LookupTableGuid.Value == Guid.Empty)
+                            {
+                                switch (type)
+                                {
+                                    case "Date": value = csitem.DateValue;
+                                        if(value != null)
+                                        formattedValue = ((DateTime)value).ToString("s", CultureInfo.InvariantCulture);
+                                        break; //Date 
+                                    case "Finishdate":
+                                        value = csitem.DateValue;
+                                        if (value != null)
+                                        formattedValue = finishDate((DateTime)value).ToString("s", CultureInfo.InvariantCulture); break;
+                                    case "Duration":
+                                        value = csitem.DurationValue;
+                                        if (value != null)
+                                        formattedValue = (Convert.ToInt64(((uint)value) * 4800m)).ToString(CultureInfo.InvariantCulture); break; //duration
+                                    case "Cost":
+                                        value = csitem.CostValue;
+                                        if (value != null)
+                                        formattedValue = (Convert.ToInt64(((decimal)value) * 60000m)).ToString(CultureInfo.InvariantCulture); break; //work
+                                    case "Flag":
+                                        value = csitem.FlagValue;
+                                        if (value != null)
+                                        formattedValue = ((bool)(value)) ? "True" : "False"; break; //pure int
+                                    case "Number":
+                                        value = csitem.NumValue;
+                                        if (value != null)
+                                        formattedValue = ((decimal)(value)).ToString(CultureInfo.InvariantCulture); break; //pure decimal
+                                    default:
+                                        
+                                        value = (x.Values.Value is ActualWorkRow) ? (x.Values.Value as ActualWorkRow).CustomFieldItems.First(t => t.FullName == property).TextTValue
+                                            : (x.Values.Value as SingleValuesRow).CustomFieldItems.First(t => t.FullName == property).TextTValue;
+                                        if (value != null)
+                                        formattedValue = (string)(value); break; //pure string
+
+                                }
+                            
+
+                            sbT.Append(Environment.NewLine);
+                            sbT.Append(level2);
+                            sbT.AppendFormat("<SimpleCustomFieldChange CustomFieldType=\"{0}\" CustomFieldGuid=\"{1}\" CustomFieldName=\"{2}\">{3}</SimpleCustomFieldChange>", info.DataType, info.Guid, info.Name, formattedValue);
+                            }
+                        else
+                        {
+                            sbT.Append(Environment.NewLine);
+                            sbT.Append(level2);
+                            sbT.AppendFormat("<LookupTableCustomFieldChange IsMultiValued=\"false\" CustomFieldType=\"{0}\" CustomFieldGuid=\"{1}\" CustomFieldName=\"{2}\"><LookupTableValue Guid=\"{3}\">{4}</LookupTableValue></LookupTableCustomFieldChange>"
+                                , csitem.DataType, csitem.CustomFieldGuid, csitem.FullName, csitem.LookupID, csitem.LookupValue);
+                        }
+                        }
+                    }
+                }
+
+                if (x.VChanged && source != null)
+                {
                     List<string> changedPropeties = null;
                     if (x.Values.OldValue == null)
                     {
                         changedPropeties = new List<string>();
                         foreach (var key in PIDS.Keys) changedPropeties.Add(key);
                     }
-                    else 
+                    else
                     {
-                        changedPropeties=(x.Values as PropertyTracker<BaseRow>).ChangedProperties;
+                        changedPropeties = (x.Values as PropertyTracker<BaseRow>).ChangedProperties;
                     }
                     foreach (string property in changedPropeties)
                     {
-                        PropertyInfo prop=configuration.GetType().GetProperty(property);
+                        PropertyInfo prop = configuration.GetType().GetProperty(property);
                         if (prop == null) continue;
                         if (!((bool)(prop.GetValue(configuration, new object[0])))) continue;
                         prop = configuration.GetType().GetProperty(property + "_Edit");
@@ -172,18 +249,18 @@ namespace TimeSheetIBusiness
                         if (!((bool)(prop.GetValue(configuration, new object[0])))) continue;
                         prop = source.GetType().GetProperty(property);
                         if (prop == null) continue;
-                        object value =  prop.GetValue(source, new object[0]);
+                        object value = prop.GetValue(source, new object[0]);
                         if (value == null) continue;
 
-                        string formattedValue=null;
-                        Entry infos=PIDS[property];
+                        string formattedValue = null;
+                        Entry infos = PIDS[property];
                         StringBuilder sbT = sb;
                         if (infos.isInTask) sbT = asb;
-                        switch(infos.XType)
+                        switch (infos.XType)
                         {
                             case 1: formattedValue =
                                 infos.finishDate ? finishDate((DateTime)value).ToString("s", CultureInfo.InvariantCulture)
-                                    :((DateTime)value).ToString("s", CultureInfo.InvariantCulture); 
+                                    : ((DateTime)value).ToString("s", CultureInfo.InvariantCulture);
                                 break; //Date 
                             case 2: formattedValue = (Convert.ToInt64(((uint)value) * 4800m)).ToString(CultureInfo.InvariantCulture); break; //duration
                             case 3: formattedValue = (Convert.ToInt64(((decimal)value) * 60000m)).ToString(CultureInfo.InvariantCulture); break; //work
@@ -191,7 +268,7 @@ namespace TimeSheetIBusiness
                             case 5: formattedValue = ((bool)(value)) ? "True" : "False"; break; //pure int
                             case 6: formattedValue = ((decimal)(value)).ToString(CultureInfo.InvariantCulture); break; //pure decimal
                             default: formattedValue = (string)(value); break; //pure string
-                     
+
                         }
                         if (infos.Timed)
                         {
@@ -208,7 +285,7 @@ namespace TimeSheetIBusiness
                             sbT.Append(level2);
                             sbT.Append("<Change PID=\""); sbT.Append(infos.Code); sbT.Append("\" >"); sbT.Append(formattedValue); sbT.Append("</Change>");
                         }
-                        
+
                     }
                 }
                 
@@ -235,6 +312,8 @@ namespace TimeSheetIBusiness
 
 
         }
+
+       
 
     }
     

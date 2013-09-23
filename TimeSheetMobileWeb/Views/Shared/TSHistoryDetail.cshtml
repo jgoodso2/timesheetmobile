@@ -1,0 +1,19 @@
+﻿@using MVCControlsToolkit.Controls
+@using MVCControlsToolkit.Core
+
+@model TimeSheetMobileWeb.Models.TimeSheetView
+    <td class="editor-label gridcelllink">
+     
+                                            <a href='#' onclick='window.location.href="@Url.Action(
+    "Index",
+"Timesheet", new { speriod = @Model.Period.Replace("(","-").Replace(")","-") }, "http")";'>@Model.Period</a>
+                                            
+      
+
+    </td>
+    <td class="editor-label gridcell">
+        @Html.DisplayField(m => m.Status)
+    </td>
+    <td class="editor-label gridcell">
+        @Html.DisplayField(m => m.Hours)
+    </td>

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheetFakeBusiness", "Ti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheetIBusiness", "TimeSheetIBusiness\TimeSheetIBusiness.csproj", "{FD55A39F-3AC7-4F98-A3AB-AE8A1A3EFF8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheetModules", "TimeSheetModules\TimeSheetModules.csproj", "{8906B8E3-B0CA-41F4-B9B9-522819E2DCC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{FD55A39F-3AC7-4F98-A3AB-AE8A1A3EFF8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD55A39F-3AC7-4F98-A3AB-AE8A1A3EFF8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD55A39F-3AC7-4F98-A3AB-AE8A1A3EFF8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8906B8E3-B0CA-41F4-B9B9-522819E2DCC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8906B8E3-B0CA-41F4-B9B9-522819E2DCC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8906B8E3-B0CA-41F4-B9B9-522819E2DCC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8906B8E3-B0CA-41F4-B9B9-522819E2DCC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

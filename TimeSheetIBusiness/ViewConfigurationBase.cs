@@ -10,8 +10,6 @@ namespace TimeSheetIBusiness
     [Serializable]
     public class ViewConfigurationBase
     {
-        [ThreadStatic]
-        public static string BaseUrl;
         internal const string NoName = "No Name"; 
         // Name and Id
         public string Id { get; set; }
@@ -169,6 +167,8 @@ namespace TimeSheetIBusiness
         public string PhysicalPercentCompleteT_Name { get; set; }
         public string PhysicalPercentCompleteT_FullName { get; set; }
 
+        public List<CustomField> CustomFields { get; set; }
+
         public ViewConfigurationBase()
         {
             WorkA_Name = NoName;
@@ -246,7 +246,6 @@ namespace TimeSheetIBusiness
         public static ViewConfigurationRow[] All { get; set; }
         [ThreadStatic]
         public static ViewConfigurationRow Default;
-        
         public static string ViewFieldName;
         public static Guid ViewFieldGuid;
         public ViewConfigurationRow()
@@ -272,7 +271,7 @@ namespace TimeSheetIBusiness
         public static ViewConfigurationTask[] All { get; set; }
         [ThreadStatic]
         public static ViewConfigurationTask Default;
-
+        
         public static string ViewFieldName;
         public static Guid ViewFieldGuid;
         public static ViewConfigurationTask Find(string id)

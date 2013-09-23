@@ -19,7 +19,5 @@ namespace TimeSheetMobile.Controllers
             return View();
             
         }
-
-        
     }
 }

@@ -15,6 +15,14 @@ namespace TimeSheetMobileWeb.Controllers
         // GET: /Tasks/
 
         protected IRepository repository;
+
+        public IRepository Repository
+        {
+            get
+            {
+                return repository;
+            }
+        }
         public TasksController(IRepository r)
         {
             repository = r;
@@ -26,7 +34,7 @@ namespace TimeSheetMobileWeb.Controllers
             UpdateTasksView model = new UpdateTasksView();
             model.PrepareRowTypes();
             Timesheet selection = null;
-            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, User.Identity as System.Security.Principal.WindowsIdentity, out selection);
+            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, User.Identity as System.Security.Principal.WindowsIdentity, out selection,TimesheetsSets.All);
             if (period != null && period.SelectedPeriodId != null)
             {
                 selection = new Timesheet();
@@ -36,6 +44,7 @@ namespace TimeSheetMobileWeb.Controllers
                 model.PeriodSelectionInfos.TimesheetSet = period.SelectedPeriodSet;
             }
             model.PeriodSelectionInfos.IsTask = true; 
+
             if (selection != null)
             {
                 model.PeriodSelectionInfos.TimesheetId = selection.Value;
@@ -47,14 +56,16 @@ namespace TimeSheetMobileWeb.Controllers
                 bool canDelete;
                 bool canRecall;
                 TimesheetHeaderInfos tInfos;
+                decimal[] totals;
                 model.ReceiveRows(repository.GetRows(
                     User.Identity as System.Security.Principal.WindowsIdentity,
                     ViewConfigurationTask.Default,
                     model.Period,
                     model.CurrentPeriodStart,
                     model.CurrentPeriodStop,
-                    out status, out canDelete, out canRecall, out tInfos));
+                    out status, out canDelete, out canRecall, out tInfos, out totals));
                 model.Status = model.TimesheetStatusString(status);
+
                 model.CanDelete = canDelete;
                 model.CanRecall = canRecall;
 
@@ -65,28 +76,52 @@ namespace TimeSheetMobileWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult Refresh(PeriodSelectedView pmodel)
+        public ActionResult Refresh(PeriodSelectedView period)
         {
             ConfigurationHelper.UserConfiguration(repository, User.Identity as System.Security.Principal.WindowsIdentity);
             this.HttpContext.Trace.Warn("Starting Refresh of TasksController");
             UpdateTasksView model = new UpdateTasksView();
-            model.CurrentPeriodStart = pmodel.SelectedPeriodStart;
-            model.CurrentPeriodStop = pmodel.SelectedPeriodStop;
-            model.Period = pmodel.SelectedPeriodId;
-            int status;
-            bool canDelete;
-            bool canRecall;
-            TimesheetHeaderInfos tInfos;
-            model.ReceiveRows(repository.GetRows(
-                User.Identity as System.Security.Principal.WindowsIdentity,
-                ViewConfigurationTask.Default,
-                model.Period,
-                model.CurrentPeriodStart,
-                model.CurrentPeriodStop,
-                out status, out canDelete, out canRecall, out tInfos));
-            model.Status = model.TimesheetStatusString(status);
-            model.CanDelete = canDelete;
-            model.CanRecall = canRecall;
+            model.PrepareRowTypes();
+            Timesheet selection = null;
+            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, User.Identity as System.Security.Principal.WindowsIdentity, out selection, TimesheetsSets.All);
+            if (period != null && period.SelectedPeriodId != null)
+            {
+                selection = new Timesheet();
+                selection.Start = period.SelectedPeriodStart;
+                selection.Stop = period.SelectedPeriodStop;
+                model.PeriodSelectionInfos.TimesheetId = selection.Id = period.SelectedPeriodId;
+                model.PeriodSelectionInfos.TimesheetSet = period.SelectedPeriodSet;
+            }
+            model.PeriodSelectionInfos.IsTask = true;
+
+            if (selection != null)
+            {
+                model.PeriodSelectionInfos.TimesheetId = selection.Value;
+                model.CurrentPeriodStart = selection.Start;
+                model.CurrentPeriodStop = selection.Stop;
+                model.Period = selection.Id;
+                model.PeriodLength = (int)(selection.Stop.Subtract(selection.Start).TotalDays) + 1;
+                int status;
+                bool canDelete;
+                bool canRecall;
+                TimesheetHeaderInfos tInfos;
+                decimal[] totals;
+                model.ReceiveRows(repository.GetRows(
+                    User.Identity as System.Security.Principal.WindowsIdentity,
+                    ViewConfigurationTask.Default,
+                    model.Period,
+                    model.CurrentPeriodStart,
+                    model.CurrentPeriodStop,
+                    out status, out canDelete, out canRecall, out tInfos,out totals));
+
+                model.Status = model.TimesheetStatusString(status);
+                model.Totals = totals;
+                model.CanDelete = canDelete;
+                model.CanRecall = canRecall;
+                
+
+
+            }
             this.HttpContext.Trace.Warn("Returning from Refresh of TasksController");
             return PartialView("Edit", model);
         }
@@ -111,7 +146,7 @@ namespace TimeSheetMobileWeb.Controllers
                     User.Identity as System.Security.Principal.WindowsIdentity,
                     projectId),
                                 m => m.Id,
-                                m => m.Name).PrepareForJson();
+                                m => m.Name,null).PrepareForJson();
             this.HttpContext.Trace.Warn("Returning from ProjectTasks of TasksController");
             return Json(
                 res,
@@ -136,6 +171,17 @@ namespace TimeSheetMobileWeb.Controllers
                     }
                 }
                 model.PeriodRows = toUpdate;
+                Timesheet selection = null;
+                model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, User.Identity as System.Security.Principal.WindowsIdentity, out selection, TimesheetsSets.All);
+               if (selection != null)
+               {
+                   model.PeriodSelectionInfos.TimesheetId = selection.Value;
+                   model.CurrentPeriodStart = selection.Start;
+                   model.CurrentPeriodStop = selection.Stop;
+                   model.Period = selection.Id;
+                   model.PeriodLength = (int)(selection.Stop.Subtract(selection.Start).TotalDays) + 1;
+               }
+
                 try
                 {
                     ErrorHandlingHelpers.UpdateRows(repository, model,
@@ -149,14 +195,16 @@ namespace TimeSheetMobileWeb.Controllers
                     bool canDelete;
                     bool canRecall;
                     TimesheetHeaderInfos tInfos;
+                    decimal[] totals;
                     model.ReceiveRows(repository.GetRows(
                         User.Identity as System.Security.Principal.WindowsIdentity,
                         ViewConfigurationTask.Default,
                         model.Period,
                         model.CurrentPeriodStart,
                         model.CurrentPeriodStop,
-                        out status, out canDelete, out canRecall, out tInfos));
+                        out status, out canDelete, out canRecall, out tInfos,out totals));
                     model.Status = model.TimesheetStatusString(status);
+                    model.Totals = totals;
                     model.CanDelete = canDelete;
                     model.CanRecall = canRecall;
 

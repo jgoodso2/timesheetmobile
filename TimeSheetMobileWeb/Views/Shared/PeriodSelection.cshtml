@@ -22,7 +22,7 @@
                         m => m.Value,
                         usePrompt: false))
                     
-                        @Html.LabelFor(m => m.TimesheetId, SiteResources.HomeMenuPeriods)
+                       @* @Html.LabelFor(m => m.TimesheetId, SiteResources.HomeMenuPeriods)
                         @Html.DropDownListFor(m => m.TimesheetId,
                                                new Dictionary<string, object> 
                                                { { "class", "mobilegadget dynamicperiods" }, 
@@ -32,23 +32,17 @@
                             Model.TimesheetsSets,
                             m => m.Value,
                             m => m.Description,
-                            usePrompt: false))
-                        <div class='maininfo'>
-                            <div class='maininfoshortcontent' data-role='content' data-theme='c' >
-                                <p><span class='ui-bar-c'>@SiteResources.CurrentTimesheet</span><br /><span class="currenttimesheet"></span></p>
-                                <p><span class='ui-bar-c'>@SiteResources.NewTimesheet</span><br /><span class="newtimesheet"></span></p>
-                            </div>
-                        </div>
-                    <form id="periodform" action = '@Url.Action("Index", (Model.IsTask ? "Tasks":"Timesheet"))' data-ajax-url='@Url.Action("Refresh", (Model.IsTask ? "Tasks":"Timesheet"))' data-ajax-target='allTimesheetsEdit' data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
+                            usePrompt: false))*@
+                       
+                    <form id="periodform" action = '@Url.Action("TimesheetHistory", "Timesheet")' 
+                    data-ajax-url='@Url.Action("TimesheetHistory", "Timesheet")' data-ajax-target='allTimesheetsEdit' 
+                                            data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
                         <input id="SelectedPeriodStart" name="SelectedPeriodStart" class = 'currentperiodstart' type="hidden" />
                         <input id="SelectedPeriodStop" name="SelectedPeriodStop"  class = 'currentperiodstop' type="hidden" />
                         <input id="SelectedPeriodId" name="SelectedPeriodId" class = 'currentperiodid' type="hidden" />
                         <input id="SelectedPeriodSet" name="SelectedPeriodSet" class = 'currentperiodSet' type="hidden" />
                     </form>
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a" ><input id="btnConfirmPeriod" type="button" value="" class='main-icon-submit main-icon-save loadConfirm' data-button-target='periodselection' /></div>
-                        <div class="ui-block-b" ><input id="btnCancelPeriod" type="button" value="" class='main-icon-submit main-icon-cancel cancel' data-button-target='periodselection' /></div>
-                    </div>
+                   
                 </div>
         </div>
         <div class='footer'>

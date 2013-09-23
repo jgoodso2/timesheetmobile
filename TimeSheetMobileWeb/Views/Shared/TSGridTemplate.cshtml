@@ -1,0 +1,26 @@
+﻿@using MVCControlsToolkit.Controls
+@using MVCControlsToolkit.Core
+
+@model TimeSheetMobileWeb.Models.TimeSheetHistoryView
+@if (Model != null && Model.PeriodTimesheets.Count > 1)
+                        { <table border="1" class="timesheet">
+                        <thead >
+                        <tr >
+                        <th class = "gridheader" style="width:60%">
+                        Period
+                        </th>
+                        <th  class = "gridheader" style="width:20%">
+                        Status
+                        </th>
+                        <th class = "gridheader" style="width:20%">
+                        Hours
+                        </th>
+                        </tr>
+                        </thead>
+                        <tbody >
+                        @Html.DataGridFor(m => m.PeriodTimesheets, ItemContainerType.tr, null, "TSHistoryDetail"
+            )
+            </tbody>
+            </table>
+                    
+                        } 

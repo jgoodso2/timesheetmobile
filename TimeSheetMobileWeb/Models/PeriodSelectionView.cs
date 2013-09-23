@@ -17,6 +17,8 @@ namespace TimeSheetMobileWeb.Models
         public static KeyValuePair<int, string>[] AllTimesheetSets;
         static PeriodSelectionView()
         {
+            lock(new object())
+            {
             AllTimesheetSets = new KeyValuePair<int, string>[6];
             AllTimesheetSets[0] = new KeyValuePair<int, string>(1, SiteResources.TimesheetsSets1);
             AllTimesheetSets[1] = new KeyValuePair<int, string>(2, SiteResources.TimesheetsSets2);
@@ -24,6 +26,7 @@ namespace TimeSheetMobileWeb.Models
             AllTimesheetSets[3] = new KeyValuePair<int, string>(4, SiteResources.TimesheetsSets4);
             AllTimesheetSets[4] = new KeyValuePair<int, string>(5, SiteResources.TimesheetsSets5);
             AllTimesheetSets[5] = new KeyValuePair<int, string>(6, SiteResources.TimesheetsSets6);
+            }
         }
         public static Timesheet DefaultTimesheet(IEnumerable<Timesheet> choices)
         {
@@ -44,18 +47,22 @@ namespace TimeSheetMobileWeb.Models
             }
             return bestFit;
         }
-        public static PeriodSelectionView GetInstance(IRepository repository, WindowsIdentity user, out Timesheet selection)
+        public static PeriodSelectionView GetInstance(IRepository repository, WindowsIdentity user, out Timesheet selection,TimesheetsSets set)
         {
             PeriodSelectionView model = new PeriodSelectionView();
             model.AllTimesheetsSets = AllTimesheetSets;
             model.TimesheetSet = Convert.ToInt32(repository.DefaultTimesheetSet);
+            DateTime start,end;
             model.TimesheetsSets = repository.SelectTimesheets(
                     user,
-                    TimeSheetIBusiness.TimesheetsSets.Default);
-            selection = DefaultTimesheet(model.TimesheetsSets);
-            if (selection != null )model.TimesheetId = selection.Value;
+                    set, out start, out end);
+
+            selection = new Timesheet() { Start = start, Stop = end };
+            //if (selection != null )model.TimesheetId = selection.Value;
             return model;
         }
+
+        
     }
 
     public class PeriodSelectedView
@@ -64,6 +71,8 @@ namespace TimeSheetMobileWeb.Models
         public string SelectedPeriodId { get; set; }
         public DateTime SelectedPeriodStart { get; set; }
         public DateTime SelectedPeriodStop { get; set; }
+
+        
     }
        
 }
