@@ -70,10 +70,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MVC3ControlsToolkit.1.8.0\lib\MVC3ControlsToolkit.dll</HintPath>
     </Reference>
-    <Reference Include="ProjectServerServices, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\project\ProjectServerServices.dll</HintPath>
-    </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\dlls\IoC\StructureMap.dll</HintPath>
     </Reference>

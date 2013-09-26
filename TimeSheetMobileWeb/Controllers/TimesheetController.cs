@@ -372,18 +372,7 @@ namespace TimeSheetMobileWeb.Controllers
                 }
             }
             
-            if (res is ActualWorkRow)
-            {
-                ActualWorkRow row = res as ActualWorkRow;
-                row.CustomFieldItems = new List<CustomFieldItem>();
-                row.CustomFieldItems = (repository as TimeSheetBusiness.Repository).GetCustomFields(ViewConfigurationRow.Default.CustomFields, selection.RequiredAssignementId, selection.RequiredPeriodIStart, selection.RequiredPeriodIStop);
-            }
-            if (res is SingleValuesRow)
-            {
-                SingleValuesRow row = res as SingleValuesRow;
-                row.CustomFieldItems = new List<CustomFieldItem>();
-                row.CustomFieldItems = (repository as TimeSheetBusiness.Repository).GetCustomFields(ViewConfigurationTask.Default.CustomFields, selection.RequiredAssignementId, selection.RequiredPeriodIStart, selection.RequiredPeriodIStop);
-            }
+            
             this.HttpContext.Trace.Warn("Returning from RowSingleValues of TimesheetController");    
             return Json(res);
         }
