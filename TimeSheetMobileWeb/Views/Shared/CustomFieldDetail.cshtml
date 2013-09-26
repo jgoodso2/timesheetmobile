@@ -51,7 +51,7 @@
                     new Guid(item.ValueFor(mbox => mbox.LookupTableItems[i].ValueMember)), item.ValueFor(mbox => mbox.LookupTableItems[i].DisplayMember)
                     , item.ValueFor(mbox => mbox.LookupTableItems[i].DataType), item.ValueFor(mbox => mbox.LookupTableItems[i].BoxedValue));
                 list.Add(lookupItem);
-                  @item.HiddenFor(mbox => mbox.LookupTableItems[i].BoxedValue)
+                @item.HiddenFor(mbox => mbox.LookupTableItems[i].BoxedValue)
                @item.HiddenFor(mbox => mbox.LookupTableItems[i].DataType)
                @item.HiddenFor(mbox => mbox.LookupTableItems[i].DisplayMember)
                @item.HiddenFor(mbox => mbox.LookupTableItems[i].ValueMember)

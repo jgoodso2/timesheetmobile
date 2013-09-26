@@ -10,6 +10,7 @@ namespace TimeSheetFakeBusiness
 {
     public class Repository: IRepository
     {
+        public System.Security.Principal.WindowsIdentity AppPoolUser { get; set; }
         public UserConfigurationInfo UserConfiguration(WindowsIdentity user, string rowField, string taskField)
         {
             return new UserConfigurationInfo { TaskViewId = null, RowViewId = "RComplete" };

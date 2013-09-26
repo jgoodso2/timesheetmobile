@@ -50,6 +50,11 @@ namespace TimeSheetIBusiness
             return myDisplayMember;
          }
 
+          set
+          {
+              myDisplayMember = value;
+          }
+
       }
 
       /// <summary>
@@ -76,6 +81,10 @@ namespace TimeSheetIBusiness
          {
             return myDataType;
          }
+          set
+          {
+              myDataType = value;
+          }
       }
 
       /// <summary>
@@ -87,6 +96,11 @@ namespace TimeSheetIBusiness
          {
             return myBoxedValue;
          }
+
+          set
+          {
+              myBoxedValue = value;
+          }
       }
 
       public override bool Equals(object obj)

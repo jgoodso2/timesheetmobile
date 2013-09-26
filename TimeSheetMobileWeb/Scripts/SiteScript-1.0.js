@@ -623,57 +623,50 @@ function TSM_CompleteAddRow(data) {
                                 name = $(this).attr('lookuptable');
                                 datatype = 'Lookup';
                             }
-                            $('#' + prefix).find('[class=datatype]').each(function () {
-                                var datatype = $(this).val();
-                                var name = $(this).attr('field');
-                                if (name == 'Lookup') {
-                                    name = $(this).attr('lookuptable');
-                                    datatype = 'Lookup';
-                                }
-                                $(".detailTBCS[name=" + name + "]").each(function () {
-                                    var jThis = $(this);
-                                    jThis.hide();
-                                    if (jThis.attr('class').indexOf(datatype) >= 0) {
-                                        if (datatype == 'Date') {
-                                            if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() != '') {
-                                                jThis.text($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val().split(" ")[0]);
-                                            }
-                                            else {
-                                                jThis.text('No Date');
-                                            }
-                                        }
-                                        else if (datatype == 'Flag') {
-                                            if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == 'True') {
-                                                jThis[0].children[0].checked = true;
-                                                jThis[0].children[1].checked = false;
-                                            }
-                                            else if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == 'False') {
-                                                jThis[0].children[0].checked = false;
-                                                jThis[0].children[1].checked = true;
-                                            }
-                                            else {
-                                                if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == '') {
-                                                    jThis[0].children[0].checked = false;
-                                                    jThis[0].children[1].checked = false;
-                                                }
-                                            }
-                                        }
-                                        else if (datatype == 'Lookup') {
-                                            jThis.html($('#' + prefix).find("." + name + "_display").html());
-                                            jThis.find('option').val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val());
+                            $(".detailTBCS[name=" + name + "]").each(function () {
+                                var jThis = $(this);
+                                jThis.hide();
+                                if (jThis.attr('class').indexOf(datatype) >= 0) {
+                                    if (datatype == 'Date') {
+                                        if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() != '') {
+                                            jThis.text($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val().split(" ")[0]);
                                         }
                                         else {
-                                            jThis.val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val());
+                                            jThis.text('No Date');
                                         }
-                                        jThis.show();
+                                    }
+                                    else if (datatype == 'Flag') {
+                                        if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == 'True') {
+                                            jThis[0].children[0].checked = true;
+                                            jThis[0].children[1].checked = false;
+                                        }
+                                        else if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == 'False') {
+                                            jThis[0].children[0].checked = false;
+                                            jThis[0].children[1].checked = true;
+                                        }
+                                        else {
+                                            if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == '') {
+                                                jThis[0].children[0].checked = false;
+                                                jThis[0].children[1].checked = false;
+                                            }
+                                        }
+                                    }
+                                    else if (datatype == 'Lookup') {
+                                        jThis.html($('#' + prefix).find("." + name + "_display").html());
+                                        if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != undefined && $('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != '')
+                                            $('.' + name + 'lkp').val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val());
                                     }
                                     else {
-                                        jThis.empty();
+                                        jThis.val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val());
                                     }
-
-                                });
+                                    jThis.show();
+                                }
+                                else {
+                                    jThis.empty();
+                                }
 
                             });
+
                         });
 
                     });
@@ -778,8 +771,7 @@ function TSM_CopyToRow(prefix) {
         else {
             val = 0.00;
         }
-
-
+        var allTotal;
         var txtval;
         if (name.indexOf("plh") == -1 && name.indexOf("DayTime") != -1) {
             if (!isNaN(parseFloat($(tname).text()))) {
@@ -789,17 +781,27 @@ function TSM_CopyToRow(prefix) {
                 txtval = 0.00;
             }
 
+             if (!isNaN(parseFloat($('#allTotal').text()))) {
+                allTotal = parseFloat($('#allTotal').text());
+            }
+            else {
+                allTotal = 0.00;
+            }
+
             var oldvalue = TSM_GetRowValue(name, prefix, jThis.val());
 
             TSM_SetRowValue(name, prefix, val);
             if (!isNaN(parseFloat(oldvalue)) && !isNaN(parseFloat(jThis.val()))) {
                 $(tname).text((txtval + parseFloat(jThis.val()) - parseFloat(oldvalue)).toFixed(2));
+                $('#allTotal').text((allTotal + parseFloat(jThis.val()) - parseFloat(oldvalue)).toFixed(2));
             }
             else if (isNaN(parseFloat(oldvalue))) {
                 $(tname).text((txtval + val).toFixed(2));
+                $('#allTotal').text((allTotal + val).toFixed(2));
             }
             else {
                 $(tname).text((txtval + val).toFixed(2));
+                $('#allTotal').text((allTotal + val).toFixed(2));
             }
         }
         else {
@@ -813,7 +815,8 @@ function TSM_CopyToRow(prefix) {
         var valuetype = jThis.attr('valuetype');
         if (valuetype == 'Date') {
             $('#' + prefix).find('[class=' + name + '_cf_display][valuetype=' + valuetype + ']').text(jThis.text());
-            $('#' + prefix).find('[class=' + name + '][valuetype=' + valuetype + ']').val(jThis.text());
+            if (jThis.text() != 'No Date')
+                $('#' + prefix).find('[class=' + name + '][valuetype=' + valuetype + ']').val(jThis.text());
         }
         else if (valuetype == 'Flag') {
             if (jThis[0].children.length > 0 && jThis[0].children[0].checked) {
@@ -830,7 +833,7 @@ function TSM_CopyToRow(prefix) {
             if (jThis.find('option:selected').length > 0 && jThis.find('option:selected').val() != '') {
                 $('#' + prefix).find('[class=' + name + '][valuetype = Lookupid]').val(jThis.find('option:selected').val());
             }
-           
+
             $('#' + prefix).find('[class=' + name + '][valuetype = Lookupvalue]').val(jThis.find('option:selected').text());
             $('#' + prefix).find('[class=' + name + '_cf_display][valuetype=' + valuetype + ']').text(jThis.find('option:selected').text());
         }
@@ -870,6 +873,7 @@ function TSM_DeleteRow(prefix) {
 
 
         var txtval;
+        var total;
         if (name.indexOf("plh") == -1 && name.indexOf("DayTime") != -1) {
             if (!isNaN(parseFloat($(tname).text()))) {
                 txtval = parseFloat($(tname).text());
@@ -878,9 +882,17 @@ function TSM_DeleteRow(prefix) {
                 txtval = 0.00;
             }
 
+            if (!isNaN(parseFloat($('#allTotal').text()))) {
+                total = parseFloat($('#allTotal').text());
+            }
+            else {
+                total = 0.00;
+            }
+
             var oldvalue = TSM_GetRowValue(name, prefix, jThis.val());
             if (!isNaN(parseFloat(oldvalue))) {
                 $(tname).text((txtval - parseFloat(oldvalue)).toFixed(2));
+              $('#allTotal').text((total - parseFloat(oldvalue)).toFixed(2));
             }
         }
     });
@@ -899,16 +911,21 @@ function TSM_CopyFromRow(prefix) {
         var name = jThis.attr('id');
         jThis.text($('#' + prefix + '_' + name).text());
     });
-
-
+    
     $(".detailTB").each(function () {
         var jThis = $(this);
         var name = jThis.attr('id');
         if ((jThis.attr('data-element-type') || '') != '') {
             name = name.substring(0, name.lastIndexOf("_"));
             jThis = $('#' + name);
-            MvcControlsToolkit_TypedTextBox_SetString(this,
+            if ($('#' + prefix + '_' + name).val() == 0) {
+                MvcControlsToolkit_TypedTextBox_SetString(this,
+                '');
+            }
+            else {
+                MvcControlsToolkit_TypedTextBox_SetString(this,
                 $('#' + prefix + '_' + name).val());
+            }
             $(this).trigger('pblur');
         }
         else {
@@ -962,8 +979,8 @@ function TSM_CopyFromRow(prefix) {
                 }
                 else if (datatype == 'Lookup') {
                     jThis.html($('#' + prefix).find("." + name + "_display").html());
-                    if($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != undefined && $('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != '')
-                    $('.' + name + 'lkp').val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val());
+                    if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != undefined && $('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != '')
+                        $('.' + name + 'lkp').val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val());
                 }
                 else {
                     jThis.val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val());

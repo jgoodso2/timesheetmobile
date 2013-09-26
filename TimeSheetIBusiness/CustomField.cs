@@ -34,7 +34,7 @@ namespace TimeSheetIBusiness
         public string LookupValue { get; set; }
         public Guid? LookupTableGuid { get; set; }
         public Guid? CustomFieldGuid { get; set; }
-        public List<LookupTableDisplayItem> LookupTableItems { get;set;}
+        public List<LookupTableDisplayItem> LookupTableItems { get; set; }
 
         public object Clone()
         {

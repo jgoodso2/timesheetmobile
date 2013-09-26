@@ -39,12 +39,17 @@
                     @if (Model.Totals != null)
                     {
                         int i=0;
+                        decimal total=0;
                         foreach( var value in Model.Totals)
                         {
                             <span class='combinedValue'>@Model.CurrentPeriodStart.AddDays(i).DayOfWeek.ToString().Substring(0,3)</span> <span>:</span>
                             <span class='combinedValue grandtotals' id = '@string.Format("DayTimes_Total_{0}", i)'>@Math.Round(value,2)</span> <text>&nbsp;</text>
                             i++;
+                            total += value;
                         }
+                        <span class='combinedValue'>Total</span>
+                         <span>:</span>
+                        <span id='allTotal' class='combinedValue'>@Math.Round(total, 2)</span> 
                     }
                         
                 </div>

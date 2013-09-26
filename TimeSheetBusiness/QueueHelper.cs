@@ -45,7 +45,7 @@ namespace TimeSheetBusiness
             }
             return errorList;
         }
-        public static bool WaitForQueueJobCompletion(Guid trackingGuid, int messageType, SvcQueueSystem.QueueSystemClient queueSystemClient)
+        public static bool WaitForQueueJobCompletion(IRepository repository, Guid trackingGuid, int messageType, SvcQueueSystem.QueueSystemClient queueSystemClient)
         {
             //System.Threading.Thread.Sleep(2000);
             SvcQueueSystem.QueueStatusDataSet queueStatusDataSet = new SvcQueueSystem.QueueStatusDataSet();
@@ -74,8 +74,12 @@ namespace TimeSheetBusiness
 
                 while (inProcess)
                 {
-                    queueStatusDataSet = queueSystemClient.ReadJobStatus(queueStatusRequestDataSet, false,
+                    using (WindowsImpersonationContext context =  repository.AppPoolUser.Impersonate())
+                    {
+                        queueStatusDataSet = queueSystemClient.ReadJobStatus(queueStatusRequestDataSet, false,
                         SvcQueueSystem.SortColumn.Undefined, SvcQueueSystem.SortOrder.Undefined);
+                    }
+                    
                     bool noRow = true;
                     foreach (SvcQueueSystem.QueueStatusDataSet.StatusRow statusRow in queueStatusDataSet.Status)
                     {

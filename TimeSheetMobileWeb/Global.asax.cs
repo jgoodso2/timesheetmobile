@@ -33,18 +33,22 @@ namespace TimeSheetMobileWeb
         {
             AreaRegistration.RegisterAllAreas();
             TimeSheetMobileWeb.IoC.DependencyControllerFactory.InitIoC();
-            
+
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+            lock (new object())
+            {
+                Application["AppUser"] = System.Security.Principal.WindowsIdentity.GetCurrent();
+            }
         }
 
         protected void Session_Start()
         {
             string url = HttpContext.Current.Items["PWAURL"].ToString();
-            Uri  uri = new Uri(url);
+            Uri uri = new Uri(url);
             string path = uri.Host + uri.AbsolutePath;
             TimeSheetMobileWeb.Models.GlobalViewsConfiguration.Load(path);
-            
+
         }
     }
 }
