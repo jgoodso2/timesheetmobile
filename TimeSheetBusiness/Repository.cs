@@ -652,88 +652,129 @@ namespace TimeSheetBusiness
             var customfieldValues = res.AssnCustomFields.Where(t => t.ASSN_UID == new Guid(assignementId)).ToList();
             foreach (CustomField field in fields)
             {
-                var id = customds.First(m => m.MD_PROP_NAME == field.FullName).MD_PROP_UID_SECONDARY;
-                if (customfieldValues.Any(t => !t.IsMD_PROP_UIDNull() && t.MD_PROP_UID == id))
+                try
                 {
-                    var customfield = customfieldValues.First(t => !t.IsMD_PROP_UIDNull() && t.MD_PROP_UID == id);
-                    CustomFieldItem item = new CustomFieldItem();
-                    switch (customfield.FIELD_TYPE_ENUM)
+                    var id = customds.First(m => m.MD_PROP_NAME == field.FullName).MD_PROP_UID_SECONDARY;
+                    if (customfieldValues.Any(t => !t.IsMD_PROP_UIDNull() && t.MD_PROP_UID == id))
                     {
-                        case 4: item.DataType = "Date";
-                            if (!customfield.IsDATE_VALUENull())
-                                item.DateValue = customfield.DATE_VALUE;
-                            break;
-                        case 9: item.DataType = "Cost";
-                            if (!customfield.IsNUM_VALUENull())
-                                item.CostValue = customfield.NUM_VALUE;
-                            break;
-                        case 6: item.DataType = "Duration";
-                            if (!customfield.IsDUR_VALUENull())
-                                item.DurationValue = customfield.DUR_VALUE;
-                            break;
-                        case 27: item.DataType = "Finishdate";
-                            if (!customfield.IsDATE_VALUENull())
-                                item.DateValue = customfield.DATE_VALUE;
-                            break;
-                        case 17: item.DataType = "Flag";
-                            if (!customfield.IsFLAG_VALUENull())
-                                item.FlagValue = customfield.FLAG_VALUE;
-                            break;
-                        case 15: item.DataType = "Number";
-                            if (!customfield.IsNUM_VALUENull())
-                                item.NumValue = customfield.NUM_VALUE;
-                            break;
-                        case 21: item.DataType = "Text";
-                            if (!customfield.IsTEXT_VALUENull())
-                                item.TextTValue = customfield.TEXT_VALUE;
-                            break;
-                    }
-                    if (!customfield.IsCODE_VALUENull())
-                    {
-                        SvcLookupTable.LookupTableDataSet lookups;
-                        using (WindowsImpersonationContext context = AppPoolUser.Impersonate())
+                        var customfield = customfieldValues.First(t => !t.IsMD_PROP_UIDNull() && t.MD_PROP_UID == id);
+                        CustomFieldItem item = new CustomFieldItem();
+                        switch (customfield.FIELD_TYPE_ENUM)
                         {
-                            lookups = lookupTableClient.ReadLookupTables("", false, System.Globalization.CultureInfo.InvariantCulture.LCID);
+                            case 4: item.DataType = "Date";
+                                if (!customfield.IsDATE_VALUENull())
+                                    item.DateValue = customfield.DATE_VALUE;
+                                break;
+                            case 9: item.DataType = "Cost";
+                                if (!customfield.IsNUM_VALUENull())
+                                    item.CostValue = customfield.NUM_VALUE;
+                                break;
+                            case 6: item.DataType = "Duration";
+                                if (!customfield.IsDUR_VALUENull())
+                                    item.DurationValue = customfield.DUR_VALUE;
+                                break;
+                            case 27: item.DataType = "Finishdate";
+                                if (!customfield.IsDATE_VALUENull())
+                                    item.DateValue = customfield.DATE_VALUE;
+                                break;
+                            case 17: item.DataType = "Flag";
+                                if (!customfield.IsFLAG_VALUENull())
+                                    item.FlagValue = customfield.FLAG_VALUE;
+                                break;
+                            case 15: item.DataType = "Number";
+                                if (!customfield.IsNUM_VALUENull())
+                                    item.NumValue = customfield.NUM_VALUE;
+                                break;
+                            case 21: item.DataType = "Text";
+                                if (!customfield.IsTEXT_VALUENull())
+                                    item.TextTValue = customfield.TEXT_VALUE;
+                                break;
                         }
-                        IEnumerable<SvcLookupTable.LookupTableDataSet.LookupTableTreesRow> lookupRows = lookups.LookupTableTrees.Where(t => t.LT_STRUCT_UID == customfield.CODE_VALUE);
-                        string value = "";
-                        foreach (SvcLookupTable.LookupTableDataSet.LookupTableTreesRow lookupRow in lookupRows)
+                        if (!customfield.IsCODE_VALUENull())
                         {
-                            switch ((Microsoft.Office.Project.Server.Library.PSDataType)customfield.FIELD_TYPE_ENUM)
+                            SvcLookupTable.LookupTableDataSet lookups;
+                            using (WindowsImpersonationContext context = AppPoolUser.Impersonate())
                             {
-                                case PSLib.PSDataType.DATE:
-                                    if (!lookupRow.IsLT_VALUE_DATENull())
-                                        value += lookupRow.LT_VALUE_DATE.ToShortDateString() + ",";
-                                    break;
-                                case PSLib.PSDataType.COST:
-                                case PSLib.PSDataType.NUMBER:
-                                    if (!lookupRow.IsLT_VALUE_NUMNull())
-                                        value += lookupRow.LT_VALUE_NUM.ToString() + ",";
-                                    break;
-                                case PSLib.PSDataType.DURATION:
-                                    if (!lookupRow.IsLT_VALUE_DURNull())
-                                        value += lookupRow.LT_VALUE_DUR.ToString() + ",";
-                                    break;
-                                case PSLib.PSDataType.STRING:
-                                    if (!lookupRow.IsLT_VALUE_TEXTNull())
-                                        value += lookupRow.LT_VALUE_TEXT + ",";
-
-                                    break;
+                                lookups = lookupTableClient.ReadLookupTables("", false, System.Globalization.CultureInfo.InvariantCulture.LCID);
                             }
-                            item.LookupTableGuid = lookupRow.LT_UID;
-                            item.LookupID = lookupRow.LT_STRUCT_UID;
+                            IEnumerable<SvcLookupTable.LookupTableDataSet.LookupTableTreesRow> lookupRows = lookups.LookupTableTrees.Where(t => t.LT_STRUCT_UID == customfield.CODE_VALUE);
+                            string value = "";
+                            foreach (SvcLookupTable.LookupTableDataSet.LookupTableTreesRow lookupRow in lookupRows)
+                            {
+                                switch ((Microsoft.Office.Project.Server.Library.PSDataType)customfield.FIELD_TYPE_ENUM)
+                                {
+                                    case PSLib.PSDataType.DATE:
+                                        if (!lookupRow.IsLT_VALUE_DATENull())
+                                            value += lookupRow.LT_VALUE_DATE.ToShortDateString() + ",";
+                                        break;
+                                    case PSLib.PSDataType.COST:
+                                    case PSLib.PSDataType.NUMBER:
+                                        if (!lookupRow.IsLT_VALUE_NUMNull())
+                                            value += lookupRow.LT_VALUE_NUM.ToString() + ",";
+                                        break;
+                                    case PSLib.PSDataType.DURATION:
+                                        if (!lookupRow.IsLT_VALUE_DURNull())
+                                            value += lookupRow.LT_VALUE_DUR.ToString() + ",";
+                                        break;
+                                    case PSLib.PSDataType.STRING:
+                                        if (!lookupRow.IsLT_VALUE_TEXTNull())
+                                            value += lookupRow.LT_VALUE_TEXT + ",";
+
+                                        break;
+                                }
+                                item.LookupTableGuid = lookupRow.LT_UID;
+                                item.LookupID = lookupRow.LT_STRUCT_UID;
+                            }
+                            item.LookupValue = value.Trim(',');
+                            var customDs = customFieldsClient.ReadCustomFields("", false);
+                            var csfield = customds.First(t => t.MD_PROP_NAME == field.FullName);
+                            item.CustomFieldGuid = csfield.MD_PROP_UID_SECONDARY;
+                            if (item.LookupTableGuid.HasValue)
+                                item.LookupTableItems = GetLookupTableValuesAsItems(item.LookupTableGuid.Value, item.DataType).ToList();
                         }
-                        item.LookupValue = value.Trim(',');
-                        var customDs = customFieldsClient.ReadCustomFields("", false);
-                        var csfield = customds.First(t => t.MD_PROP_NAME == field.FullName);
-                        item.CustomFieldGuid = csfield.MD_PROP_UID_SECONDARY;
-                        if (item.LookupTableGuid.HasValue)
-                            item.LookupTableItems = GetLookupTableValuesAsItems(item.LookupTableGuid.Value, item.DataType).ToList();
+                        else
+                        {
+                            var customDs = customFieldsClient.ReadCustomFields("", false);
+                            var csfield = customds.First(t => t.MD_PROP_NAME == field.FullName);
+                            if (!csfield.IsMD_LOOKUP_TABLE_UIDNull())
+                            {
+                                string value = null;
+                                item.LookupValue = value;
+                                item.LookupTableGuid = csfield.MD_LOOKUP_TABLE_UID;
+                                item.CustomFieldGuid = csfield.MD_PROP_UID_SECONDARY;
+                                item.LookupTableItems = GetLookupTableValuesAsItems(csfield.MD_LOOKUP_TABLE_UID,
+                                    item.DataType).ToList();
+                            }
+                        }
+                        item.Name = field.Name;
+                        item.FullName = field.FullName;
+                        values.Add(item);
                     }
                     else
                     {
+                        CustomFieldItem item = new CustomFieldItem();
+                        item.Name = field.Name;
+                        item.FullName = field.FullName;
                         var customDs = customFieldsClient.ReadCustomFields("", false);
                         var csfield = customds.First(t => t.MD_PROP_NAME == field.FullName);
+                        switch (csfield.MD_PROP_TYPE_ENUM)
+                        {
+                            case 4: item.DataType = "Date";
+                                break;
+                            case 9: item.DataType = "Cost";
+                                break;
+                            case 6: item.DataType = "Duration";
+                                break;
+                            case 27: item.DataType = "Finishdate";
+                                break;
+                            case 17: item.DataType = "Flag";
+                                break;
+                            case 15: item.DataType = "Number";
+                                break;
+                            case 21: item.DataType = "Text";
+                                break;
+
+                        }
                         if (!csfield.IsMD_LOOKUP_TABLE_UIDNull())
                         {
                             string value = null;
@@ -743,50 +784,14 @@ namespace TimeSheetBusiness
                             item.LookupTableItems = GetLookupTableValuesAsItems(csfield.MD_LOOKUP_TABLE_UID,
                                 item.DataType).ToList();
                         }
+                        item.DateValue = null;
+                        values.Add(item);
                     }
-                    item.Name = field.Name;
-                    item.FullName = field.FullName;
-                    values.Add(item);
+
                 }
-                else
+                catch (Exception ex)
                 {
-                    CustomFieldItem item = new CustomFieldItem();
-                    item.Name = field.Name;
-                    item.FullName = field.FullName;
-                    var customDs = customFieldsClient.ReadCustomFields("", false);
-                    var csfield = customds.First(t => t.MD_PROP_NAME == field.FullName);
-                    switch (csfield.MD_PROP_TYPE_ENUM)
-                    {
-                        case 4: item.DataType = "Date";
-                            break;
-                        case 9: item.DataType = "Cost";
-                            break;
-                        case 6: item.DataType = "Duration";
-                            break;
-                        case 27: item.DataType = "Finishdate";
-                            break;
-                        case 17: item.DataType = "Flag";
-                            break;
-                        case 15: item.DataType = "Number";
-                            break;
-                        case 21: item.DataType = "Text";
-                            break;
-
-                    }
-                    if (!csfield.IsMD_LOOKUP_TABLE_UIDNull())
-                    {
-                        string value = null;
-                        item.LookupValue = value;
-                        item.LookupTableGuid = csfield.MD_LOOKUP_TABLE_UID;
-                        item.CustomFieldGuid = csfield.MD_PROP_UID_SECONDARY;
-                        item.LookupTableItems = GetLookupTableValuesAsItems(csfield.MD_LOOKUP_TABLE_UID,
-                            item.DataType).ToList();
-                    }
-                    item.DateValue = null;
-                    values.Add(item);
                 }
-
-
             }
             return values;
         }
