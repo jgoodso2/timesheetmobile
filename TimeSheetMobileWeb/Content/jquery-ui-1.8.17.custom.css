@@ -94,7 +94,7 @@
 .ui-state-active .ui-icon {background-image: url(images/ui-icons_222222_256x240.png); }
 .ui-state-highlight .ui-icon {background-image: url(images/ui-icons_4b8e0b_256x240.png); }
 .ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url(images/ui-icons_a83300_256x240.png); }
-.ui-calendar { margin-right:50px; float:right;width: 25px; height: 25px; background-image: url(images/calendar.png); }
+.ui-calendar { margin-right:1160px; float:right;width: 25px; height: 25px; background-image: url(images/calendar.png); }
 
 /* positioning */
 .ui-icon-carat-1-n { background-position: 0 0; }

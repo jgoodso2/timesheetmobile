@@ -527,6 +527,7 @@ function TSM_ConfirmPeriodCallBack(data) {
     history.back();
     TSM_formDirty(false);
     TSM_UpdateMainLayout();
+    $('.currstatus-d').text($('.currstatus').val() || '');
 }
 
 function TSM_UpdateMainLayout() {

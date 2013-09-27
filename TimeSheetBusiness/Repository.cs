@@ -452,6 +452,7 @@ namespace TimeSheetBusiness
                             line.PROJ_UID = new Guid(projectId);
                             line.TS_LINE_CACHED_PROJ_NAME = projectName;
                             line.TS_LINE_CACHED_ASSIGN_NAME = "Top Level";
+                            group.IsTopLevelTask = true;
                         }
                         else
                         {
@@ -550,6 +551,7 @@ namespace TimeSheetBusiness
                     if (configuration.ConfirmedA && !sa.IsASSN_IS_CONFIRMEDNull()) ar.ConfirmedA = sa.ASSN_IS_CONFIRMED;
                     if (configuration.CommentsA && !sa.IsWASSN_COMMENTSNull()) ar.CommentsA = sa.WASSN_COMMENTS;
 
+
                 }
                 if (aor != null)
                 {
@@ -573,6 +575,14 @@ namespace TimeSheetBusiness
                     if (configuration.CommentsA && !sa.IsWASSN_COMMENTSNull()) sv.CommentsA = sa.WASSN_COMMENTS;
                     if (configuration.OvertimeWorkA && !sa.IsASSN_OVT_WORKNull()) sv.OvertimeWorkA = sa.ASSN_OVT_WORK / 60000m;
                 }
+            }
+            else
+            {
+                ar.AssignementId = assignementId;
+                     if (configuration.CustomFields != null)
+                    {
+                        ar.CustomFieldItems = GetCustomFields(configuration.CustomFields, assignementId, start, stop,customDataSet);
+                    }
             }
             if (res.Tasks.Count > 0)
             {
@@ -630,10 +640,9 @@ namespace TimeSheetBusiness
                     if (configuration.RemainingOvertimeWorkT && !st.IsTASK_REM_OVT_WORKNull()) sv.RemainingOvertimeWorkT = st.TASK_REM_OVT_WORK / 60000m;
                     if (configuration.CustomFields != null)
                     {
-                        foreach (CustomField field in configuration.CustomFields)
-                        {
+                        
                             sv.CustomFieldItems = GetCustomFields(configuration.CustomFields, assignementId, start, stop,customDataSet);
-                        }
+                       
                     }
                 }
 
@@ -652,8 +661,7 @@ namespace TimeSheetBusiness
             var customfieldValues = res.AssnCustomFields.Where(t => t.ASSN_UID == new Guid(assignementId)).ToList();
             foreach (CustomField field in fields)
             {
-                try
-                {
+                
                     var id = customds.First(m => m.MD_PROP_NAME == field.FullName).MD_PROP_UID_SECONDARY;
                     if (customfieldValues.Any(t => !t.IsMD_PROP_UIDNull() && t.MD_PROP_UID == id))
                     {
@@ -788,10 +796,7 @@ namespace TimeSheetBusiness
                         values.Add(item);
                     }
 
-                }
-                catch (Exception ex)
-                {
-                }
+               
             }
             return values;
         }
@@ -1448,10 +1453,13 @@ return periodID;
                 {
                     try
                     {
+                        
                         if (_resAssDS == null) _resAssDS = GetResourceAssignmentDataSet();
-                        list = list.Where(t => (_resAssDS.ResourceAssignment.Any(s => s.ASSN_UID == new Guid(t.Key)))).ToList();
+                        // weed out top level tasks since they are not intended for statusing
+                        var statuslist = list.Where(t=>(t.IsTopLevelTask == false) && (t.Changed == true)).ToList();
+                        statuslist = statuslist.Where(t => (_resAssDS.ResourceAssignment.Any(s => s.ASSN_UID == new Guid(t.Key)))).ToList();
 
-                        string xml = new ChangeXml(_resAssDS, list, configuration, start, stop, this).Get();
+                        string xml = new ChangeXml(_resAssDS, statuslist, configuration, start, stop, this).Get();
 
                         if (xml != null) statusingClient.UpdateStatus(xml);
                     }

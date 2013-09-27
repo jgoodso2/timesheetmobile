@@ -153,7 +153,7 @@ namespace TimeSheetIBusiness
                         }
                     }
                 }
-                if (x.CChanged && source != null){
+                if (x.CChanged && source != null && !group.IsTopLevelTask){
                     List<string> changedPropeties = null;
                     
                         changedPropeties = new List<string>();

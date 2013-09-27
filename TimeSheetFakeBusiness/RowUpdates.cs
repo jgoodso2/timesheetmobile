@@ -124,5 +124,7 @@ namespace TimeSheetIBusiness
                 Actuals.Add(z);
             }
         }
+
+        public bool IsTopLevelTask { get; set; }
     }
 }
