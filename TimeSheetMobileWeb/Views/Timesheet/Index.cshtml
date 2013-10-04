@@ -19,7 +19,6 @@
          
                                            
             <div data-role='content' data-theme='b' class='periodHeader'><b><span id="indexPeriod" class='currenttimesheet'>@Model.PeriodString</span>
-            <text>&nbsp;&nbsp;&nbsp;&nbsp</text>
            </b>
            <input id="btnCalendar" type="button" value="" class='ui-calendar' onclick= 'window.location.href="@Url.Action("TimesheetHistory", "Timesheet")";'/>
                 
@@ -32,7 +31,7 @@
                         data-action-value='False' data-action-container='@Html.PrefixedId(m => m.Submit)'/></div>
                     <div class="ui-block-c" ><input id="Button2" type="button" value="" class='main-icon-submit main-icon-send submit fsubmit-mainform submit-mainform' data-action-confirm ="@SiteResources.ConfirmSubmit"
                         data-action-value='True' data-action-container='@Html.PrefixedId(m => m.Submit)'/></div>
-                    <div class="ui-block-d" ><input  type="button" class='main-icon-submit main-icon-view goto' data-button-target='viewselection'/></div>
+                    
                     <div class="ui-block-e" ><input id='btnRecallDelete'  type="button" class='main-icon-submit main-icon-delete goto' data-button-target='recalldelete'/></div>
             </div>
             <div class='maininfo'>

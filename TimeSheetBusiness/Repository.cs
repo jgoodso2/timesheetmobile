@@ -1657,6 +1657,7 @@ return periodID;
         public CustomFieldInfo GetCustomFieldType(string property)
         {
             var customfields = customFieldsClient.ReadCustomFields("", false).CustomFields;
+
             if (customfields.Any(m => m.MD_PROP_NAME == property))
             {
                 var customfied = customfields.First(m => m.MD_PROP_NAME == property);
