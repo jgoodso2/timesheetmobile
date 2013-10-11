@@ -78,13 +78,19 @@ namespace TimeSheetBusiness
                         timesheetviewrow = (SvcCustomFields.CustomFieldDataSet.CustomFieldsRow[])cds.CustomFields.Select("MD_PROP_NAME = '" + rowField + "'");
 
                         //to do//   remove dependency on these custom fields
-                        ViewConfigurationRow.ViewFieldGuid = defaultTimesheetViewUID = timesheetviewrow[0].MD_PROP_UID;
+                        if (timesheetviewrow.Length > 0)
+                        {
+                            ViewConfigurationRow.ViewFieldGuid = defaultTimesheetViewUID = timesheetviewrow[0].MD_PROP_UID;
+                        }
                     }
                     if (!string.IsNullOrWhiteSpace(taskField))
                     {
                         SvcCustomFields.CustomFieldDataSet.CustomFieldsRow[] statusviewrow;
                         statusviewrow = (SvcCustomFields.CustomFieldDataSet.CustomFieldsRow[])cds.CustomFields.Select("MD_PROP_NAME = '" + taskField + "'");
-                        ViewConfigurationTask.ViewFieldGuid = defaultStatusViewUID = statusviewrow[0].MD_PROP_UID;
+                        if (statusviewrow.Length > 0)
+                        {
+                            ViewConfigurationTask.ViewFieldGuid = defaultStatusViewUID = statusviewrow[0].MD_PROP_UID;
+                        }
                     }
 
                 }
@@ -1733,34 +1739,34 @@ return periodID;
                 
                         adminClient = new SvcAdmin.AdminClient(binding, address);
                         adminClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                            = TokenImpersonationLevel.Impersonation;
+                            = TokenImpersonationLevel.Delegation;
                         adminClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
                     
 
                 projectClient = new SvcProject.ProjectClient(binding, address);
                 projectClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                    = TokenImpersonationLevel.Impersonation;
+                    = TokenImpersonationLevel.Delegation;
                 projectClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
                 queueSystemClient = new SvcQueueSystem.QueueSystemClient(binding, address);
                 queueSystemClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                    = TokenImpersonationLevel.Impersonation;
+                    = TokenImpersonationLevel.Delegation;
                 queueSystemClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
                 resourceClient = new SvcResource.ResourceClient(binding, address);
                 resourceClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                    = TokenImpersonationLevel.Impersonation;
+                    = TokenImpersonationLevel.Delegation;
                 resourceClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
                 lookupTableClient = new SvcLookupTable.LookupTableClient(binding, address);
                 lookupTableClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                    = TokenImpersonationLevel.Impersonation;
+                    = TokenImpersonationLevel.Delegation;
                 lookupTableClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
 
                 customFieldsClient = new SvcCustomFields.CustomFieldsClient(binding, address);
                 customFieldsClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                    = TokenImpersonationLevel.Impersonation;
+                    = TokenImpersonationLevel.Delegation;
                 customFieldsClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
                 calendarClient = new SvcCalendar.CalendarClient(binding, address);
@@ -1770,22 +1776,22 @@ return periodID;
 
                 archiveClient = new SvcArchive.ArchiveClient(binding, address);
                 archiveClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                    = TokenImpersonationLevel.Impersonation;
+                    = TokenImpersonationLevel.Delegation;
                 archiveClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
                 pwaClient = new SvcStatusing.StatusingClient(binding, address);
                 pwaClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                    = TokenImpersonationLevel.Impersonation;
+                    = TokenImpersonationLevel.Delegation;
                 pwaClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
                 timesheetClient = new SvcTimeSheet.TimeSheetClient(binding, address);
                 timesheetClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                    = TokenImpersonationLevel.Impersonation;
+                    = TokenImpersonationLevel.Delegation;
                 timesheetClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
                 queueClient = new SvcQueueSystem.QueueSystemClient(binding, address);
                 queueClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
-                    = TokenImpersonationLevel.Impersonation;
+                    = TokenImpersonationLevel.Delegation;
                 queueClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
             }
             catch (Exception ex)

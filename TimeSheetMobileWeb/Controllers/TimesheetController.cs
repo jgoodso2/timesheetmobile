@@ -308,6 +308,7 @@ namespace TimeSheetMobileWeb.Controllers
                 
                 try
                 {
+                    
                     ErrorHandlingHelpers.UpdateRows(repository, model,
                         User.Identity as System.Security.Principal.WindowsIdentity,
                         ViewConfigurationRow.Default,
