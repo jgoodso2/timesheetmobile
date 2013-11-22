@@ -313,7 +313,7 @@
     <value>The selected item is already in the list</value>
   </data>
   <data name="InitialLoadingMessage" xml:space="preserve">
-    <value>Caching...</value>
+    <value>Please wait.. Loading</value>
   </data>
   <data name="ConfirmSave" xml:space="preserve">
     <value>Are you sure you want to save changes without submitting them?</value>
@@ -374,5 +374,8 @@
   </data>
   <data name="HomeMenuTimesheets" xml:space="preserve">
     <value>My Timesheets</value>
+  </data>
+  <data name="MyApprovals" xml:space="preserve">
+    <value>My Approvals</value>
   </data>
 </root>

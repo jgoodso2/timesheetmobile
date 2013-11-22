@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
   <publishProfile publishUrl="http://localhost:89" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="Expedite" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="MSDeploy" replaceMatchingFiles="False" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="Web.config" publishTime="07/26/2012 05:28:13" />
     <file relUrl="Scripts/cultures/globalize.culture.be-BY.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-JO.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-QA.js" publishTime="01/29/2012 06:34:12" />
@@ -14,8 +15,8 @@
     <file relUrl="Scripts/cultures/globalize.culture.moh.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="bin/WebMatrix.Data.xml" publishTime="12/19/2010 23:59:38" />
     <file relUrl="Scripts/cultures/globalize.culture.hi-IN.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Views/Shared/TimeInput.cshtml" publishTime="01/29/2012 09:19:02" />
     <file relUrl="Scripts/cultures/globalize.culture.az-Cyrl.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Content/Site-1.0.css" publishTime="08/02/2012 05:23:26" />
     <file relUrl="Scripts/cultures/globalize.culture.be.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.tt-RU.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/images/treeview-famfamfam.gif" publishTime="02/15/2012 05:52:16" />
@@ -36,7 +37,6 @@
     <file relUrl="Scripts/cultures/globalize.culture.ps.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.es-EC.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/jquery.validate.unobtrusive.js" publishTime="01/13/2012 04:59:00" />
-    <file relUrl="Scripts/cultures/globalize.culture.tn-ZA.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/images/file.gif" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Content/images/ui-icons_4b8e0b_256x240.png" publishTime="01/29/2012 05:52:52" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-LB.js" publishTime="01/29/2012 06:34:12" />
@@ -49,18 +49,21 @@
     <file relUrl="Scripts/cultures/globalize.culture.quz.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.quz-BO.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.xh.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.as-IN.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.hi.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.yo-NG.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.is.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ba.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Scripts/cultures/globalize.culture.bs-Latn.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Scripts/cultures/globalize.culture.en-US.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/themes/base/jquery.ui.tabs.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.es-SV.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="bin/TimeSheetMobileWeb.pdb" publishTime="10/22/2012 19:04:01" />
     <file relUrl="Content/themes/base/minified/images/ui-bg_flat_75_ffffff_40x100.png" publishTime="01/13/2012 05:00:04" />
-    <file relUrl="bin/EntityFramework.xml" publishTime="01/13/2012 04:59:02" />
     <file relUrl="Scripts/cultures/globalize.culture.bo.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/themes/base/minified/images/ui-bg_flat_0_aaaaaa_40x100.png" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.uz.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.es-PA.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/MicrosoftAjax.debug.js" publishTime="01/13/2012 04:59:00" />
     <file relUrl="Views/Shared/TaskSelection.cshtml" publishTime="06/11/2012 16:44:20" />
     <file relUrl="Content/themes/base/minified/jquery.ui.progressbar.min.css" publishTime="01/13/2012 05:00:04" />
@@ -91,22 +94,25 @@
     <file relUrl="Scripts/cultures/globalize.culture.fr.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.sq.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.sr-Cyrl-RS.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.nn.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.en-CA.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/themes/base/minified/images/ui-icons_888888_256x240.png" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.fr-FR.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.si.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/images/ui-icons_222222_256x240.png" publishTime="01/29/2012 05:52:52" />
     <file relUrl="Scripts/cultures/globalize.culture.en-BZ.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Content/themes/base/jquery-ui.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.sw.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/minified/jquery.ui.base.min.css" publishTime="01/13/2012 05:00:04" />
+    <file relUrl="Scripts/cultures/globalize.culture.nl.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.sr.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.dv.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.sv.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.eu.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Scripts/cultures/globalize.culture.ka.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-AE.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.oc.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.fi-FI.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Scripts/cultures/globalize.culture.rm-CH.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Content/themes/base/jquery.ui.dialog.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.sr-Cyrl-ME.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/jquery.validate-vsdoc.js" publishTime="01/13/2012 05:00:44" />
     <file relUrl="Scripts/cultures/globalize.culture.nl-BE.js" publishTime="01/29/2012 06:34:14" />
@@ -129,7 +135,7 @@
     <file relUrl="Scripts/cultures/globalize.culture.wo-SN.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ta-IN.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ro.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Content/Site-1.0.css" publishTime="08/02/2012 05:23:26" />
+    <file relUrl="Views/Shared/TimeInput.cshtml" publishTime="01/29/2012 09:19:02" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-OM.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.ms-MY.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ro-RO.js" publishTime="01/29/2012 06:34:14" />
@@ -149,6 +155,7 @@
     <file relUrl="Scripts/cultures/globalize.culture.bs.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.ta.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.mt.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.es-GT.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/jquery.mobile-1.0.min.js" publishTime="01/13/2012 05:10:22" />
     <file relUrl="Scripts/cultures/globalize.culture.prs.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/jquery-ui-1.8.17.js" publishTime="01/13/2012 05:00:04" />
@@ -166,13 +173,13 @@
     <file relUrl="Scripts/cultures/globalize.culture.fy-NL.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/minified/images/ui-bg_highlight-soft_75_cccccc_1x100.png" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.id-ID.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.fr-CH.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.xh-ZA.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Views/Tasks/Index.cshtml" publishTime="06/23/2012 11:13:39" />
     <file relUrl="Scripts/cultures/globalize.culture.hu-HU.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.el-GR.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.bn-IN.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.sr-Latn-RS.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.iu-Latn.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/minified/jquery.ui.button.min.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.pl.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/images/ui-bg_highlight-hard_20_0972a5_1x100.png" publishTime="01/29/2012 05:52:52" />
@@ -213,13 +220,11 @@
     <file relUrl="Scripts/cultures/globalize.culture.mr-IN.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ur.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/minified/images/ui-bg_glass_75_e6e6e6_1x400.png" publishTime="01/13/2012 05:00:04" />
-    <file relUrl="Scripts/cultures/globalize.culture.sw-KE.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="bin/Mvc3ControlsToolkitExt.pdb" publishTime="03/14/2012 06:14:42" />
     <file relUrl="Scripts/knockout.mapping-2.0.0.debug.js" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Scripts/cultures/globalize.culture.ig.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.cs.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.id.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.zu-ZA.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/globalize.js" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Scripts/cultures/globalize.culture.ky.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ms.js" publishTime="01/29/2012 06:34:14" />
@@ -240,7 +245,6 @@
     <file relUrl="Scripts/cultures/globalize.culture.prs-AF.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/jquery-ui-1.8.17.custom.min.js" publishTime="01/29/2012 06:11:10" />
     <file relUrl="Scripts/cultures/globalize.culture.qut-GT.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.lt.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.sv-FI.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.es-PE.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/themes/base/minified/images/ui-icons_2e83ff_256x240.png" publishTime="01/13/2012 05:00:04" />
@@ -263,14 +267,14 @@
     <file relUrl="Scripts/jquery-1.7.1-vsdoc.js" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.fr-CA.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.en-ZW.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Scripts/cultures/globalize.culture.ur-PK.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.nso-ZA.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/images/minus.gif" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Scripts/cultures/globalize.culture.pl-PL.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/jquery.validate.min.js" publishTime="01/13/2012 05:00:44" />
-    <file relUrl="Scripts/jquery.mobile-1.0.js" publishTime="01/13/2012 05:10:22" />
+    <file relUrl="Scripts/cultures/globalize.culture.zh-Hant.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="bin/System.Web.WebPages.Deployment.dll" publishTime="01/05/2011 15:45:38" />
     <file relUrl="Scripts/TimesheetsScript-1.0.js" publishTime="06/24/2012 10:21:34" />
+    <file relUrl="Scripts/jquery.mobile-1.0.js" publishTime="01/13/2012 05:10:22" />
     <file relUrl="Scripts/cultures/globalize.culture.tzm-Latn-DZ.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/jquery.mobile.structure-1.1.0.min.css" publishTime="06/12/2012 15:36:40" />
     <file relUrl="Scripts/cultures/globalize.culture.zh-CHS.js" publishTime="01/29/2012 06:34:14" />
@@ -288,7 +292,7 @@
     <file relUrl="bin/System.Web.Razor.dll" publishTime="01/05/2011 15:45:38" />
     <file relUrl="Scripts/cultures/globalize.culture.es-BO.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-TN.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Content/themes/base/jquery.ui.dialog.css" publishTime="01/13/2012 05:00:04" />
+    <file relUrl="Scripts/cultures/globalize.culture.nn.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.gu.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ru.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ms-BN.js" publishTime="01/29/2012 06:34:14" />
@@ -300,19 +304,20 @@
     <file relUrl="Views/Shared/_Layout.cshtml" publishTime="06/24/2012 14:07:28" />
     <file relUrl="Content/themes/base/minified/jquery.ui.resizable.min.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.fil.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Scripts/cultures/globalize.culture.bs-Cyrl-BA.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Scripts/cultures/globalize.culture.ur-PK.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/minified/jquery.ui.dialog.min.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.smj.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.bs-Latn-BA.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.lb-LU.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.hr.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.ug-CN.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.tk.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.fo-FO.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.iu.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.bg.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.tt.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Web.config" publishTime="07/26/2012 05:28:13" />
+    <file relUrl="Scripts/cultures/globalize.culture.se.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/knockout.all-1.8.0.min.js" publishTime="02/15/2012 05:52:16" />
+    <file relUrl="Copy (2) of Web.Debug.config" publishTime="04/26/2012 08:46:10" />
     <file relUrl="Scripts/cultures/globalize.culture.mr.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.es-CL.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/themes/base/minified/images/ui-icons_454545_256x240.png" publishTime="01/13/2012 05:00:04" />
@@ -344,8 +349,7 @@
     <file relUrl="Scripts/cultures/globalize.culture.ps-AF.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/MVCControlToolkit.Controls.Core-1.8.1.min.js" publishTime="06/16/2012 04:46:32" />
     <file relUrl="Scripts/SiteScript-1.0.js" publishTime="07/19/2012 04:28:05" />
-    <file relUrl="Scripts/cultures/globalize.culture.mi.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Content/themes/base/jquery-ui.css" publishTime="01/13/2012 05:00:04" />
+    <file relUrl="Scripts/cultures/globalize.culture.hr.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.br-FR.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.sa.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.en-MY.js" publishTime="01/29/2012 06:34:12" />
@@ -364,22 +368,20 @@
     <file relUrl="Views/Home/Index.cshtml" publishTime="06/12/2012 16:36:34" />
     <file relUrl="Views/Tasks/UpdateSummary.cshtml" publishTime="06/23/2012 11:11:50" />
     <file relUrl="Scripts/MicrosoftMvcAjax.debug.js" publishTime="01/13/2012 04:59:00" />
-    <file relUrl="Copy (2) of Web.Debug.config" publishTime="04/26/2012 08:46:10" />
+    <file relUrl="Scripts/cultures/globalize.culture.rm-CH.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="packages.config" publishTime="02/15/2012 05:52:18" />
     <file relUrl="Scripts/cultures/globalize.culture.he-IL.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.mn-Mong-CN.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.zh-Hant.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.tzm.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.es.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Scripts/cultures/globalize.culture.quz-EC.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/MVCControlToolkit.Controls.Core-1.8.1.js" publishTime="06/08/2012 10:47:16" />
     <file relUrl="Scripts/cultures/globalize.culture.am.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Scripts/cultures/globalize.culture.as-IN.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Scripts/cultures/globalize.culture.zu-ZA.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.af-ZA.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/images/treeview-famfamfam-line.gif" publishTime="02/15/2012 05:52:16" />
-    <file relUrl="Scripts/cultures/globalize.culture.sq-AL.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="bin/System.Web.Helpers.xml" publishTime="12/19/2010 23:59:38" />
     <file relUrl="Scripts/cultures/globalize.culture.zh-CHT.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.sr-Latn.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Content/themes/base/minified/jquery.ui.theme.min.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-IQ.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.en-TT.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-MA.js" publishTime="01/29/2012 06:34:12" />
@@ -416,27 +418,27 @@
     <file relUrl="Content/themes/base/images/ui-icons_888888_256x240.png" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.en-AU.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-SA.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Scripts/cultures/globalize.culture.mk-MK.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.mi.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.uz-Cyrl-UZ.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/minified/jquery.ui.core.min.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.ml.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.ka.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.lt.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Views/Shared/Edit.cshtml" publishTime="07/14/2012 05:56:56" />
-    <file relUrl="Content/site.jquery.mobile-1.0.css.min.css" publishTime="08/01/2012 01:25:54" />
+    <file relUrl="Scripts/cultures/globalize.culture.tn-ZA.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/minified/jquery.ui.datepicker.min.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Copy (2) of Web.Release.config" publishTime="04/26/2012 08:46:10" />
     <file relUrl="Content/images/logo-home.png" publishTime="06/25/2012 12:02:40" />
-    <file relUrl="Views/Timesheet/Index.cshtml" publishTime="06/23/2012 11:13:16" />
-    <file relUrl="Content/images/treeview-red-line.gif" publishTime="02/15/2012 05:52:16" />
+    <file relUrl="Scripts/cultures/globalize.culture.quz-EC.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/images/ui-bg_highlight-soft_80_eeeeee_1x100.png" publishTime="01/29/2012 05:52:52" />
     <file relUrl="Scripts/cultures/globalize.culture.es-ES.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.ru-RU.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.es-PY.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Scripts/cultures/globalize.culture.bg-BG.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="bin/System.Web.WebPages.Razor.dll" publishTime="01/05/2011 15:45:38" />
     <file relUrl="Scripts/cultures/globalize.culture.az.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.it-CH.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.nn-NO.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.en-CA.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Content/images/treeview-red-line.gif" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Content/themes/base/minified/jquery.ui.all.min.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.sr-Cyrl-BA.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/images/ui-bg_flat_50_5c5c5c_40x100.png" publishTime="01/29/2012 05:52:52" />
@@ -444,7 +446,7 @@
     <file relUrl="Scripts/cultures/globalize.culture.uk.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/images/ui-bg_highlight-soft_35_222222_1x100.png" publishTime="01/29/2012 05:52:52" />
     <file relUrl="Content/images/ui-bg_highlight-soft_33_003147_1x100.png" publishTime="01/29/2012 05:52:52" />
-    <file relUrl="Scripts/cultures/globalize.culture.nl.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.sq-AL.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/MVCControlToolkit.Controls-1.8.0.js" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Scripts/cultures/globalize.culture.sr-Cyrl.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ig-NG.js" publishTime="01/29/2012 06:34:14" />
@@ -455,8 +457,8 @@
     <file relUrl="Content/themes/base/images/ui-bg_glass_75_e6e6e6_1x400.png" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Content/themes/base/minified/jquery.ui.autocomplete.min.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Content/themes/base/jquery.ui.datepicker.css" publishTime="01/13/2012 05:00:04" />
-    <file relUrl="Content/jquery.mobile.structure-1.0.css" publishTime="01/25/2012 07:16:40" />
-    <file relUrl="Scripts/cultures/globalize.culture.bg-BG.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Scripts/cultures/globalize.culture.bs-Cyrl-BA.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Scripts/cultures/globalize.culture.iu-Cans-CA.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ga.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ne-NP.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.gd.js" publishTime="01/29/2012 06:34:14" />
@@ -487,7 +489,7 @@
     <file relUrl="Content/license.txt" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Scripts/cultures/globalize.culture.br.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/themes/base/images/ui-bg_glass_95_fef1ec_1x400.png" publishTime="01/13/2012 05:00:04" />
-    <file relUrl="Content/site.jquery.mobile.css" publishTime="01/26/2012 08:35:56" />
+    <file relUrl="Scripts/cultures/globalize.culture.sw-KE.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/images/folder-closed.gif" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Scripts/cultures/globalize.culture.tg-Cyrl-TJ.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ha-Latn-NG.js" publishTime="01/29/2012 06:34:14" />
@@ -496,7 +498,7 @@
     <file relUrl="Scripts/cultures/globalize.culture.pa-IN.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/site.jquery.mobile.min.css" publishTime="01/26/2012 08:35:56" />
     <file relUrl="Scripts/cultures/globalize.culture.vi-VN.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.bs-Latn.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Scripts/cultures/globalize.culture.mk-MK.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="bin/System.Web.WebPages.Deployment.xml" publishTime="12/20/2010 10:52:36" />
     <file relUrl="Scripts/cultures/globalize.culture.cy.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/themes/base/minified/jquery-ui.min.css" publishTime="01/13/2012 05:00:04" />
@@ -507,12 +509,12 @@
     <file relUrl="Scripts/cultures/globalize.culture.en-029.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="bin/System.Web.WebPages.Razor.xml" publishTime="12/20/2010 10:52:36" />
     <file relUrl="Content/themes/base/jquery.ui.resizable.css" publishTime="01/13/2012 05:00:04" />
-    <file relUrl="Scripts/cultures/globalize.culture.ug-CN.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Content/site.jquery.mobile-1.0.css.min.css" publishTime="08/01/2012 01:25:54" />
     <file relUrl="Scripts/cultures/globalize.culture.sk.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.kn.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/images/ui-icons_222222_256x240.png" publishTime="01/13/2012 05:00:04" />
     <file relUrl="bin/System.Web.Razor.xml" publishTime="12/20/2010 10:52:36" />
-    <file relUrl="Scripts/cultures/globalize.culture.iu-Cans-CA.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.sr-Latn.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.ar-KW.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.kok.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.es-VE.js" publishTime="01/29/2012 06:34:12" />
@@ -521,7 +523,6 @@
     <file relUrl="Scripts/cultures/globalize.culture.sma.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="bin/StructureMap.dll" publishTime="06/21/2011 10:52:28" />
     <file relUrl="Scripts/cultures/globalize.culture.ky-KG.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.se.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.hsb.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.uz-Cyrl.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.tg-Cyrl.js" publishTime="01/29/2012 06:34:14" />
@@ -531,7 +532,7 @@
     <file relUrl="Content/images/ajax-loader.png" publishTime="08/01/2012 01:25:54" />
     <file relUrl="Scripts/cultures/globalize.culture.es-US.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/MVCControlToolkit.Controls-1.8.0.min.js" publishTime="02/15/2012 05:52:16" />
-    <file relUrl="Scripts/cultures/globalize.culture.en-US.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Views/Timesheet/Index.cshtml" publishTime="06/23/2012 11:13:16" />
     <file relUrl="Scripts/cultures/globalize.culture.mi-NZ.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.rw-RW.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/minified/jquery.ui.slider.min.css" publishTime="01/13/2012 05:00:04" />
@@ -542,7 +543,6 @@
     <file relUrl="Scripts/cultures/globalize.culture.smn.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.de-LI.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/themes/base/images/ui-bg_glass_65_ffffff_1x400.png" publishTime="01/13/2012 05:00:04" />
-    <file relUrl="Scripts/jquery.tmpl.js" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Scripts/cultures/globalize.culture.syr.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.lb.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="bin/TimeSheetBusiness.pdb" publishTime="10/22/2012 19:03:57" />
@@ -557,9 +557,9 @@
     <file relUrl="Scripts/cultures/globalize.culture.pt-BR.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.sr-Latn-ME.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.de-LU.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Scripts/cultures/globalize.culture.tzm.js" publishTime="01/29/2012 06:34:14" />
+    <file relUrl="Scripts/cultures/globalize.culture.iu-Latn.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.co-FR.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Content/themes/base/minified/jquery.ui.theme.min.css" publishTime="01/13/2012 05:00:04" />
+    <file relUrl="Content/jquery.mobile.structure-1.0.css" publishTime="01/25/2012 07:16:40" />
     <file relUrl="Scripts/cultures/globalize.culture.yo.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.en-JM.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Content/images/ui-bg_highlight-soft_44_444444_1x100.png" publishTime="01/29/2012 05:52:52" />
@@ -567,17 +567,18 @@
     <file relUrl="Scripts/cultures/globalize.culture.tr.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="bin/System.Web.WebPages.xml" publishTime="12/19/2010 23:59:38" />
     <file relUrl="Scripts/cultures/globalize.culture.sr-Cyrl-CS.js" publishTime="01/29/2012 06:34:14" />
-    <file relUrl="Scripts/cultures/globalize.culture.fr-CH.js" publishTime="01/29/2012 06:34:12" />
-    <file relUrl="Scripts/cultures/globalize.culture.es-GT.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="Content/site.jquery.mobile.css" publishTime="01/26/2012 08:35:56" />
+    <file relUrl="Scripts/jquery.tmpl.js" publishTime="02/15/2012 05:52:16" />
     <file relUrl="Scripts/cultures/globalize.culture.lt-LT.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.fr-LU.js" publishTime="01/29/2012 06:34:12" />
     <file relUrl="Scripts/cultures/globalize.culture.gu-IN.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/jquery.treeview.all-1.8.0.min.js" publishTime="02/15/2012 05:52:16" />
-    <file relUrl="Scripts/cultures/globalize.culture.es-PA.js" publishTime="01/29/2012 06:34:12" />
+    <file relUrl="bin/EntityFramework.xml" publishTime="01/13/2012 04:59:02" />
     <file relUrl="Content/themes/base/jquery.ui.core.css" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.tk-TM.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Content/themes/base/images/ui-icons_2e83ff_256x240.png" publishTime="01/13/2012 05:00:04" />
     <file relUrl="Scripts/cultures/globalize.culture.lv.js" publishTime="01/29/2012 06:34:14" />
     <file relUrl="Scripts/cultures/globalize.culture.nso.js" publishTime="01/29/2012 06:34:14" />
   </publishProfile>
+  <publishProfile publishUrl="http://localhost:91" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="TSMobile" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile2" publishMethod="MSDeploy" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="False" />
 </publishData>

@@ -65,7 +65,8 @@
       <HintPath>..\..\..\..\..\Program Files\Microsoft Office Servers\14.0\Bin\Microsoft.Office.Project.Server.Library.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
-    <Reference Include="MVC3ControlsToolkit">
+    <Reference Include="MVC3ControlsToolkit, Version=1.8.5.0, Culture=neutral, PublicKeyToken=b6277d1c804403e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MVC3ControlsToolkit.1.8.0\lib\MVC3ControlsToolkit.dll</HintPath>
     </Reference>
     <Reference Include="Mvc3ControlsToolkitExt">
@@ -114,6 +115,10 @@
     <ProjectReference Include="..\TimeSheetIBusiness\TimeSheetIBusiness.csproj">
       <Project>{FD55A39F-3AC7-4F98-A3AB-AE8A1A3EFF8A}</Project>
       <Name>TimeSheetIBusiness</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WCFHelpers\WCFHelpers.csproj">
+      <Project>{508B6AF7-B6E2-4016-8714-4C6F71B0C465}</Project>
+      <Name>WCFHelpers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

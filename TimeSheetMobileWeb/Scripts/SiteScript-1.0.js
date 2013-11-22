@@ -53,7 +53,7 @@ function TSM_LeaveTo(target, application, options) {
 }
 function TSM_partialSubmit(jForm) {
     var target = $('#' + jForm.attr('data-ajax-target'));
-    $.mobile.showPageLoadingMsg();
+    $.mobile.showPageLoadingMsg()
     $.post(jForm.attr('data-ajax-url'), jForm.serialize(), function (data) {
         target.html(data);
         $.validator.unobtrusive.reParse(target);
@@ -68,7 +68,7 @@ function TSM_partialSubmit(jForm) {
     });
 }
 function TSM_jsonSubmit(jForm) {
-    $.mobile.showPageLoadingMsg();
+    $.mobile.showPageLoadingMsg()
     $.post(jForm.attr('data-ajax-url'), jForm.serialize(), function (data) {
         var onComplete = jForm.attr('data-ajax-oncomplete') || null;
         if (onComplete != null) {
@@ -319,7 +319,7 @@ $(document).ready(function () {
 
         var jForm = $('#periodform');
         var target = $('#' + jForm.attr('data-ajax-target'));
-        $.mobile.showPageLoadingMsg();
+        $.mobile.showPageLoadingMsg()
         var jForm = $('#periodform');
         $.post(jForm.attr('data-ajax-url') + '?speriod=' + this.value, jForm.serialize(), function (data) {
             target.html(data);
@@ -564,7 +564,7 @@ function TSM_ConfirmView() {
         history.back();
         return;
     }
-    $.mobile.showPageLoadingMsg();
+    $.mobile.showPageLoadingMsg()
     $('#periodform').submit();
 }
 function TSM_startAddRow(origin) {
@@ -1055,7 +1055,7 @@ function daysBetween(sfirst, ssecond) {
     var days = millisBetween / millisecondsPerDay;
 
     // Round down.
-    return Math.floor(days);
+    return Math.floor(days) + 1;
 }
 function TSM_PrepareDays(start, end) {
     var container = $('#dayContainer');
@@ -1075,7 +1075,7 @@ function TSM_PrepareDays(start, end) {
     var i = 0;
     while (i < dur) {
         if (i != 0 && i % 2 == 0) toBuild = toBuild + "</br>";
-        var ds = MvcControlsToolkit_Format(curr, 'ddd dd/MM', MvcControlsToolkit_DataType_DateTime, '', ' ');
+        var ds = MvcControlsToolkit_Format(curr, 'ddd MM/dd', MvcControlsToolkit_DataType_DateTime, '', ' ');
         toBuild = toBuild + template.replace(/_plh_/g, i + '').replace(/_p1lh_/g, ds);
         i++;
         curr = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate() + 1);

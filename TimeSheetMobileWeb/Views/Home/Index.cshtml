@@ -26,13 +26,15 @@
             $.mobile.metaViewportContent = false;
             
         });
-        $(document).ready(function(){
+        $(document).ready(function () {
+            $.mobile.hidePageLoadingMsg();
+
             $('.menu-link').click(function () {
                 $.mobile.loadingMessage = '@SiteResources.InitialLoadingMessage';
                 $.mobile.loadingMessageTheme = 'a';
                 $.mobile.loadingMessageTextVisible = true;
-                //$.mobile.showPageLoadingMsg();
-                window.location = $(this).attr('data-action');
+                $.mobile.showPageLoadingMsg();
+                window.location.href = $(this).attr('data-action');
             });
         })
     </script>
@@ -47,6 +49,7 @@
             <ul id='menu'>
                 <li><a href="#" class='menu-link' data-action='@Url.Action("TimesheetHistory", "Timesheet")'>@(SiteResources.HomeMenuTimesheet+ " >")</a></li>
                 <li><a href="#" class='menu-link' data-action='@Url.Action("Index", "Tasks")'>@(SiteResources.HomeMenuTasks + " >")</a></li>
+                <li><a href="#"  onclick="return false;">@(SiteResources.MyApprovals + " >")</a></li>
             </ul>
         </div>
         

@@ -241,7 +241,7 @@ namespace TimeSheetMobileWeb.Controllers
             if (res.DayTimes == null)
             {
                 res.DayTimes = new List<decimal?>();
-                for (int i = 0; i < Convert.ToInt32(selection.RequiredPeriodIStop.Subtract(selection.RequiredPeriodIStart).TotalDays); i++)
+                for (int i = 0; i < Convert.ToInt32(selection.RequiredPeriodIStop.Subtract(selection.RequiredPeriodIStart).TotalDays + 1); i++)
                 {
                     res.DayTimes.Add(0);
                 }

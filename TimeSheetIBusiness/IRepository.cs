@@ -21,7 +21,7 @@ namespace TimeSheetIBusiness
         void ChangeUserConfiguration(WindowsIdentity user, UserConfigurationInfo conf,  string rowField, string taskField);
         bool SetClientEndpointsProg(string pwaUrl);
         string GetPeriodID(DateTime start, DateTime end);
-        CustomFieldInfo GetCustomFieldType(string property);
+        CustomFieldInfo GetCustomFieldType(Guid id,int type, string property);
         LookupTableDisplayItem[] GetLookupTableValuesAsItems(Guid tableUid, string dataType);
 
 

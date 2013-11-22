@@ -84,7 +84,7 @@ namespace TimeSheetIBusiness
         protected static IDictionary<string, Entry> PIDS;
         protected static string level1 = "    ";
         protected static string level2 = "         ";
-        public string Get()
+        public string Get(SvcCustomFields.CustomFieldDataSet customfields)
         {
             List<WholeLine> notFildered = groups;
             groups = new List<WholeLine>();
@@ -101,7 +101,7 @@ namespace TimeSheetIBusiness
             
             foreach (var group in groups)
             {
-                addGroup(group, sb);
+                addGroup(customfields,group, sb);
             }
             sb.Append(Environment.NewLine);
             sb.Append("</Changes>");
@@ -111,7 +111,7 @@ namespace TimeSheetIBusiness
         {
             return new DateTime(x.Year, x.Month, x.Day, 23, 59, 59); 
         }
-        private void addGroup(WholeLine group, StringBuilder sb)
+        private void addGroup(SvcCustomFields.CustomFieldDataSet customfields, WholeLine group, StringBuilder sb)
         {
             if (!group.Changed) return;
             string assignementId = group.Key;
@@ -164,7 +164,12 @@ namespace TimeSheetIBusiness
                     StringBuilder sbT = sb;
                     foreach (string property in changedPropeties)
                     {
-                        CustomFieldInfo info = repository.GetCustomFieldType(property);
+                        CustomFieldInfo info = new CustomFieldInfo();
+                        if (customfields.CustomFields.Any(m => m.MD_PROP_NAME == property))
+                        {
+                            var csfield = customfields.CustomFields.First(m => m.MD_PROP_NAME == property);
+                            info = repository.GetCustomFieldType(csfield.MD_PROP_UID_SECONDARY, csfield.MD_PROP_TYPE_ENUM, property);
+                        }
                         string type = info.DataType;
                         
                         string formattedValue= null;

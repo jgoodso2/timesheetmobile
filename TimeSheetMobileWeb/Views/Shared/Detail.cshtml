@@ -42,10 +42,13 @@
                     @{decimal? dummy = null;}
                     @if ((!Model.TaskRow) || (!ViewConfigurationTask.Default.NoTPData))
                     {  
-                    <span id='dayTemplate' style='display:none;'>
+                    
+                        <span id='dayTemplate' style='display:none;'>
+                       
                         <span class="ui-bar-c middleEnf">_p1lh_</span>
                         @Html.TypedTextBox("DayTimes[_plh_]", dummy, new { @class = "dayBox detailTB positive dayTime" }, null, ContentAlign.Right)
                         @Html.ValidationMessage("DayTimes[_plh_]", "*")
+                       
                      </span>
                     <div class='timephasedvalues'>
                         <span id = 'rowsTitle' class="ui-bar-c middleEnf"></span>
@@ -317,28 +320,7 @@
                                     @h.TypedTextBoxFor(m => m.RemainingOvertimeWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
                                     @h.ValidationMessageFor(m => m.RemainingOvertimeWorkT, "*")<br />
                                 }
-                                  @if ((ViewConfigurationTask.Default.CustomFields != null)
-                                    )
-                                  {
-                                      foreach (var field in ViewConfigurationTask.Default.CustomFields)
-                                      {
-                                          if (field.Visible)
-                                          {
-                                        <span class="ui-bar-c middleEnf">@field.Name</span>
-
-                                      <a href='#' id='@(h.PrefixedId("") + "_cf_date")' name ='@field.Name' class='datepicker detailTBCS Date' valuetype='Date'>No Date</a>
-                                    @h.ValidationMessage("@field.Name", "*")
-                                    <input id='@(h.PrefixedId("") + "_cf_cost")' name ='@field.Name' type="text"  class = "workBox detailTBCS positive Cost" valuetype='Cost'/>
-                                     <input id='@(h.PrefixedId("") + "_cf_dur")' name ='@field.Name' type="text"  class = "workBox detailTBCS positive Duration" valuetype='Duration'/>
-                                     <input id='@(h.PrefixedId("") + "_cf_num")' name ='@field.Name' type="text"  class = "workBox detailTBCS positive Number" valuetype='Number'/>
-                                      <input id='@(h.PrefixedId("") + "_cf_text")' name ='@field.Name' type="text"  class = "workBox detailTBCS Text" valuetype='Text'/>
-                                      <span id='@(h.PrefixedId("") + "_cf_flag")' name ='@field.Name' valuetype='Flag' class = "detailTBCS Flag"><input  type="radio"   name ='@field.Name'  value="Yes" />Yes<input  type="radio"   name ='@field.Name'  value="No" />No</span>
-                                      <span id='@(h.PrefixedId("") + "_cf_lookup")' name ='@field.Name' valuetype='Lookup' class = "detailTBCS Lookup"></span>
-                                      <br/>
-                                      
-                                          }
-                                      }
-                                  }
+                                 
                                 
                         </div>
                     }
@@ -571,7 +553,7 @@
                                     @h.TypedTextBoxFor(m => m.RemainingOvertimeWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
                                     @h.ValidationMessageFor(m => m.RemainingOvertimeWorkT, "*")<br />
                                 }
-                                 @if ((ViewConfigurationTask.Default.CustomFields != null)
+                                 @if (Model.TaskRow && (ViewConfigurationTask.Default.CustomFields != null)
                                     )
                                   {
                                       foreach (var field in ViewConfigurationTask.Default.CustomFields)

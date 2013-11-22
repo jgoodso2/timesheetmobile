@@ -97,6 +97,9 @@ div.maininfoshortcontent
     background-image: url('images/logo-home.png');
     background-position:top;
     background-repeat:no-repeat;
+    background-position: center center;
+    background-size: 100%;
+    
 }
 .header h2 
 {
@@ -256,6 +259,17 @@ textarea.fullscreen
     width: 95% !important;
     height: 5em !important;
 }
+
+.timephasedvalues .ui-bar-c{
+        display: inline-block;
+        width: 80px;
+    }
+    
+    .row_choice .ui-bar-c{
+        display: inline-block;
+        width: 120px;
+    }
+    
 input.fullscreen
 {
     width: 95% !important;

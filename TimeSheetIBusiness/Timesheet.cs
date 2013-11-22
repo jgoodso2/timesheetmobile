@@ -27,7 +27,7 @@ namespace TimeSheetIBusiness
         {
             get
             {
-                return string.Format("{0}#{1:s}#{2:s}#{3}", Id, Start, Stop, Convert.ToInt32(Stop.Subtract(Start).TotalDays));
+                return string.Format("{0}#{1:s}#{2:s}#{3}", Id, Start, Stop, Convert.ToInt32(Stop.Subtract(Start).TotalDays) + 1);
             }
         }
     }

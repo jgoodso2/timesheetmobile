@@ -39,7 +39,7 @@
     <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
     <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualWorkA_Name : ViewConfigurationRow.Default.ActualWorkA_Name)</span>
     &nbsp;
-    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays); i++)
+    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
     {
         <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code + "_header" })
@@ -272,7 +272,7 @@
     <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
     <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualOvertimeWorkA_Name : ViewConfigurationRow.Default.ActualOvertimeWorkA_Name)</span>
     &nbsp;
-    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays); i++)
+    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
     {
         <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code + "_header" })
@@ -537,7 +537,7 @@
         @item.HiddenFor(m => m.RemainingOvertimeWorkT)
         <span id='@(item.PrefixedId(m => m.RemainingOvertimeWorkT) + "_display")'>@item.FormattedDisplay(m => m.RemainingOvertimeWorkT, decimalFormat)</span>
     }
-     @if ((ViewConfigurationTask.Default.CustomFields != null)
+     @if (isTask && (ViewConfigurationTask.Default.CustomFields != null)
                                     )
      {
          List<CustomFieldItem> list = new List<CustomFieldItem>();
@@ -574,7 +574,7 @@
     }
     <br />
     <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
-    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays); i++)
+    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays)+ 1; i++)
     {
         <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code + "_header" })
@@ -602,7 +602,7 @@
     <br />
     <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
     <span class="ui-bar-c lowEnf">@ViewConfigurationRow.Default.ActualNonBillableWorkA_Name</span>
-    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays); i++)
+    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays + 1); i++)
     {
         <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code + "_header" })
@@ -631,7 +631,7 @@
     <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
     <span class="ui-bar-c lowEnf">@ViewConfigurationRow.Default.ActualNonBillableOvertimeWorkA_Name</span>
     &nbsp;
-    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays); i++)
+    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
     {
         <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code + "_header" })

@@ -6,6 +6,13 @@
 }
 @section head{
 <script src="@Url.Content("~/Scripts/TimesheetsScript-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.mobile.hidePageLoadingMsg();
+
+    })
+    </script>
 }
 
 <div data-role='page' data-theme='a' id='timesheet' data-title="@SiteResources.HomeMenuTimesheet" data-leave-application='@SiteResources.LeaveApplication' class = 'ajaxLoader'>
@@ -20,7 +27,7 @@
                                            
             <div data-role='content' data-theme='b' class='periodHeader'><b><span id="indexPeriod" class='currenttimesheet'>@Model.PeriodString</span>
            </b>
-           <input id="btnCalendar" type="button" value="" class='ui-calendar' onclick= 'window.location.href="@Url.Action("TimesheetHistory", "Timesheet")";'/>
+           <input id="btnCalendar" type="button" value="" class='ui-calendar' onclick= '$.mobile.showPageLoadingMsg()window.location.href="@Url.Action("TimesheetHistory", "Timesheet")";'/>
                 
                 <input id  = 'periodid' type = "hidden" value = '@Model.Period' />
             </div>

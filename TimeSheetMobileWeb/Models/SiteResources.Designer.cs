@@ -421,7 +421,7 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Caching....
+        ///   Looks up a localized string similar to Please wait.. Loading.
         /// </summary>
         public static string InitialLoadingMessage {
             get {
@@ -453,6 +453,15 @@ namespace TimeSheetMobileWeb.Models {
         public static string Loading {
             get {
                 return ResourceManager.GetString("Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My Approvals.
+        /// </summary>
+        public static string MyApprovals {
+            get {
+                return ResourceManager.GetString("MyApprovals", resourceCulture);
             }
         }
         

@@ -85,7 +85,7 @@ namespace TimeSheetMobileWeb.Controllers
                 model.CurrentPeriodStart = selection.Start;
                 model.CurrentPeriodStop = selection.Stop;
                 model.Period = selection.Id;
-                model.PeriodLength = Convert.ToInt32(selection.Stop.Subtract(selection.Start).TotalDays);
+                model.PeriodLength = Convert.ToInt32(selection.Stop.Date.Subtract(selection.Start.Date).TotalDays + 1);
                 int status;
                 bool canDelete;
                 bool canRecall;
@@ -132,7 +132,7 @@ namespace TimeSheetMobileWeb.Controllers
                 model.CurrentPeriodStart = selection.Start;
                 model.CurrentPeriodStop = selection.Stop;
                 model.Period = selection.Id;
-                model.PeriodLength = Convert.ToInt32(selection.Stop.Subtract(selection.Start).TotalDays);
+                model.PeriodLength = Convert.ToInt32(selection.Stop.Date.Subtract(selection.Start.Date).TotalDays + 1);
 
                 DateTime start, end;
                 model.ReceiveRows(repository.SelectTimesheets(
@@ -169,7 +169,7 @@ namespace TimeSheetMobileWeb.Controllers
                 model.CurrentPeriodStart = selection.Start;
                 model.CurrentPeriodStop = selection.Stop;
                 model.Period = selection.Id;
-                model.PeriodLength = Convert.ToInt32(selection.Stop.Subtract(selection.Start).TotalDays);
+                model.PeriodLength = Convert.ToInt32(selection.Stop.Date.Subtract(selection.Start.Date).TotalDays + 1);
 
                 DateTime start, end;
                 model.ReceiveRows(repository.SelectTimesheets(
@@ -367,7 +367,7 @@ namespace TimeSheetMobileWeb.Controllers
             if (res.DayTimes == null)
             {
                 res.DayTimes = new List<decimal?>();
-                for (int i = 0; i < Convert.ToInt32(selection.RequiredPeriodIStop.Subtract(selection.RequiredPeriodIStart).TotalDays); i++)
+                for (int i = 0; i < Convert.ToInt32(selection.RequiredPeriodIStop.Subtract(selection.RequiredPeriodIStart).TotalDays + 1); i++)
                 {
                     res.DayTimes.Add(0);
                 }
@@ -387,7 +387,7 @@ namespace TimeSheetMobileWeb.Controllers
                 CustomFieldsView model = new CustomFieldsView() { CustomFieldItems = selection.ToList() };
                 return PartialView("CustomFieldDetail", model);
             }
-            return PartialView();
+            return PartialView("CustomFieldDetail",new CustomFieldsView());
         }
         [HttpPost]
         public ActionResult RecallDelete(RecallDeleteView model)

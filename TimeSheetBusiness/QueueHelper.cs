@@ -68,17 +68,13 @@ namespace TimeSheetBusiness
 
             List<int> errorList = new List<int>();
 
-            using (OperationContextScope scope = new OperationContextScope(queueSystemClient.InnerChannel))
-            {
-                
+           
 
                 while (inProcess)
                 {
-                    using (WindowsImpersonationContext context =  repository.AppPoolUser.Impersonate())
-                    {
+                    
                         queueStatusDataSet = queueSystemClient.ReadJobStatus(queueStatusRequestDataSet, false,
                         SvcQueueSystem.SortColumn.Undefined, SvcQueueSystem.SortOrder.Undefined);
-                    }
                     
                     bool noRow = true;
                     foreach (SvcQueueSystem.QueueStatusDataSet.StatusRow statusRow in queueStatusDataSet.Status)
@@ -116,7 +112,6 @@ namespace TimeSheetBusiness
                         return result;//result = false;
                     }
                 }
-            }
             return result;
         }
     }

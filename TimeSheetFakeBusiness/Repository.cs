@@ -15,7 +15,7 @@ namespace TimeSheetFakeBusiness
         {
             return new UserConfigurationInfo { TaskViewId = null, RowViewId = "RComplete" };
         }
-        public CustomFieldInfo GetCustomFieldType(string property)
+        public CustomFieldInfo GetCustomFieldType(Guid guid,int t, string property)
         {
             return null;
         }

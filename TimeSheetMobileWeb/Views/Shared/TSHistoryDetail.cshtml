@@ -4,7 +4,7 @@
 @model TimeSheetMobileWeb.Models.TimeSheetView
     <td class="editor-label gridcelllink">
      
-                                            <a href='#' onclick='window.location.href="@Url.Action(
+                                            <a href='#' onclick='$.mobile.showPageLoadingMsg(); window.location.href="@Url.Action(
     "Index",
 "Timesheet", new { speriod = @Model.Period.Replace("(","-").Replace(")","-") }, "http")";'>@Model.Period</a>
                                             
