@@ -26,7 +26,7 @@
          (!isTask && ViewConfigurationRow.Default.ActualWorkA))
     {
         ltemplates.Add(_S.H<ActualWorkRow>(
-    @<text> <span id='@(item.PrefixedId(m => m.ProjectName) + "_display")' >@item.FormattedDisplay(m => m.ProjectName)</span>
+    @<text> <span id='@(item.PrefixedId(m => m.ProjectName) + @item.ValueFor(m=>m.LineClass.Id) + "_display")' >@item.FormattedDisplay(m => m.ProjectName)</span>
     @if (!isTask)
     {
         <a href="#" class='ui-link'  id='@item.PrefixedId("remove")' onclick="TSM_DeleteRow('@item.PrefixedId("remove")');">@SiteResources.Remove</a>
@@ -36,7 +36,7 @@
         <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code">@SiteResources.Edit</a>
     }
     <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
+    <span id='@(item.PrefixedId(m => m.AssignementName) + @item.ValueFor(m=>m.LineClass.Id) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
     <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualWorkA_Name : ViewConfigurationRow.Default.ActualWorkA_Name)</span>
     &nbsp;
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
@@ -245,6 +245,8 @@
             @item.Partial("CustomFieldDetail", new CustomFieldsView() { CustomFieldItems = list })
         </span>
     }
+    @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
     @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code })
     @item.HiddenFor(m => m.ProjectName)
     @item.HiddenFor(m => m.AssignementName)
@@ -269,7 +271,7 @@
         <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code">@SiteResources.Edit</a>
     }
     <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
+    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
     <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualOvertimeWorkA_Name : ViewConfigurationRow.Default.ActualOvertimeWorkA_Name)</span>
     &nbsp;
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
@@ -307,6 +309,8 @@
     @item.HiddenFor(m => m.ProjectId)
     @item.HiddenFor(m => m.ProjectName)
     @item.HiddenFor(m => m.AssignementName)
+    @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
     </text>
             ));
         aow_index = rc;
@@ -319,7 +323,7 @@
     @<text> <span id='@(item.PrefixedId(m => m.ProjectName) + "_display")' >@item.FormattedDisplay(m => m.ProjectName)</span>
     <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code">@SiteResources.Edit</a>
     <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
+    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
     @if ((isTask && ViewConfigurationTask.Default.WorkA) ||
                         (!isTask && ViewConfigurationRow.Default.WorkA))
     {
@@ -554,6 +558,8 @@
             @item.Partial("CustomFieldDetail", new CustomFieldsView() { CustomFieldItems = list })
         </span>
      }
+    @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
     @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code })
     @item.HiddenFor(m => m.ProjectId)
     @item.HiddenFor(m => m.ProjectName)
@@ -573,8 +579,8 @@
         <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code">@SiteResources.Edit</a>
     }
     <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
-    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays)+ 1; i++)
+    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
+    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
     {
         <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code + "_header" })
@@ -600,7 +606,7 @@
         <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code">@SiteResources.Edit</a>
     }
     <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
+    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
     <span class="ui-bar-c lowEnf">@ViewConfigurationRow.Default.ActualNonBillableWorkA_Name</span>
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays + 1); i++)
     {
@@ -628,7 +634,7 @@
         <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code">@SiteResources.Edit</a>
     }
     <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
+    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
     <span class="ui-bar-c lowEnf">@ViewConfigurationRow.Default.ActualNonBillableOvertimeWorkA_Name</span>
     &nbsp;
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)

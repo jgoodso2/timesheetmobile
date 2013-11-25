@@ -13,7 +13,7 @@ namespace TimeSheetIBusiness
         IEnumerable<AssignementInfo> ProjectAssignements(WindowsIdentity user, string ProjectId);
         IEnumerable<Timesheet> SelectTimesheets(System.Security.Principal.WindowsIdentity user, TimesheetsSets set, out DateTime start, out DateTime end);
         List<BaseRow> GetRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, out int status, out bool canDelete, out bool canRecall, out TimesheetHeaderInfos tInfos,out decimal[] totals);
-        BaseRow GetRowSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string ProgectId, string AssignementId, Type RowType);
+        BaseRow GetRowSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string ProgectId, string AssignementId, string lineClassID,Type RowType);
         void UpdateRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit);
         TimesheetsSets DefaultTimesheetSet {get;}
         void RecallDelete(WindowsIdentity user, string periodId, DateTime start, DateTime stop, bool isRecall);
@@ -24,7 +24,7 @@ namespace TimeSheetIBusiness
         CustomFieldInfo GetCustomFieldType(Guid id,int type, string property);
         LookupTableDisplayItem[] GetLookupTableValuesAsItems(Guid tableUid, string dataType);
 
-
+        List<LineClass> GetLineClassifications();
         WindowsIdentity AppPoolUser { get; set; }
     }
 }

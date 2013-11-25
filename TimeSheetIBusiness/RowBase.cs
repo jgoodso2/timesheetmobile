@@ -15,7 +15,7 @@ namespace TimeSheetIBusiness
         public string ProjectName { get; set; }
         public string AssignementName { get; set; }
         public int RowType { get; set; }
-        
+        public LineClass LineClass { get; set; }
        
         public override bool Equals(object obj)
         {
@@ -197,4 +197,6 @@ namespace TimeSheetIBusiness
         public List<CustomFieldItem> CustomFieldItems { get; set; }
 
     }
+
+    
 }

@@ -12,6 +12,20 @@
     <div data-role='content' data-theme='b' class='periodHeader'><span class='currenttimesheet'>period of time</span></div>
     <div data-role='content' data-theme='b' >
     <form id="rowRequest" data-ajax-url='@Url.Action("RowSingleValues", (Model.IsInTask ? "Tasks" : "Timesheet"))' data-ajax-oncomplete='TSM_CompleteAddRow' data-duplicate-message='@SiteResources.DuplicateTask'>
+        
+          @h.DropDownListFor(m => m.RequiredLineClassId,
+                                       new Dictionary<string, object> 
+                                       { { "class", "mobilegadget updatelineclass" }, 
+                                       { "data-native-menu", "false" },
+                                       {"data-action", ""},
+                                       {"data-prompt", ""}},
+
+                ChoiceListHelper.Create(
+                Model.LineClasses,
+                m => m.Id,
+                m => m.Name,
+                usePrompt: false
+                ))
         @h.LabelFor(m => m.RequiredProgectId, SiteResources.WorkTimeProject)
         @h.DropDownListFor(m => m.RequiredProgectId,
                                        new Dictionary<string, object> 
@@ -25,6 +39,8 @@
                 m => m.Name,
                 usePrompt: true,
                 overridePrompt: SiteResources.ProjectPrompt))
+
+               
         
         
         @if (!Model.IsProjectlineType)
@@ -40,6 +56,8 @@
             data-native-menu="false" disabled="disabled" ><option value=''>@SiteResources.AssignementPrompt</option></select>
         }
         @h.HiddenFor(m => m.RequiredPeriodId, new { @class = "currentperiodid" })
+        @h.HiddenFor(m => m.RequiredLineClassId, new { @class = "currentlineclassid" })
+        @h.HiddenFor(m => m.RequiredLineClassName, new { @class = "currentlineclassname" })
         @h.HiddenFor(m => m.RequiredPeriodIStart, new { @class = "currentperiodstart" })
         @h.HiddenFor(m => m.RequiredPeriodIStop, new { @class = "currentperiodstop" })
         @h.HiddenFor(m => m.RequiredRowType, new { @class = "currentrowtype" })

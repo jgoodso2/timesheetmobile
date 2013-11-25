@@ -15,6 +15,22 @@ namespace TimeSheetIBusiness
     }
 
     [Serializable]
+    public class LineClass
+    {
+        public LineClass()
+        {
+        }
+        public LineClass(string id, string Name)
+        {
+            // TODO: Complete member initialization
+            this.Id = id;
+            this.Name = Name;
+        }
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    [Serializable]
     public class CustomFieldItem : ICloneable
     {
         public string Name { get; set; }

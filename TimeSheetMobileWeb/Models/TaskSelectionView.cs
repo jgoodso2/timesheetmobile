@@ -37,5 +37,7 @@ namespace TimeSheetMobileWeb.Models
             
             RowTypes = res.ToArray();
         }
+
+        public List<LineClass> LineClasses { get; set; }
     }
 }

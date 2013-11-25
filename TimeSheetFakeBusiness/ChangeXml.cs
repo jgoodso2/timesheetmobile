@@ -114,7 +114,7 @@ namespace TimeSheetIBusiness
         private void addGroup(SvcCustomFields.CustomFieldDataSet customfields, WholeLine group, StringBuilder sb)
         {
             if (!group.Changed) return;
-            string assignementId = group.Key;
+            string assignementId = group.Key.Split(":".ToCharArray())[0];
             string projectId = group.Actuals[0].Values.Value.ProjectId;
             sb.Append(Environment.NewLine);
             sb.Append(level1);

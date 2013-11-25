@@ -281,6 +281,12 @@ $(document).ready(function () {
         target.val(data);
     });
 
+    $('.updatelineclass').change(function () {
+        var jThis = $(this);
+        $('.currentlineclassid').val(jThis.find('option:selected').val());
+        $('.currentlineclassname').val(jThis.find('option:selected').text());
+    });
+
     $('.updatetasks').change(function () {
         var jThis = $(this);
         if (jThis.val() == "-1") {
@@ -426,7 +432,20 @@ function TSM_ConfirmAdd(show) {
     var projectId = $('#RequiredProgectId').val();
     if (cGuid == '') {
         $('.rowlist').each(function () { $(this).button('disable'); });
+        if (projectId == "-1") {
+            $(".updatelineclass").selectmenu('disable');
+        }
+        else {
+            $(".updatelineclass").selectmenu('enable');
+        }
         return;
+    }
+
+    if (projectId == "-1") {
+        $(".updatelineclass").selectmenu('disable');
+    }
+    else {
+        $(".updatelineclass").selectmenu('enable');
     }
     $('.rowlist').each(function () {
         var jThis = $(this);
@@ -444,6 +463,7 @@ function TSM_ConfirmAdd(show) {
                 }
                 else {
                     jThis.button('enable');
+                    
                 }
 
             }
@@ -588,6 +608,7 @@ function TSM_CompleteAddRow(data) {
     var prefix = item.attr("id");
     var end_prefix = prefix.lastIndexOf("_");
     prefix = prefix.substring(0, end_prefix);
+    
     TSM_CopyObjectToRow(item, data, prefix);
     if (data["CustomFieldItems"] != undefined) {
         $.ajax({
@@ -733,6 +754,19 @@ function TSM_SetRowValue(name, prefix, value) {
 
 function TSM_CopyObjectToRow(item, source, prefix) {
     for (var property in source) {
+        if (property == "AssignementName") {
+            var val = source[property] || null;
+            if (val != null) {
+                TSM_SetRowValue(property, prefix, source[property] + " "  + source["LineClass"].Name);
+                $(prefix).find('.currentlineclassid').val(source["LineClass"].Id); 
+                continue;
+            }
+        }
+
+        if (property == "LineClass") {
+            $('#' + prefix + "_LineClass_Id").val(source["LineClass"].Id);
+            $('#' + prefix + "_LineClass_Name").val(source["LineClass"].Name);
+        }
         if (property == "DayTimes") {
             var val = source[property] || null;
             if (val != null) {

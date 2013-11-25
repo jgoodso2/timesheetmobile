@@ -43,6 +43,13 @@ namespace TimeSheetFakeBusiness
                 return false;
             }
         }
+
+        public List<LineClass> GetLineClassifications()
+        {
+            List<LineClass> lineclasses = new List<LineClass>();
+           
+            return lineclasses;
+        }
         public List<BaseRow> GetRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, out int status, out bool canDelete, out bool canRecall, out TimesheetHeaderInfos tInfos,out decimal[] totals)
         {
             tInfos = null;
@@ -106,7 +113,7 @@ namespace TimeSheetFakeBusiness
             }
             return res;
         }
-        public BaseRow GetRowSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string ProgectId, string AssignementId, Type RowType)
+        public BaseRow GetRowSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string ProgectId, string AssignementId,string lineClassID, Type RowType)
         {
             List<decimal?> standards = new List<decimal?> { 2.1m, 4.5m, 5, 5, 4, 6, 3 };
             if (RowType == typeof(ActualWorkRow))

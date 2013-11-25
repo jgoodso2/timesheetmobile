@@ -245,6 +245,7 @@ namespace TimeSheetMobileWeb.Controllers
             TaskSelectionView model = new TaskSelectionView();
             model.Title = SiteResources.HomeMenuAddRow;
             model.Projects = new List<ProjectInfo>() { new ProjectInfo { Id = "-1", Name = ViewConfigurationRow.Default.AdminDescription } }.Concat(repository.UserProjects(User.Identity as System.Security.Principal.WindowsIdentity));
+            model.LineClasses = repository.GetLineClassifications();
             model.IsInTask = false;
             model.PrepareRowTypes();
             this.HttpContext.Trace.Warn("Returning from TaskSelection of TimesheetController");
@@ -359,6 +360,7 @@ namespace TimeSheetMobileWeb.Controllers
                 selection.RequiredPeriodIStop,
                 selection.RequiredProgectId,
                 selection.RequiredAssignementId,
+                selection.RequiredLineClassId,
                 UpdateViewBase.RowTypeFromCode(selection.RequiredRowType));
             res.ProjectId = selection.RequiredProgectId;
             res.AssignementId = selection.RequiredAssignementId;
@@ -372,7 +374,6 @@ namespace TimeSheetMobileWeb.Controllers
                     res.DayTimes.Add(0);
                 }
             }
-            
             
             this.HttpContext.Trace.Warn("Returning from RowSingleValues of TimesheetController");    
             return Json(res);

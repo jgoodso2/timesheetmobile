@@ -15,5 +15,7 @@ namespace TimeSheetMobileWeb.Models
         public string RequiredProjectName { get; set; }
         public string RequiredAssignementName { get; set; }
         public string RequiredRowType { get; set; }
+        public string RequiredLineClassId { get; set; }
+        public string RequiredLineClassName { get; set; }
     }
 }

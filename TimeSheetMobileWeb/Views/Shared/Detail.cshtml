@@ -93,7 +93,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.StartA_FullName : ViewConfigurationRow.Default.StartA_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.StartA, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.StartA) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartA)">@h.FormattedDisplay(m => m.StartA)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.StartA) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartA)">@h.FormattedDisplay(m => m.StartA)</a>
                                     @h.ValidationMessageFor(m => m.StartA, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.FinishA && ViewConfigurationTask.Default.FinishA_Edit) ||
@@ -102,7 +102,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.FinishA_FullName : ViewConfigurationRow.Default.FinishA_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.FinishA, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.FinishA) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishA)">@h.FormattedDisplay(m => m.FinishA)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.FinishA) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishA)">@h.FormattedDisplay(m => m.FinishA)</a>
                                     @h.ValidationMessageFor(m => m.FinishA, "*")<br />
                                 }
                                 
@@ -112,7 +112,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualStartA_FullName : ViewConfigurationRow.Default.ActualStartA_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.ActualStartA, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.ActualStartA) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualStartA)">@h.FormattedDisplay(m => m.ActualStartA)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.ActualStartA) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualStartA)">@h.FormattedDisplay(m => m.ActualStartA)</a>
                                     @h.ValidationMessageFor(m => m.ActualStartA, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualFinishA && ViewConfigurationTask.Default.ActualFinishA_Edit) ||
@@ -121,7 +121,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualFinishA_FullName : ViewConfigurationRow.Default.ActualFinishA_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.ActualFinishA, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.ActualFinishA) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualFinishA)">@h.FormattedDisplay(m => m.ActualFinishA)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.ActualFinishA) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualFinishA)">@h.FormattedDisplay(m => m.ActualFinishA)</a>
                                     @h.ValidationMessageFor(m => m.ActualFinishA, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.PercentWorkCompleteA && ViewConfigurationTask.Default.PercentWorkCompleteA_Edit) ||
@@ -191,7 +191,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.StartT_FullName : ViewConfigurationRow.Default.StartT_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.StartT, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.StartT) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartT)">@h.FormattedDisplay(m => m.StartT)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.StartT) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartT)">@h.FormattedDisplay(m => m.StartT)</a>
                                     @h.ValidationMessageFor(m => m.StartT, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.FinishT && ViewConfigurationTask.Default.FinishT_Edit) ||
@@ -200,7 +200,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.FinishT_FullName : ViewConfigurationRow.Default.FinishT_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.FinishT, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.FinishT) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishT)">@h.FormattedDisplay(m => m.FinishT)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.FinishT) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishT)">@h.FormattedDisplay(m => m.FinishT)</a>
                                     @h.ValidationMessageFor(m => m.FinishT, "*")<br />
                                 }
                                 
@@ -210,7 +210,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.ResumeT_FullName : ViewConfigurationRow.Default.ResumeT_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.ResumeT, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.ResumeT) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ResumeT)">@h.FormattedDisplay(m => m.ResumeT)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.ResumeT) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ResumeT)">@h.FormattedDisplay(m => m.ResumeT)</a>
                                     @h.ValidationMessageFor(m => m.ResumeT, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.DeadlineT && ViewConfigurationTask.Default.DeadlineT_Edit) ||
@@ -219,7 +219,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.DeadlineT_FullName : ViewConfigurationRow.Default.DeadlineT_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.DeadlineT, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.DeadlineT) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.DeadlineT)">@h.FormattedDisplay(m => m.DeadlineT)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.DeadlineT) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.DeadlineT)">@h.FormattedDisplay(m => m.DeadlineT)</a>
                                     @h.ValidationMessageFor(m => m.DeadlineT, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.DurationT && ViewConfigurationTask.Default.DurationT_Edit) ||
@@ -358,7 +358,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.StartA_FullName : ViewConfigurationRow.Default.StartA_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.StartA, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.StartA) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartA)">@h.FormattedDisplay(m => m.StartA)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.StartA) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartA)">@h.FormattedDisplay(m => m.StartA)</a>
                                     @h.ValidationMessageFor(m => m.StartA, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.FinishA && ViewConfigurationTask.Default.FinishA_Edit) ||
@@ -367,7 +367,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.FinishA_FullName : ViewConfigurationRow.Default.FinishA_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.FinishA, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.FinishA) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishA)">@h.FormattedDisplay(m => m.FinishA)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.FinishA) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishA)">@h.FormattedDisplay(m => m.FinishA)</a>
                                     @h.ValidationMessageFor(m => m.FinishA, "*")<br />
                                 }
                                 
@@ -377,7 +377,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualStartA_FullName : ViewConfigurationRow.Default.ActualStartA_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.ActualStartA, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.ActualStartA) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualStartA)">@h.FormattedDisplay(m => m.ActualStartA)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.ActualStartA) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualStartA)">@h.FormattedDisplay(m => m.ActualStartA)</a>
                                     @h.ValidationMessageFor(m => m.ActualStartA, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualFinishA && ViewConfigurationTask.Default.ActualFinishA_Edit) ||
@@ -386,7 +386,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualFinishA_FullName : ViewConfigurationRow.Default.ActualFinishA_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.ActualFinishA, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.ActualFinishA) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualFinishA)">@h.FormattedDisplay(m => m.ActualFinishA)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.ActualFinishA) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualFinishA)">@h.FormattedDisplay(m => m.ActualFinishA)</a>
                                     @h.ValidationMessageFor(m => m.ActualFinishA, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.PercentWorkCompleteA && ViewConfigurationTask.Default.PercentWorkCompleteA_Edit) ||
@@ -456,7 +456,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.StartT_FullName : ViewConfigurationRow.Default.StartT_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.StartT, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.StartT) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartT)">@h.FormattedDisplay(m => m.StartT)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.StartT) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartT)">@h.FormattedDisplay(m => m.StartT)</a>
                                     @h.ValidationMessageFor(m => m.StartT, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.FinishT && ViewConfigurationTask.Default.FinishT_Edit) ||
@@ -465,7 +465,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.FinishT_FullName : ViewConfigurationRow.Default.FinishT_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.FinishT, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.FinishT) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishT)">@h.FormattedDisplay(m => m.FinishT)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.FinishT) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishT)">@h.FormattedDisplay(m => m.FinishT)</a>
                                     @h.ValidationMessageFor(m => m.FinishT, "*")<br />
                                 }
                                 
@@ -475,7 +475,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.ResumeT_FullName : ViewConfigurationRow.Default.ResumeT_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.ResumeT, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.ResumeT) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ResumeT)">@h.FormattedDisplay(m => m.ResumeT)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.ResumeT) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ResumeT)">@h.FormattedDisplay(m => m.ResumeT)</a>
                                     @h.ValidationMessageFor(m => m.ResumeT, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.DeadlineT && ViewConfigurationTask.Default.DeadlineT_Edit) ||
@@ -484,7 +484,7 @@
                                     <span class="ui-bar-c middleEnf">@(Model.TaskRow ? ViewConfigurationTask.Default.DeadlineT_FullName : ViewConfigurationRow.Default.DeadlineT_FullName)</span>
                                     
                                      @h.HiddenFor(m => m.DeadlineT, new { @class = "detailTB" })
-                                    <a href='#' id="@(h.PrefixedId(m => m.DeadlineT) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.DeadlineT)">@h.FormattedDisplay(m => m.DeadlineT)</a>
+                                    <a href='#' id="@(h.PrefixedId(m => m.DeadlineT) + h.ValueFor(m=>m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.DeadlineT)">@h.FormattedDisplay(m => m.DeadlineT)</a>
                                     @h.ValidationMessageFor(m => m.DeadlineT, "*")<br />
                                 }
                                 @if ((Model.TaskRow && ViewConfigurationTask.Default.DurationT && ViewConfigurationTask.Default.DurationT_Edit) ||
