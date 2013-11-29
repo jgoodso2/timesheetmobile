@@ -378,4 +378,7 @@
   <data name="MyApprovals" xml:space="preserve">
     <value>My Approvals</value>
   </data>
+  <data name="LineClassification" xml:space="preserve">
+    <value>Line Classification</value>
+  </data>
 </root>

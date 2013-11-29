@@ -360,6 +360,7 @@ namespace TimeSheetMobileWeb.Controllers
                 selection.RequiredPeriodIStop,
                 selection.RequiredProgectId,
                 selection.RequiredAssignementId,
+                selection.RequiredAssignementName,
                 selection.RequiredLineClassId,
                 UpdateViewBase.RowTypeFromCode(selection.RequiredRowType));
             res.ProjectId = selection.RequiredProgectId;

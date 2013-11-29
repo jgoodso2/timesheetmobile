@@ -247,10 +247,11 @@
     }
     @item.HiddenFor(m => m.LineClass.Id)
     @item.HiddenFor(m => m.LineClass.Name)
-    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code })
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" 
+    + (item.ViewData.Model.AssignementName != "Top Level"    ? (item.ViewData.Model.AssignementId + "_" + item.ViewData.Model.LineClass.Id) : ("TopLevel_" + item.ViewData.Model.LineClass.Id +  item.ViewData.Model.ProjectId) ) + "-" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code })
     @item.HiddenFor(m => m.ProjectName)
     @item.HiddenFor(m => m.AssignementName)
-    @item.HiddenFor(m => m.ProjectId, new { @class = item.ViewData.Model == null ? "p-project-container" : "p-" + item.ViewData.Model.AssignementId + item.ViewData.Model.ProjectId + "-" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code })
+    @item.HiddenFor(m => m.ProjectId, new { @class = item.ViewData.Model == null ? "p-project-container" : "p-" + (item.ViewData.Model.AssignementId + item.ViewData.Model.ProjectId) + "-" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code })
     </text>
             ));
         aw_index = rc;
@@ -304,8 +305,9 @@
         <span id='@(item.PrefixedId(m => m.RemainingOvertimeWorkT) + "_display")'>@item.FormattedDisplay(m => m.RemainingOvertimeWorkT, decimalFormat)</span>
     }
     
-    
-    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code })
+      @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + (item.ViewData.Model.AssignementName != "Top Level" ? (item.ViewData.Model.AssignementId + "_" + item.ViewData.Model.LineClass.Id) : ("TopLevel_" + item.ViewData.Model.LineClass.Id +  item.ViewData.Model.ProjectId))  + "-" + UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code })
     @item.HiddenFor(m => m.ProjectId)
     @item.HiddenFor(m => m.ProjectName)
     @item.HiddenFor(m => m.AssignementName)
@@ -560,7 +562,7 @@
      }
     @item.HiddenFor(m => m.LineClass.Id)
     @item.HiddenFor(m => m.LineClass.Name)
-    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code })
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + (item.ViewData.Model.AssignementName != "Top Level" ? (item.ViewData.Model.AssignementId + "_" + item.ViewData.Model.LineClass.Id) : ("TopLevel_" + item.ViewData.Model.LineClass.Id +  item.ViewData.Model.ProjectId))  + "-" + UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code })
     @item.HiddenFor(m => m.ProjectId)
     @item.HiddenFor(m => m.ProjectName)
     @item.HiddenFor(m => m.AssignementName)
@@ -579,7 +581,7 @@
         <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code">@SiteResources.Edit</a>
     }
     <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
+    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
     {
         <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
@@ -587,6 +589,8 @@
         <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")'>@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
         </text>
     }
+      @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
     @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code })
     @item.HiddenFor(m => m.ProjectId)
     @item.HiddenFor(m => m.ProjectName)
@@ -615,6 +619,8 @@
         <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")'>@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
         </text>
     }
+      @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
     @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code })
     @item.HiddenFor(m => m.ProjectId)
     @item.HiddenFor(m => m.ProjectName)
@@ -644,7 +650,11 @@
         <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")'>@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
         </text>
     }
-    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code })
+    
+      @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)@item.HiddenFor(m => m.AssignementId, new { @class = (item.ViewData.Model == null ? "p-guid-container" : "p-" 
+                                         + (item.ViewData.Model.AssignementName != "Top Level" ? (item.ViewData.Model.AssignementId + "_" + item.ViewData.Model.LineClass.Id) : 
+                                         ("TopLevel_" + item.ViewData.Model.LineClass.Id +  item.ViewData.Model.ProjectId)))  + "-" + UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code })
     @item.HiddenFor(m => m.ProjectId)
     @item.HiddenFor(m => m.ProjectName)
     @item.HiddenFor(m => m.AssignementName)

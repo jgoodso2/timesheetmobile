@@ -448,6 +448,15 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Line Classification.
+        /// </summary>
+        public static string LineClassification {
+            get {
+                return ResourceManager.GetString("LineClassification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to please wait, loading.
         /// </summary>
         public static string Loading {

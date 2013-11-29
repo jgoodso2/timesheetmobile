@@ -57,13 +57,23 @@ namespace TimeSheetBusiness
             }
         }
 
+        public List<LineClass> GetAllLineClassifications()
+        {
+            List<LineClass> lineclasses = new List<LineClass>();
+            var tsLineClassDs = adminClient.ReadLineClasses(SvcAdmin.LineClassType.All, SvcAdmin.LineClassState.Enabled).LineClasses.ToList();
+            foreach (var lineclass in tsLineClassDs)
+            {
+                lineclasses.Add(new LineClass(lineclass.TS_LINE_CLASS_UID.ToString(), lineclass.TS_LINE_CLASS_NAME));
+            }
+            return lineclasses;
+        }
         public List<LineClass> GetLineClassifications()
         {
             List<LineClass> lineclasses = new List<LineClass>();
             var tsLineClassDs = adminClient.ReadLineClasses(SvcAdmin.LineClassType.All, SvcAdmin.LineClassState.Enabled).LineClasses.Where(t => t.TS_LINE_CLASS_TYPE == 0);
             foreach (var lineclass in tsLineClassDs)
             {
-                lineclasses.Add(new LineClass(lineclass.TS_LINE_CLASS_UID.ToString(), lineclass.TS_LINE_CLASS_DESC ));
+                lineclasses.Add(new LineClass(lineclass.TS_LINE_CLASS_UID.ToString(), lineclass.TS_LINE_CLASS_NAME ));
             }
             return lineclasses;
         }
@@ -638,11 +648,15 @@ namespace TimeSheetBusiness
                                  var lineClass = classses.First(t => t.Id == line.TS_LINE_CLASS_UID.ToString());
                                  ar.LineClass = new LineClass(lineClass.Id, lineClass.Name);
                              }
+                             else
+                             {
+                                 ar.LineClass = GetLineClassifications().First(t => t.Name == "Standard");
+                             }
 
                          }
                          else
                          {
-                             GetLineClassifications();
+                            ar.LineClass = GetLineClassifications().First(t=>t.Name == "Standard");
                          }
                      }
 
@@ -688,7 +702,15 @@ namespace TimeSheetBusiness
                                 var lineClass = classses.First(t => t.Id == line.TS_LINE_CLASS_UID.ToString());
                                 ar.LineClass = new LineClass(lineClass.Id, lineClass.Name);
                             }
+                            else
+                            {
+                                ar.LineClass = GetLineClassifications().First(t => t.Name == "Standard");
+                            }
 
+                        }
+                        else
+                        {
+                            ar.LineClass = GetLineClassifications().First(t => t.Name == "Standard");
                         }
                     }
 
@@ -712,7 +734,15 @@ namespace TimeSheetBusiness
                                 var lineClass = classses.First(t => t.Id == line.TS_LINE_CLASS_UID.ToString());
                                 aor.LineClass = new LineClass(lineClass.Id, lineClass.Name);
                             }
+                            else
+                            {
+                                aor.LineClass = GetLineClassifications().First(t => t.Name == "Standard");
+                            }
 
+                        }
+                        else
+                        {
+                            aor.LineClass = GetLineClassifications().First(t => t.Name == "Standard");
                         }
                     }
                 }
@@ -756,6 +786,10 @@ namespace TimeSheetBusiness
                                 sv.LineClass = new LineClass(lineClass.Id, lineClass.Name);
                             }
 
+                        }
+                        else
+                        {
+                            sv.LineClass = GetLineClassifications().First(t => t.Name == "Standard");
                         }
                     }
                 }
@@ -1244,7 +1278,7 @@ namespace TimeSheetBusiness
             bool prepopulateForHours = false;
             Guid ruid = LoggedUser(user);
             SvcCustomFields.CustomFieldDataSet customfieldDataSet = GetCustomFields(configuration);
-            var lineClasses = GetLineClassifications();
+            var lineClasses = GetAllLineClassifications();
             Guid periodUID = Guid.Empty;
             if (!string.IsNullOrEmpty(periodId))
             {
@@ -1388,6 +1422,7 @@ namespace TimeSheetBusiness
                     {
                         SetImpersonation(user.Name);
                         tsDs = timesheetClient.ReadTimesheet(tuid); //calling ReadTimesheet to pre populate with default server settings
+                        timesheetDS = tsDs;
                     }
                     GetTimesheetAction(status, out canDelete, out canRecall);
 
@@ -1533,10 +1568,11 @@ namespace TimeSheetBusiness
                     result = GetAllSingleValues(lineClasses,null, timesheetDS, customfieldDataSet, user, configuration, periodId, start, stop, row.PROJ_UID.ToString(), row.ASSN_UID.ToString(), actual, overtime, customfieldDataSet);
                 if (actual != null)
                 {
-                    if (result) res.Add(actual);
+                    if (result || actual.AssignementName == "Top Level") res.Add(actual);
                     else
                     {
                         admin.DayTimes = actual.DayTimes;
+                        admin.LineClass = actual.LineClass;
                         res.Add(admin);
                     }
                 }
@@ -1590,12 +1626,12 @@ namespace TimeSheetBusiness
 
         }
 
-        public BaseRow GetRowSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string projectId, string assignementId,string lineClassID, Type RowType)
+        public BaseRow GetRowSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string projectId, string assignementId,string assignmentName,string lineClassID, Type RowType)
         {
 
             BaseRow res = null;
             var ruid = LoggedUser(user);
-            var lineClasses = GetLineClassifications();
+            var lineClasses = GetAllLineClassifications();
             SvcTimeSheet.TimesheetDataSet timesheetDS = new SvcTimeSheet.TimesheetDataSet();
             Guid periodUID;
             if (Guid.TryParse(periodId, out periodUID))
@@ -1626,14 +1662,18 @@ namespace TimeSheetBusiness
             else if (RowType == typeof(AdministrativeRow))
             {
                 res = new AdministrativeRow();
+                res.LineClass = GetAllLineClassifications().First(t => t.Name == assignmentName);
             }
             else if (RowType == typeof(NonBillableActualWorkRow))
             {
+
                 res = new NonBillableActualWorkRow();
+                res.LineClass = GetAllLineClassifications().First(t => t.Name == assignmentName);
             }
             else
             {
                 res = new NonBillableOvertimeWorkRow();
+                res.LineClass = GetAllLineClassifications().First(t => t.Name == assignmentName);
             }
             if (res != null)
             {
@@ -1648,7 +1688,7 @@ namespace TimeSheetBusiness
             var customfields = GetCustomFields(configuration);
             if (rows == null) return;
 
-            var crows = rows.GroupBy(m => m.Value.AssignementId + ":"+ m.Value.LineClass.Id);
+            var crows = rows.GroupBy(m => m.Value.LineClass == null ? m.Value.AssignementId : m.Value.AssignementId + "_"+ m.Value.LineClass.Id);
             Guid ruid = LoggedUser(user);
             IDictionary<string, WholeLine> dict =
                 new Dictionary<string, WholeLine>();
@@ -1682,7 +1722,7 @@ namespace TimeSheetBusiness
                     if (_resAssDS == null) _resAssDS = GetResourceAssignmentDataSet(user);
                     // weed out top level tasks since they are not intended for statusing
                     var statuslist = list.Where(t => (t.IsTopLevelTask == false) && (t.Changed == true)).ToList();
-                    statuslist = statuslist.Where(t => (_resAssDS.ResourceAssignment.Any(s => s.ASSN_UID == new Guid(t.Key.Split(":".ToCharArray())[0])))).ToList();
+                    statuslist = statuslist.Where(t => (_resAssDS.ResourceAssignment.Any(s => s.ASSN_UID == new Guid(t.Key.Split("_".ToCharArray())[0])))).ToList();
 
                     string xml = new ChangeXml(_resAssDS, statuslist, configuration, start, stop, this).Get(customfields);
                     using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
@@ -1700,7 +1740,7 @@ namespace TimeSheetBusiness
                 {
                     if (g.Actuals != null && g.Actuals.Count > 0 && g.Actuals[0].Values != null &&
                         (g.Actuals[0].Values.Value is AdministrativeRow || g.Actuals[0].Values.OldValue is AdministrativeRow)) continue;
-                    changedAssignements.Add(new Guid(g.Key.Split(":".ToCharArray())[0]));
+                    changedAssignements.Add(new Guid(g.Key.Split("_".ToCharArray())[0]));
                 }
                 try
                 {
@@ -1754,9 +1794,10 @@ namespace TimeSheetBusiness
                         foreach (var row in tsDs.Lines)
                         {
                             string assignementId = row.ASSN_UID.ToString();
+
                             string lineClassID = row.TS_LINE_CLASS_UID.ToString();
                             WholeLine group = null;
-                            bool res = dict.TryGetValue(assignementId + ":" + lineClassID, out group);
+                            bool res = dict.TryGetValue(assignementId + "_" + lineClassID, out group);
                             if (!res) continue;
                             group.ProjectId = row.PROJ_UID.ToString();
                             group.Processed = true;
@@ -1767,13 +1808,13 @@ namespace TimeSheetBusiness
 
                             if (group.Processed || !group.Changed) continue;
                             if (_resAssDS == null) _resAssDS = GetResourceAssignmentDataSet(user);
-                            createRow(user, group, ref tsDs, _resAssDS, null, configuration, start, stop, group.Key.Split(":".ToCharArray())[0], group.ProjectId, group.ProjectName);
+                            createRow(user, group, ref tsDs, _resAssDS, null, configuration, start, stop, group.Key.Split("_".ToCharArray())[0], group.ProjectId, group.ProjectName);
                             group.Processed = true;
                         }
                         List<SvcTimeSheet.TimesheetDataSet.LinesRow> rowsToDelete = new List<SvcTimeSheet.TimesheetDataSet.LinesRow>();
                         foreach (var row in tsDs.Lines)
                         {
-                            string assignementId = row.ASSN_UID != null ? row.ASSN_UID.ToString() +":" + row.TS_LINE_CLASS_UID.ToString() : row.TS_LINE_CLASS_UID.ToString();  //John; this line sets the assignmentUID?
+                            string assignementId = row.ASSN_UID != null ? row.ASSN_UID.ToString() +"_" + row.TS_LINE_CLASS_UID.ToString() : row.TS_LINE_CLASS_UID.ToString();  //John; this line sets the assignmentUID?
                             WholeLine group = null;
                             bool res = dict.TryGetValue(assignementId, out group);
                             if (!res) continue;

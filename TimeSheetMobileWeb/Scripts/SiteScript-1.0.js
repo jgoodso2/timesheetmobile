@@ -285,6 +285,7 @@ $(document).ready(function () {
         var jThis = $(this);
         $('.currentlineclassid').val(jThis.find('option:selected').val());
         $('.currentlineclassname').val(jThis.find('option:selected').text());
+        TSM_ConfirmAdd(true);
     });
 
     $('.updatetasks').change(function () {
@@ -429,6 +430,7 @@ function TSM_TasksOptionsCallback(jTarget) {
 
 function TSM_ConfirmAdd(show) {
     var cGuid = $('.dynamictasks').val();
+    var lineclassGuid = $(".updatelineclass").val()
     var projectId = $('#RequiredProgectId').val();
     if (cGuid == '') {
         $('.rowlist').each(function () { $(this).button('disable'); });
@@ -449,8 +451,14 @@ function TSM_ConfirmAdd(show) {
     }
     $('.rowlist').each(function () {
         var jThis = $(this);
-        var rowId = "p-" + cGuid + "-" + jThis.attr('data-button-selection');
-        var assnid = "p-" + "Top Level" + projectId + "-" + jThis.attr('data-button-selection');
+        var rowId;
+        if (projectId == "-1") {
+            rowId = "p-" + cGuid + "-" + jThis.attr('data-button-selection');
+        }
+        else {
+            rowId = "p-" + cGuid + "_" + lineclassGuid + "-" + jThis.attr('data-button-selection');
+        }
+        var assnid = "p-" + "TopLevel_" + lineclassGuid + projectId + "-" + jThis.attr('data-button-selection');
         if (((cGuid || '') != '') && ($('.currentperiodid').val() != '')) {
 
             if ($('.dynamictasks option:selected').text() == 'Top Level') {
@@ -462,8 +470,8 @@ function TSM_ConfirmAdd(show) {
                     jThis.button('enable');
                 }
                 else {
-                    jThis.button('enable');
-                    
+                    jThis.button('disable');
+
                 }
 
             }
@@ -608,99 +616,118 @@ function TSM_CompleteAddRow(data) {
     var prefix = item.attr("id");
     var end_prefix = prefix.lastIndexOf("_");
     prefix = prefix.substring(0, end_prefix);
-    
+
     TSM_CopyObjectToRow(item, data, prefix);
-    if (data["CustomFieldItems"] != undefined) {
-        $.ajax({
-            cache: false,
-            type: "POST",
-            url: 'Timesheet/CustomFields',
-            contentType: 'application/json',
-            dataType: "json",
-            data: JSON.stringify(data["CustomFieldItems"]),
-            success: function (data) {
-                $('#' + prefix).empty();
-                $('#' + prefix).html(data);
-                $('#' + prefix).find('[class=datatype]').each(function () {
-                    var datatype = $(this).val();
-                    var name = $(this).attr('field');
-
-                });
-                $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "-" + rowType);
-                $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
-                item.find('.goto').trigger('click');
-
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                if (xhr.readyState == 4) {
+    var projectId = $('#RequiredProgectId').val();
+    if (projectId != "-1") {
+        if (data["CustomFieldItems"] != undefined) {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: 'Timesheet/CustomFields',
+                async: "false",
+                contentType: 'application/json',
+                dataType: "json",
+                data: JSON.stringify(data["CustomFieldItems"]),
+                success: function (data) {
                     $('#' + prefix).empty();
-                    $('#' + prefix).html(xhr.responseText);
+                    $('#' + prefix).html(data);
                     $('#' + prefix).find('[class=datatype]').each(function () {
                         var datatype = $(this).val();
                         var name = $(this).attr('field');
+
+                    });
+                    if (data.AssignementName == 'Top Level') {
+                        $(".p-guid-container").removeClass("p-guid-container").addClass("p-" +  "TopLevel_" + data.LineClass.Id +  data.ProjectId +"-" + rowType);
+                    }
+                    else {
+                        $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "_" + data.LineClass.Id + "-" + rowType);
+                    }
+                    $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
+                    item.find('.goto').trigger('click');
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    if (xhr.readyState == 4) {
+                        $('#' + prefix).empty();
+                        $('#' + prefix).html(xhr.responseText);
                         $('#' + prefix).find('[class=datatype]').each(function () {
                             var datatype = $(this).val();
                             var name = $(this).attr('field');
-                            if (name == 'Lookup') {
-                                name = $(this).attr('lookuptable');
-                                datatype = 'Lookup';
-                            }
-                            $(".detailTBCS[name=" + name + "]").each(function () {
-                                var jThis = $(this);
-                                jThis.hide();
-                                if (jThis.attr('class').indexOf(datatype) >= 0) {
-                                    if (datatype == 'Date') {
-                                        if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() != '') {
-                                            jThis.text($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val().split(" ")[0]);
-                                        }
-                                        else {
-                                            jThis.text('No Date');
-                                        }
-                                    }
-                                    else if (datatype == 'Flag') {
-                                        if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == 'True') {
-                                            jThis[0].children[0].checked = true;
-                                            jThis[0].children[1].checked = false;
-                                        }
-                                        else if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == 'False') {
-                                            jThis[0].children[0].checked = false;
-                                            jThis[0].children[1].checked = true;
-                                        }
-                                        else {
-                                            if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == '') {
-                                                jThis[0].children[0].checked = false;
-                                                jThis[0].children[1].checked = false;
+                            $('#' + prefix).find('[class=datatype]').each(function () {
+                                var datatype = $(this).val();
+                                var name = $(this).attr('field');
+                                if (name == 'Lookup') {
+                                    name = $(this).attr('lookuptable');
+                                    datatype = 'Lookup';
+                                }
+                                $(".detailTBCS[name=" + name + "]").each(function () {
+                                    var jThis = $(this);
+                                    jThis.hide();
+                                    if (jThis.attr('class').indexOf(datatype) >= 0) {
+                                        if (datatype == 'Date') {
+                                            if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() != '') {
+                                                jThis.text($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val().split(" ")[0]);
+                                            }
+                                            else {
+                                                jThis.text('No Date');
                                             }
                                         }
-                                    }
-                                    else if (datatype == 'Lookup') {
-                                        jThis.html($('#' + prefix).find("." + name + "_display").html());
-                                        if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != undefined && $('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != '')
-                                            $('.' + name + 'lkp').val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val());
+                                        else if (datatype == 'Flag') {
+                                            if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == 'True') {
+                                                jThis[0].children[0].checked = true;
+                                                jThis[0].children[1].checked = false;
+                                            }
+                                            else if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == 'False') {
+                                                jThis[0].children[0].checked = false;
+                                                jThis[0].children[1].checked = true;
+                                            }
+                                            else {
+                                                if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() == '') {
+                                                    jThis[0].children[0].checked = false;
+                                                    jThis[0].children[1].checked = false;
+                                                }
+                                            }
+                                        }
+                                        else if (datatype == 'Lookup') {
+                                            jThis.html($('#' + prefix).find("." + name + "_display").html());
+                                            if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != undefined && $('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val() != '')
+                                                $('.' + name + 'lkp').val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=Lookupid]').val());
+                                        }
+                                        else {
+                                            jThis.val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val());
+                                        }
+                                        jThis.show();
                                     }
                                     else {
-                                        jThis.val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val());
+                                        jThis.empty();
                                     }
-                                    jThis.show();
-                                }
-                                else {
-                                    jThis.empty();
-                                }
+
+                                });
 
                             });
 
                         });
+                        if (data.AssignementName == 'Top Level') {
+                            $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + "TopLevel_" + data.LineClass.Id + data.ProjectId + "-" + rowType);
+                        }
+                        else {
+                            $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "_" + data.LineClass.Id + "-" + rowType);
+                        }
+                        $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
+                        item.find('.goto').trigger('click');
 
-                    });
-                    $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "-" + rowType);
-                    $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
-                    item.find('.goto').trigger('click');
+                    }
                 }
-            }
 
-        });
+            });
+        }
     }
-
+    else {
+        $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "-" + rowType);
+        $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
+        item.find('.goto').trigger('click');
+    }
 }
 
 function TSM_GetRowValue(name, prefix, value) {
