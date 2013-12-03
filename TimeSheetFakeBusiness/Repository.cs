@@ -113,6 +113,11 @@ namespace TimeSheetFakeBusiness
             }
             return res;
         }
+
+        public Dictionary<string, List<MyTimesheetApproval>> GetTimesheetApprovals(WindowsIdentity user)
+        {
+            throw new ArgumentException();
+        }
         public BaseRow GetRowSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string ProgectId, string AssignementId,string assignmentName,string lineClassID, Type RowType)
         {
             List<decimal?> standards = new List<decimal?> { 2.1m, 4.5m, 5, 5, 4, 6, 3 };

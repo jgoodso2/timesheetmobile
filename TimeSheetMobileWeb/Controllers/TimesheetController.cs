@@ -111,6 +111,18 @@ namespace TimeSheetMobileWeb.Controllers
             return View(model);
         }
 
+
+        [HttpGet()]
+        public ActionResult MyApprovals()
+        {
+
+            this.HttpContext.Trace.Warn("Starting MyApprovals of TimesheetController");
+            MyApprovalView model = new MyApprovalView();
+            model.TimesheetApprovals = Repository.GetTimesheetApprovals(User.Identity as System.Security.Principal.WindowsIdentity);
+            this.HttpContext.Trace.Warn("Returning from MyApprovals of TimesheetController");
+            return View("../Approvals/MyApprovals", model);
+        }
+
         public ActionResult TimesheetHistory(string speriod)
         {
             this.HttpContext.Trace.Warn("Starting Index of TimesheetController");

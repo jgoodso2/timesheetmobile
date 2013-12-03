@@ -74,6 +74,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelsResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="MyApprovalBase.cs" />
+    <Compile Include="MyTaskApproval.cs" />
+    <Compile Include="MyTimesheetApproval.cs" />
     <Compile Include="ProjectInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RowBase.cs" />

@@ -1,0 +1,48 @@
+﻿@model TimeSheetMobileWeb.Models.MyApprovalView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+@{
+    ViewBag.Title = SiteResources.MyApprovals;
+}
+@section head{
+<script src="@Url.Content("~/Scripts/TimesheetsScript-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.mobile.hidePageLoadingMsg();
+
+        $('.menu-link').click(function () {
+            $.mobile.loadingMessage = '@SiteResources.InitialLoadingMessage';
+            $.mobile.loadingMessageTheme = 'a';
+            $.mobile.loadingMessageTextVisible = true;
+            $.mobile.showPageLoadingMsg();
+            window.location.href = $(this).attr('data-action');
+        });
+    })
+    </script>
+}
+ <div class="wrapper" data-role='page' data-theme='a'>
+    <div>
+        <div class='header'>
+        <div></div>
+        </div>
+        <div class='contentmenu'>
+        @foreach (KeyValuePair<string,List<MyTimesheetApproval>> pair in Model.TimesheetApprovals)
+        {
+            <div>
+            @pair.Key
+            </div>
+            <ul id='menu'>
+            @foreach (var timesheet in @pair.Value)
+            {
+                <li><a href="#" class='menu-link' data-action='Url.Action("Index","Timesheet", new { speriod = @timesheet.Period.Replace("(", "-").Replace(")", "-") }, "http")"'>@timesheet.Period</a></li>
+            }
+            </ul>
+        }
+        </div>
+        
+        <div class='footer' >
+         <hr />
+        </div>
+
+

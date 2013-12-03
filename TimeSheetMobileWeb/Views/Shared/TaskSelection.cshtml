@@ -43,6 +43,8 @@
             data-native-menu="false" disabled="disabled" ><option value=''>@SiteResources.AssignementPrompt</option></select>
         }
 
+        @if (!Model.IsInTask)
+        {
         @h.LabelFor(m => m.RequiredProgectId, SiteResources.LineClassification)
                @h.DropDownListFor(m => m.RequiredLineClassId,
                                        new Dictionary<string, object> 
@@ -57,6 +59,7 @@
                 m => m.Name,
                 usePrompt: false
                 )) 
+        }
         @h.HiddenFor(m => m.RequiredPeriodId, new { @class = "currentperiodid" })
         @h.HiddenFor(m => m.RequiredLineClassId, new { @class = "currentlineclassid" })
         @h.HiddenFor(m => m.RequiredLineClassName, new { @class = "currentlineclassname" })
