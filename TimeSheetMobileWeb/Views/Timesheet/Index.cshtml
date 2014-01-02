@@ -32,7 +32,31 @@
                 <input id  = 'periodid' type = "hidden" value = '@Model.Period' />
             </div>
                 
+             
+
+            @if (Model.ApprovalMode)
+            {
+                
                 <div class="ui-grid-d">
+                    <div class="ui-block-a" >
+                    <input id="btnApprove" type="button" value="" class='main-icon-submit main-icon-approve fsubmit-mainform submit-mainform'  data-button-selection="@Model.RowTypes[0].Code"/>
+                    </div>
+                    <div class="ui-block-b" >
+                    <input id="btnReject" type="button" value="" class='main-icon-submit main-icon-reject fsubmit-mainform submit-mainform' data-button-selection="@Model.RowTypes[0].Code"/>
+                    </div>
+                 <div class="ui-block-a" >
+                 <input id="btnAdd" type="button" value="" class='main-icon-submit main-icon-add goto' data-button-target='taskselection' data-button-selection="@Model.RowTypes[0].Code"/>
+                 </div>
+                    <div class="ui-block-b" >
+                    <input id="Button1" type="button" value="" class='main-icon-submit main-icon-save submit csubmit-mainform submit-mainform' data-action-confirm ="@SiteResources.ConfirmSave"
+
+                        data-action-value='False' data-action-container='@Html.PrefixedId(m => m.Submit)'/>
+                   </div>
+            </div>
+            }
+            else
+            {
+               <div class="ui-grid-d">
                     <div class="ui-block-a" ><input id="btnAdd" type="button" value="" class='main-icon-submit main-icon-add goto' data-button-target='taskselection' data-button-selection="@Model.RowTypes[0].Code"/></div>
                     <div class="ui-block-b" ><input id="Button1" type="button" value="" class='main-icon-submit main-icon-save submit csubmit-mainform submit-mainform' data-action-confirm ="@SiteResources.ConfirmSave"
                         data-action-value='False' data-action-container='@Html.PrefixedId(m => m.Submit)'/></div>
@@ -41,21 +65,23 @@
                     
                     <div class="ui-block-e" ><input id='btnRecallDelete'  type="button" class='main-icon-submit main-icon-delete goto' data-button-target='recalldelete'/></div>
             </div>
+            }
+
             <div class='maininfo'>
                 <div class ='maininfoheader' data-role='content' data-theme='a'>
                     @if (Model.Totals != null)
                     {
-                        int i=0;
-                        
-                        foreach( var value in Model.Totals)
+                        int i = 0;
+
+                        foreach (var value in Model.Totals)
                         {
-                            <span class='combinedValue'>@Model.CurrentPeriodStart.AddDays(i).DayOfWeek.ToString().Substring(0,3)</span> <span>:</span>
-                            <span class='combinedValue grandtotals' id = '@string.Format("DayTimes_Total_{0}", i)'>@Math.Round(value,2)</span> <text>&nbsp;</text>
+                            <span class='combinedValue'>@Model.CurrentPeriodStart.AddDays(i).DayOfWeek.ToString().Substring(0, 3)</span> <span>:</span>
+                            <span class='combinedValue grandtotals' id = '@string.Format("DayTimes_Total_{0}", i)'>@Math.Round(value, 2)</span> <text>&nbsp;</text>
                             i++;
-                           
+
                         }
-                        
-                        
+
+
                     }
                         
                 </div>

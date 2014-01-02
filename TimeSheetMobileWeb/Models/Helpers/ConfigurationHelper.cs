@@ -14,12 +14,12 @@ namespace TimeSheetMobileWeb.Models
         private static string taskIdField = "_task_";
         private static string TimesheetIdField = "_row_";
         private static string cookieUpdatedField = "_updated_";
-        public static void UserConfiguration(IRepository rep, System.Security.Principal.WindowsIdentity user)
+        public static void UserConfiguration(IRepository rep, string user)
         {
             HttpCookie cookie = HttpContext.Current.Request.Cookies[cookiename];
             string taskId = null;
             string rowId = null;
-            if (cookie != null && cookie.Values[userField] == user.Name)
+            if (cookie != null && cookie.Values[userField] == user)
             {
                 taskId = cookie.Values[taskIdField];
                 rowId = cookie.Values[TimesheetIdField];
@@ -42,7 +42,7 @@ namespace TimeSheetMobileWeb.Models
                     if (newCookie==null) newCookie=new HttpCookie(cookiename);
                     newCookie.Values[taskIdField] = taskId;
                     newCookie.Values[TimesheetIdField] = rowId;
-                    newCookie.Values[userField] = user.Name;
+                    newCookie.Values[userField] = user;
                     newCookie.Values[cookieUpdatedField] = string.Empty;
                     newCookie.Expires = DateTime.Now.AddYears(1);
                     HttpContext.Current.Response.Cookies.Add(newCookie);
@@ -65,7 +65,7 @@ namespace TimeSheetMobileWeb.Models
             ViewConfigurationRow.Default = rowSelected;
             ViewConfigurationTask.Default = taskSelected;
         }
-        public static void ChangeUserConfiguration(IRepository rep, System.Security.Principal.WindowsIdentity user, UserConfigurationInfo conf)
+        public static void ChangeUserConfiguration(IRepository rep, string user, UserConfigurationInfo conf)
         {
             if (ViewConfigurationRow.ViewFieldName != null || ViewConfigurationTask.ViewFieldName != null)
             {
@@ -74,7 +74,7 @@ namespace TimeSheetMobileWeb.Models
             HttpCookie newCookie = new HttpCookie(cookiename);
             newCookie.Values[taskIdField] = conf.TaskViewId;
             newCookie.Values[TimesheetIdField] = conf.RowViewId;
-            newCookie.Values[userField] = user.Name;
+            newCookie.Values[userField] = user;
             newCookie.Expires = DateTime.Now.AddYears(1);
             newCookie.Values[cookieUpdatedField] = string.Empty;
             HttpContext.Current.Response.Cookies.Add(newCookie);

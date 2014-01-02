@@ -12,6 +12,7 @@ using SvcTimeSheet;
 using System.Web.Services.Protocols;
 using SvcAdmin;
 using PSLib = Microsoft.Office.Project.Server.Library;
+using System.Globalization;
 namespace PSITest
 {
     [TestClass]
@@ -38,6 +39,7 @@ namespace PSITest
         public  SvcCalendar.CalendarClient calendarClient;
         public  SvcArchive.ArchiveClient archiveClient;
         public  SvcPWA.PWAClient pwaClient;
+        public SvcStatusing.StatusingClient statusingClient;
         public TimeSheetClient timesheetClient;
         public SvcSecurity.SecurityClient securityClient;
 
@@ -204,7 +206,7 @@ namespace PSITest
             return obj;
         }
 
-        [TestMethod]
+        [Ignore]
         public void CreateDelegatedTimesheet()
         {
             //Surrogate Timesheets are deprecated from project server 2010
@@ -274,6 +276,83 @@ namespace PSITest
 
         }
 
+        [TestMethod]
+        public void Verify_TaskManagerEnabled_NoReqdLineApproval_NoSingleEntryMode()
+        {
+            using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
+            {
+                SetImpersonation("CONTOSO\\NISHANT");
+                var ds  = statusingClient.ReadStatusApprovalsSubmitted(true);
+            }
+            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+            {
+                SetImpersonation("CONTOSO\\ADMINISTRATOR");
+                var ds = timesheetClient.ReadTimesheetsPendingApproval(new DateTime(1984, 1, 1), new DateTime(2049, 12, 1), null);
+            }
+        }
+
+        [TestMethod]
+        public void Verify_TaskManagerEnabled_NoReqdLineApproval_SingleEntryMode()
+        {
+            using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
+            {
+                SetImpersonation("CONTOSO\\NISHANT");
+                var ds = statusingClient.ReadStatusApprovalsSubmitted(true);
+            }
+            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+            {
+                SetImpersonation("CONTOSO\\ADMINISTRATOR");
+                var ds = timesheetClient.ReadTimesheetsPendingApproval(new DateTime(1984, 1, 1), new DateTime(2049, 12, 1), null);
+            }
+        }
+
+        [TestMethod]
+        public void Verify_TaskManagerEnabled_ReqdLineApproval_SingleEntryMode()
+        {
+            using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
+            {
+                SetImpersonation("CONTOSO\\NISHANT");
+                var ds = statusingClient.ReadStatusApprovalsSubmitted(true);
+            }
+            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+            {
+                SetImpersonation("CONTOSO\\ADMINISTRATOR");
+                var ds = timesheetClient.ReadTimesheetsPendingApproval(new DateTime(1984, 1, 1), new DateTime(2049, 12, 1), null);
+
+            }
+        }
+
+        [TestMethod]
+        public void ApproveTimesheet()
+        {
+            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+            {
+                SetImpersonation("CONTOSO\\ADMINISTRATOR");
+                var ds = timesheetClient.ReadTimesheetsPendingApproval(new DateTime(1984, 1, 1), new DateTime(2049, 12, 1), null);
+                var tds = timesheetClient.ReadTimesheet(ds.Timesheets[0].TS_UID);
+                bool isWindowsUser;
+                timesheetClient.QueueReviewTimesheet(Guid.NewGuid(), tds.Headers[0].TS_UID, 
+                    GetResourceUidFromNtAccount("CONTOSO\\ADMINISTRATOR", out isWindowsUser) 
+                    //Guid.Empty
+                    ,"Approved",SvcTimeSheet.Action.Approve);
+                //timesheetClient.ApproveProjectTimesheetLines(timesheetClient.ReadTimesheet(ds.Timesheets[0].TS_UID).Lines.Where(t=>t.TS_LINE_VALIDATION_TYPE == 1).Select(t => t.TS_LINE_UID).ToArray(), null, "Approved by unit test");
+                
+            }
+        }
+
+
+        public void SetImpersonation(string impersonatedUser)
+        {
+            Guid trackingGuid = Guid.NewGuid();
+            bool isWindowsUser;
+            Guid siteId = Guid.Empty;           // Project Web App site ID.
+            CultureInfo languageCulture = null; // The language culture is not used.
+            CultureInfo localeCulture = null;   // The locale culture is not used.
+            Guid resourceGuid = GetResourceUidFromNtAccount(impersonatedUser, out isWindowsUser);
+            WcfHelpers.SetImpersonationContext(isWindowsUser, impersonatedUser, resourceGuid, trackingGuid, siteId,
+                                               languageCulture, localeCulture);
+            WCFHelpers.WcfHelpers.UseCorrectHeaders(true);
+        }
         // Set the PSI client endpoints programmatically; don't use app.config.
         private bool SetClientEndpointsProg(string pwaUrl)
         {
@@ -361,6 +440,11 @@ namespace PSITest
                 pwaClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 pwaClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+
+                statusingClient = new SvcStatusing.StatusingClient(binding, address);
+                statusingClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
+                    = TokenImpersonationLevel.Impersonation;
+                statusingClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
             }
             catch (Exception ex)
             {

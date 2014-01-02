@@ -13,7 +13,7 @@
 @{  
     List<object> ltemplates = new List<object>();
 
-    bool editEnabled = isTask || Model == null || (Model as UpdateTimesheetsView).CanDelete;
+    bool editEnabled = isTask || Model == null || (Model as UpdateTimesheetsView).CanDelete || Model.ApprovalMode;
     int rc = 0;
     int aw_index = -1;
     int aow_index = -1;
@@ -707,6 +707,7 @@
     @Html.HiddenFor(m => m.PeriodLength)
     @Html.HiddenFor(m => m.Status, new { @class = "currstatus" })
 }
+@Html.HiddenFor(m => m.ApprovalMode, new { @class = "approvalmode" })
 @Html.HiddenFor(m => m.CanDelete, new { @class = "candelete" })
 @Html.HiddenFor(m => m.CanRecall, new { @class = "canrecall" })
 @Html.HiddenFor(m => m.ErrorMessage, new { @class = "updateerrormessage" })

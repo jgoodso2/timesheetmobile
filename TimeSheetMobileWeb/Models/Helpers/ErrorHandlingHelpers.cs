@@ -10,11 +10,11 @@ namespace TimeSheetMobileWeb.Models
 {
     public static class ErrorHandlingHelpers
     {
-        public static void UpdateRows(IRepository rep, UpdateViewBase model, WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit)
+        public static void UpdateRows(bool isApprovalMode,IRepository rep, UpdateViewBase model, string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit)
         {
             try
             {
-                rep.UpdateRows(user, configuration, periodId, start, stop, rows, submit);
+                rep.UpdateRows(isApprovalMode,user, configuration, periodId, start, stop, rows, submit);
             }
             catch (UpdateException uex)
             {

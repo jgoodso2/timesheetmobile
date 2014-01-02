@@ -31,6 +31,8 @@ namespace TimeSheetMobileWeb.Models
         public TimesheetHeaderInfos HeaderInfos { get; set; }
         public string ErrorMessage { get; set; }
         public decimal[] Totals { get; set; }
+        public bool ApprovalMode { get; set; }
+
         
         public static RowType GetRowType(Type rowClass)
         {

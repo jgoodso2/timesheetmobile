@@ -81,7 +81,7 @@ function TSM_jsonSubmit(jForm) {
 }
 function TSM_formDirty(x, y) {
     y = y || 'mainform';
-    var cantEdit = ($('.currtotalact').length != 0) && ($('.candelete').val() != 'True');
+    var cantEdit = ($('.currtotalact').length != 0) && ($('.candelete').val() != 'True') && ($('.approvalmode').val() != 'True');
     var form = $('#' + y);
     form.data('_dirty_', x);
     form.trigger('dirtychange', x);

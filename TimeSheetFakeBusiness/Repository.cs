@@ -11,7 +11,7 @@ namespace TimeSheetFakeBusiness
     public class Repository: IRepository
     {
         public System.Security.Principal.WindowsIdentity AppPoolUser { get; set; }
-        public UserConfigurationInfo UserConfiguration(WindowsIdentity user, string rowField, string taskField)
+        public UserConfigurationInfo UserConfiguration(string user, string rowField, string taskField)
         {
             return new UserConfigurationInfo { TaskViewId = null, RowViewId = "RComplete" };
         }
@@ -31,7 +31,7 @@ namespace TimeSheetFakeBusiness
         {
             return true;
         }
-        public void ChangeUserConfiguration(WindowsIdentity user, UserConfigurationInfo conf, string rowField, string taskField)
+        public void ChangeUserConfiguration(string user, UserConfigurationInfo conf, string rowField, string taskField)
         {
             string dummy = rowField;
         }
@@ -50,7 +50,7 @@ namespace TimeSheetFakeBusiness
            
             return lineclasses;
         }
-        public List<BaseRow> GetRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, out int status, out bool canDelete, out bool canRecall, out TimesheetHeaderInfos tInfos,out decimal[] totals)
+        public List<BaseRow> GetRows(string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, out int status, out bool canDelete, out bool canRecall, out TimesheetHeaderInfos tInfos,out decimal[] totals)
         {
             tInfos = null;
             totals = null;
@@ -114,11 +114,13 @@ namespace TimeSheetFakeBusiness
             return res;
         }
 
-        public Dictionary<string, List<MyTimesheetApproval>> GetTimesheetApprovals(WindowsIdentity user)
+
+
+        public Dictionary<string, List<MyTimesheetApproval>> GetTimesheetApprovals(string user)
         {
             throw new ArgumentException();
         }
-        public BaseRow GetRowSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string ProgectId, string AssignementId,string assignmentName,string lineClassID, Type RowType)
+        public BaseRow GetRowSingleValues(string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string ProgectId, string AssignementId,string assignmentName,string lineClassID, Type RowType)
         {
             List<decimal?> standards = new List<decimal?> { 2.1m, 4.5m, 5, 5, 4, 6, 3 };
             if (RowType == typeof(ActualWorkRow))
@@ -163,7 +165,7 @@ namespace TimeSheetFakeBusiness
                                                                   ProjectName = "ProjNew1" };
             }
         }
-        public void UpdateRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit)
+        public void UpdateRows(bool isApprovalMode, string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit)
         {
             if (rows == null) return;
             var crows = rows.GroupBy(m => m.Value.AssignementId);
@@ -190,7 +192,7 @@ namespace TimeSheetFakeBusiness
                 tracker.Confirm();
             }
         }
-        public void RecallDelete(WindowsIdentity user, string periodId, DateTime start, DateTime stop, bool isRecall)
+        public void RecallDelete(string user, string periodId, DateTime start, DateTime stop, bool isRecall)
         {
         }
         public TimesheetsSets DefaultTimesheetSet {get {return TimesheetsSets.Last3;}}
@@ -199,7 +201,7 @@ namespace TimeSheetFakeBusiness
         {
             throw new Exception();
         }
-        public IEnumerable<Timesheet> SelectTimesheets(System.Security.Principal.WindowsIdentity user, TimesheetsSets set, out DateTime start, out DateTime end)
+        public IEnumerable<Timesheet> SelectTimesheets(string user, TimesheetsSets set, out DateTime start, out DateTime end)
         {
             start = DateTime.MinValue;
             end = DateTime.MaxValue;
@@ -240,7 +242,7 @@ namespace TimeSheetFakeBusiness
             canDelete = (status == 0) || (status == 4) || (status == 2);
             canRecall = (status == 1) || (status == 3) || (status == 2);
         }
-        public IEnumerable<ProjectInfo> UserProjects(System.Security.Principal.WindowsIdentity user)
+        public IEnumerable<ProjectInfo> UserProjects(string user)
         {
             List<ProjectInfo> res = new List<ProjectInfo>();
             res.Add(new ProjectInfo
@@ -256,7 +258,7 @@ namespace TimeSheetFakeBusiness
             return res;
         }
 
-        public IEnumerable<AssignementInfo> ProjectAssignements(System.Security.Principal.WindowsIdentity user, string ProjectId)
+        public IEnumerable<AssignementInfo> ProjectAssignements(string user, string ProjectId)
         {
             List<AssignementInfo> res = new List<AssignementInfo>();
             if (string.IsNullOrWhiteSpace(ProjectId))

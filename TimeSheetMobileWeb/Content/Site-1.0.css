@@ -189,6 +189,21 @@ div.footer-dynamic
 {
     background-image: url('images/1Add-2.png');
 }
+.main-icon-approve
+{
+    background-image: url('images/approve.png');
+}
+
+.main-icon-reject
+{
+    background-image: url('images/reject.png');
+}
+
+.main-icon-back
+{
+    background-image: url('images/back.png');
+}
+
 .main-icon-view
 {
     background-image: url('images/4View-1.png');
@@ -210,6 +225,10 @@ div.footer-dynamic
     background-image: none;
 }
 .main-icon-add[disabled=disabled], .main-icon-add:disabled
+{
+    background-image: none;
+}
+.main-icon-approve[disabled=disabled], .main-icon-approve:disabled
 {
     background-image: none;
 }

@@ -9,16 +9,16 @@ namespace TimeSheetIBusiness
 {
     public interface IRepository
     {
-        IEnumerable<ProjectInfo> UserProjects(WindowsIdentity user);
-        IEnumerable<AssignementInfo> ProjectAssignements(WindowsIdentity user, string ProjectId);
-        IEnumerable<Timesheet> SelectTimesheets(System.Security.Principal.WindowsIdentity user, TimesheetsSets set, out DateTime start, out DateTime end);
-        List<BaseRow> GetRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, out int status, out bool canDelete, out bool canRecall, out TimesheetHeaderInfos tInfos,out decimal[] totals);
-        BaseRow GetRowSingleValues(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string ProgectId, string AssignementId, string assignmentName, string lineClassID, Type RowType);
-        void UpdateRows(WindowsIdentity user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit);
+        IEnumerable<ProjectInfo> UserProjects(string user);
+        IEnumerable<AssignementInfo> ProjectAssignements(string user, string ProjectId);
+        IEnumerable<Timesheet> SelectTimesheets(string user, TimesheetsSets set, out DateTime start, out DateTime end);
+        List<BaseRow> GetRows(string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, out int status, out bool canDelete, out bool canRecall, out TimesheetHeaderInfos tInfos,out decimal[] totals);
+        BaseRow GetRowSingleValues(string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, string ProgectId, string AssignementId, string assignmentName, string lineClassID, Type RowType);
+        void UpdateRows(bool isApprovalMode, string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit);
         TimesheetsSets DefaultTimesheetSet {get;}
-        void RecallDelete(WindowsIdentity user, string periodId, DateTime start, DateTime stop, bool isRecall);
-        UserConfigurationInfo UserConfiguration(WindowsIdentity user, string rowField, string taskField);
-        void ChangeUserConfiguration(WindowsIdentity user, UserConfigurationInfo conf,  string rowField, string taskField);
+        void RecallDelete(string user, string periodId, DateTime start, DateTime stop, bool isRecall);
+        UserConfigurationInfo UserConfiguration(string user, string rowField, string taskField);
+        void ChangeUserConfiguration(string user, UserConfigurationInfo conf,  string rowField, string taskField);
         bool SetClientEndpointsProg(string pwaUrl);
         string GetPeriodID(DateTime start, DateTime end);
         CustomFieldInfo GetCustomFieldType(Guid id,int type, string property);
@@ -26,6 +26,6 @@ namespace TimeSheetIBusiness
 
         List<LineClass> GetLineClassifications();
         WindowsIdentity AppPoolUser { get; set; }
-        Dictionary<string,List<MyTimesheetApproval>> GetTimesheetApprovals(WindowsIdentity user);
+        Dictionary<string,List<MyTimesheetApproval>> GetTimesheetApprovals(string user);
     }
 }

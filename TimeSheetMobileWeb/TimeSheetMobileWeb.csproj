@@ -149,6 +149,8 @@
     <Content Include="Content\images\6Cancel-1.png" />
     <Content Include="Content\images\ajax-loader.gif" />
     <Content Include="Content\images\ajax-loader.png" />
+    <Content Include="Content\images\Approve.png" />
+    <Content Include="Content\images\Back.png" />
     <Content Include="Content\images\calendar.png" />
     <Content Include="Content\images\file.gif" />
     <Content Include="Content\images\folder-closed.gif" />
@@ -163,6 +165,7 @@
     <Content Include="Content\images\logo-progressive.PNG" />
     <Content Include="Content\images\minus.gif" />
     <Content Include="Content\images\plus.gif" />
+    <Content Include="Content\images\Reject.png" />
     <Content Include="Content\images\treeview-black-line.gif" />
     <Content Include="Content\images\treeview-black.gif" />
     <Content Include="Content\images\treeview-default-line.gif" />

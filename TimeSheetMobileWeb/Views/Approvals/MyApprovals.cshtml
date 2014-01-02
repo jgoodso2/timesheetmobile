@@ -35,7 +35,11 @@
             <ul id='menu'>
             @foreach (var timesheet in @pair.Value)
             {
-                <li><a href="#" class='menu-link' data-action='Url.Action("Index","Timesheet", new { speriod = @timesheet.Period.Replace("(", "-").Replace(")", "-") }, "http")"'>@timesheet.Period</a></li>
+
+                string newUser = timesheet.UserNTAccount;
+                    
+                <li><a href="#" class='menu-link' data-action='@Url.Action("Index", "Timesheet", new { speriod = "1-" + @timesheet.Period.Replace("(", "-").Replace(")", "-") + "-", user = newUser }, "http")'>
+                @string.Format("{0} {1} {2}",timesheet.Hours,timesheet.Name, timesheet.Period)</a></li>
             }
             </ul>
         }
@@ -43,6 +47,8 @@
         
         <div class='footer' >
          <hr />
+        </div>
+        </div>
         </div>
 
 

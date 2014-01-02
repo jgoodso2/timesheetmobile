@@ -47,7 +47,7 @@ namespace TimeSheetMobileWeb.Models
             }
             return bestFit;
         }
-        public static PeriodSelectionView GetInstance(IRepository repository, WindowsIdentity user, out Timesheet selection,TimesheetsSets set)
+        public static PeriodSelectionView GetInstance(IRepository repository, string user, out Timesheet selection,TimesheetsSets set)
         {
             PeriodSelectionView model = new PeriodSelectionView();
             model.AllTimesheetsSets = AllTimesheetSets;

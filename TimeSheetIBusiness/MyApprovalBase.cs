@@ -10,5 +10,6 @@ namespace TimeSheetIBusiness
         public string User {get;set;}
         public string ProjectId { get; set; }
         public string Approver { get; set; }
+        public string UserNTAccount { get; set; }
     }
 }
