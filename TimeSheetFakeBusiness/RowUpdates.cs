@@ -92,7 +92,7 @@ namespace TimeSheetIBusiness
 
                 if (x.Value is SingleValuesRow)
                 {
-                    Changed = CChanged;
+                    Changed = CChanged || VChanged;
                 }
                 else
                 {

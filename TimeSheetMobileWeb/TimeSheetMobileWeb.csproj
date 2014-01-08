@@ -110,6 +110,7 @@
     </Compile>
     <Compile Include="IoC\DependencyControllerFactory.cs" />
     <Compile Include="Models\BaseRowView.cs" />
+    <Compile Include="Models\BaseView.cs" />
     <Compile Include="Models\ConfirmationView.cs" />
     <Compile Include="Models\CustomFieldsView.cs" />
     <Compile Include="Models\DebugHelper.cs" />
@@ -196,6 +197,21 @@
     <Content Include="Content\jquery.treeview.css" />
     <Content Include="Content\license.txt" />
     <Content Include="Content\MenuStyle.css" />
+    <Content Include="Content\Parallon\images\icon-add-timesheet-26x26.png" />
+    <Content Include="Content\Parallon\images\icon-approval-32x32.png" />
+    <Content Include="Content\Parallon\images\icon-bulk-save-26X26.png" />
+    <Content Include="Content\Parallon\images\icon-bulk-send-26X26.png" />
+    <Content Include="Content\Parallon\images\icon-change-view-26x26.png" />
+    <Content Include="Content\Parallon\images\icon-delete-26x26.png" />
+    <Content Include="Content\Parallon\images\icon-home-26X26.png" />
+    <Content Include="Content\Parallon\images\icon-recall-26x26.png" />
+    <Content Include="Content\Parallon\images\icon-tasks-32x32.png" />
+    <Content Include="Content\Parallon\images\icon-timesheet-26x26.png" />
+    <Content Include="Content\Parallon\images\icon-timesheet-32x32.png" />
+    <Content Include="Content\Parallon\images\icon-view-26x26.png" />
+    <Content Include="Content\Parallon\images\logo.png" />
+    <Content Include="Content\Parallon\images\taskitem-bg.png" />
+    <Content Include="Content\Parallon\css\main.css" />
     <Content Include="Content\site.jquery.mobile-1.0.css.css" />
     <Content Include="Content\site.jquery.mobile-1.0.css.min.css" />
     <Content Include="Content\site.jquery.mobile.css" />
@@ -622,6 +638,7 @@
     <Content Include="Scripts\jquery-ui-1.8.17.custom.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.17.js" />
     <Content Include="Scripts\jquery-ui-1.8.17.min.js" />
+    <Content Include="Scripts\Jquery.js" />
     <Content Include="Scripts\jquery.mobile-1.0.js" />
     <Content Include="Scripts\jquery.mobile-1.0.min.js" />
     <Content Include="Scripts\jquery.mobile-1.1.0.js" />
@@ -635,6 +652,7 @@
     <Content Include="Scripts\knockout-2.0.0.debug.js" />
     <Content Include="Scripts\knockout.all-1.8.0.min.js" />
     <Content Include="Scripts\knockout.mapping-2.0.0.debug.js" />
+    <Content Include="Scripts\main.js" />
     <Content Include="Scripts\modernizr-1.7.js" />
     <Content Include="Scripts\modernizr-1.7.min.js" />
     <Content Include="Scripts\MvcControlToolkit.Bindings-1.8.0.js" />
@@ -697,6 +715,7 @@
     <Content Include="Views\Shared\CustomFieldEdit.cshtml" />
     <Content Include="Views\Shared\LookupTableItemsDisplay.cshtml" />
     <Content Include="Views\Approvals\MyApprovals.cshtml" />
+    <Content Include="Views\Tasks\RecallDelete.cshtml" />
     <None Include="_bin_deployableAssemblies\System.Web.Mvc.dll" />
     <None Include="_bin_deployableAssemblies\WebMatrix.WebData.xml" />
     <None Include="_bin_deployableAssemblies\WebMatrix.WebData.dll" />

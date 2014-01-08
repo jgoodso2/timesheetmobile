@@ -11,6 +11,10 @@ namespace TimeSheetFakeBusiness
     public class Repository: IRepository
     {
         public System.Security.Principal.WindowsIdentity AppPoolUser { get; set; }
+        public string GetUserName(string name)
+        {
+            return "";
+        }
         public UserConfigurationInfo UserConfiguration(string user, string rowField, string taskField)
         {
             return new UserConfigurationInfo { TaskViewId = null, RowViewId = "RComplete" };
@@ -164,7 +168,9 @@ namespace TimeSheetFakeBusiness
                                                                   AssignementName = "AssNew1",
                                                                   ProjectName = "ProjNew1" };
             }
+        
         }
+         
         public void UpdateRows(bool isApprovalMode, string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit)
         {
             if (rows == null) return;

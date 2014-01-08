@@ -1,4 +1,27 @@
 ﻿
+function TSM_OpenTask(id) {
+    var data = $('[data-row-from=' + id + ']');
+    var row_type = data.attr('data-button-selection');
+    row_choice_ViewList.Select("property_group_" + row_type);
+    $('#rowsTitle').text(TSM_DetailTitle(row_type));
+    var prefix = data.attr('data-row-from');
+    $('#basedetail').data('chosen-row', prefix);
+    TSM_CopyFromRow(prefix);
+}
+
+function TSM_SaveTask() {
+    var data = $(this);
+    if (!$('#detailform').validate().form()) {
+        data.cancel = true;
+        return;
+    }
+    TSM_ensurePositive();
+    TSM_CopyToRow($('#basedetail').data('chosen-row'));
+    TSM_UpdateMainLayout();
+    TSM_formDirty(true);
+}
+
+
 (function () {
     var cookiename = "_configuration_";
     var userField = "_user_";
@@ -36,13 +59,11 @@
 function TSM_ChangePage(page, options, origin) {
     var data = { cancel: false, action: origin };
     $('#' + page).trigger('gotoing', data);
-    if (!data.cancel) $.mobile.changePage('#' + page, options);
     $('#' + page).trigger('goto', data);
 }
 function TSM_Return(target, options, event, origin) {
     var data = { cancel: false, action: origin };
     $('#' + target).trigger(event + "ing", data);
-    if (!data.cancel) history.back();
     $('#' + target).trigger(event, data);
 }
 function TSM_LeaveTo(target, application, options) {
@@ -53,7 +74,7 @@ function TSM_LeaveTo(target, application, options) {
 }
 function TSM_partialSubmit(jForm) {
     var target = $('#' + jForm.attr('data-ajax-target'));
-    $.mobile.showPageLoadingMsg()
+    $.mobile.showPageLoadingMsg();
     $.post(jForm.attr('data-ajax-url'), jForm.serialize(), function (data) {
         target.html(data);
         $.validator.unobtrusive.reParse(target);
@@ -61,7 +82,7 @@ function TSM_partialSubmit(jForm) {
         var onComplete = jForm.attr('data-ajax-oncomplete') || null;
         if (onComplete != null) {
             onComplete = eval(onComplete);
-            onComplete();
+            onComplete(data);
 
         }
         $.mobile.hidePageLoadingMsg();
@@ -74,10 +95,11 @@ function TSM_jsonSubmit(jForm) {
         if (onComplete != null) {
             onComplete = eval(onComplete);
             onComplete($.parseJSON(data));
-            $.mobile.hidePageLoadingMsg();
+            
         }
     },
     "text");
+    $.mobile.hidePageLoadingMsg();
 }
 function TSM_formDirty(x, y) {
     y = y || 'mainform';
@@ -154,8 +176,6 @@ function TSM_prepareDatePicker(jField) {
     if (val == null || isNaN(val)) {
         val = null;
         sel = new Date();
-        if (min != null && sel < min) sel = min;
-        if (max != null && sel > max) sel = max;
     }
     else {
         if (min != null && val < min) val = min;
@@ -174,20 +194,7 @@ function TSM_prepareDatePicker(jField) {
 }
 
 function TSM_initButtons(options) {
-    function TSM_GoToHandler(e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        if (($(this).attr('data-rel') || '') == 'dialog') {
-            options = $.extend({}, options);
-            options['changeHash'] = false;
-        }
-        else {
-            options = $.extend({}, options);
-            options['changeHash'] = true;
-        }
-        if ($(this).hasClass('ui-disabled')) return;
-        TSM_ChangePage($(this).attr('data-button-target'), options, e.target);
-    }
+    
 
     if ($('.datapickerwidget').length > 0) {
         $('.datapickerwidget').datepicker({ onSelect: function (dateText, inst) {
@@ -223,23 +230,29 @@ function TSM_initButtons(options) {
         }
     );
 
-    $(".goto").click(
-        TSM_GoToHandler
-    );
+        
+
     $(".confirm").click(
         function (e) {
+
             e.preventDefault();
             e.stopImmediatePropagation();
             if ($(this).hasClass('ui-disabled')) return;
             TSM_Return($(this).attr('data-button-target'), options, 'confirm', e.target);
         }
     );
-    $(".loadConfirm").click(
+        $(".loadConfirm").click(
         function (e) {
             e.preventDefault();
             e.stopImmediatePropagation();
             if ($(this).hasClass('ui-disabled')) return;
-            $('#' + $(this).attr('data-button-target')).trigger('confirm', { cancel: false, action: e.target });
+            jThis = $(this);
+            var conf = jThis.attr('data-action-confirm');
+            if (conf && !window.confirm(conf)) return;
+            var target = $('#' + jThis.attr('data-action-container'));
+            target.val(jThis.attr('data-action-value'));
+            var fs = target.parents('form').first();
+            if (fs.validate().form()) TSM_partialSubmit(fs);
         }
     );
     $(".cancel").click(
@@ -258,15 +271,7 @@ function TSM_initButtons(options) {
             TSM_LeaveTo($(this).attr('data-button-target'), $(this).attr('data-button-application'));
         }
     );
-    MvcControlsToolkit_ParseRegister.add(
-     function (selector) {
-         $(selector).find('.goto').click(
-            TSM_GoToHandler
-         );
-
-     },
-
- false)
+       
 }
 
 var TSM_PageChangeOptions = null;
@@ -288,8 +293,14 @@ $(document).ready(function () {
         TSM_ConfirmAdd(true);
     });
 
+    $('.dynamictasks').change(function () {
+        $('.currentassname').val($(this).find('option:selected').text());
+        $('.currentassid').val($(this).find('option:selected').val());
+        TSM_ConfirmAdd(true);
+    });
+
     $('.updatetasks').change(function () {
-        var jThis = $(this);
+        var jThis = $('.updatetasks');
         if (jThis.val() == "-1") {
             $('.normalRows').hide();
             $('.adminRows').show();
@@ -302,23 +313,29 @@ $(document).ready(function () {
 
         $('.currentprojname').val(jThis.find('option:selected').text());
         var data = $('.currentprojname').val();
-        var selectedid = this.value
+        var selectedid = jThis.val();
 
-
-        MvcControlsToolkit_UpdateDropDownOptions(
-                jThis.attr('data-action') + '?projectId=' + selectedid,
-                $('.dynamictasks'),
-                jThis.attr('data-prompt'), null, null, TSM_TasksOptionsCallback);
-
-
-
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: jThis.attr('data-action') + '?projectId=' + selectedid,
+            async: "false",
+            contentType: 'application/json',
+            success: function (data) {
+                $('#assignmentsContainer').html(data);
+                TSM_TasksOptionsCallback($('.dynamictasks'));
+                TSM_ConfirmAdd();
+                $('.dynamictasks').change(function () {
+                    $('.currentassname').val($(this).find('option:selected').text());
+                    $('.currentassid').val($(this).find('option:selected').val());
+                    TSM_ConfirmAdd(true);
+                });
+            }
+        });
 
     });
 
-    $('.dynamictasks').change(function () {
-        $('.currentassname').val($(this).find('option:selected').text());
-        TSM_ConfirmAdd(true);
-    });
+
     //    $('.dynamicperiods').change(function (e) {
     //        TSM_NewPeriod();
     //    });
@@ -328,7 +345,7 @@ $(document).ready(function () {
         var target = $('#' + jForm.attr('data-ajax-target'));
         $.mobile.showPageLoadingMsg()
         var jForm = $('#periodform');
-        $.post(jForm.attr('data-ajax-url') + '?speriod=' + this.value, jForm.serialize(), function (data) {
+        $.post(jForm.attr('data-ajax-url') + '?speriod=' + $('.updatetimesheets').val(), jForm.serialize(), function (data) {
             target.html(data);
             $.validator.unobtrusive.reParse(target);
             TSM_initButtons(TSM_PageChangeOptions);
@@ -347,43 +364,15 @@ $(document).ready(function () {
     TSM_ConfirmPeriod(true, null);
     TSM_View();
     TSM_UpdateMainLayout();
-    $('#basedetail').bind('goto', function (e, data) {
-        var row_type = $(data.action).attr('data-button-selection');
-        row_choice_ViewList.Select("property_group_" + row_type);
-        $('#rowsTitle').text(TSM_DetailTitle(row_type));
-        var prefix = $(data.action).attr('data-row-from');
-        $('#basedetail').data('chosen-row', prefix);
-        TSM_CopyFromRow(prefix);
-    })
-
-    $('#basedetail').bind('goto', function (e, data) {
-        var row_type = $(data.action).attr('data-button-selection');
-        row_choice_ViewList.Select("property_group_" + row_type);
-        $('#rowsTitle').text(TSM_DetailTitle(row_type));
-        var prefix = $(data.action).attr('data-row-from');
-        $('#basedetail').data('chosen-row', prefix);
-        TSM_CopyFromRow(prefix);
-    })
 
 
 
 
-    .bind('confirming', function (e, data) {
-        if (!$('#detailform').validate().form()) {
-            data.cancel = true;
-            return;
-        }
-        TSM_ensurePositive();
-        TSM_CopyToRow($('#basedetail').data('chosen-row'));
-        TSM_UpdateMainLayout();
-        TSM_formDirty(true);
 
-    }
-    )
-    .bind('cancel', function () {
 
-    }
-    );
+
+
+
     $('.allrowsContainer').bind('itemChange', function (e, data) {
         if (data.ChangeType == 'ItemCreated') {
             TSM_UpdateMainLayout();
@@ -395,31 +384,32 @@ $(document).ready(function () {
         }
     });
 });
-$(document).live('pageinit', function (e) {
-    if (e.target.id == 'taskselection') {
-        TSM_TasksOptionsCallback($('.dynamictasks'));
-        TSM_ConfirmAdd();
+$(document).ready(function (e) {
+    if (e.target != undefined) {
+        if (e.target.id == 'taskselection') {
+            TSM_TasksOptionsCallback($('.dynamictasks'));
+            TSM_ConfirmAdd();
 
-    }
-    else if (e.target.id == 'periodselection') {
-        TSM_PeriodsOptionsCallback($('.updatetimesheets'));
+        }
+        else if (e.target.id == 'periodselection') {
+            TSM_PeriodsOptionsCallback($('.updatetimesheets'));
+        }
     }
 
 })
 function TSM_TasksOptionsCallback(jTarget) {
     if (jTarget.length > 0) {
-        if (jTarget[0].options.length > 1) jTarget.selectmenu("enable");
-        else jTarget.selectmenu("disable");
-        jTarget.selectmenu("refresh");
+        if (jTarget[0].options.length > 1) jTarget.removeAttr("disabled");
+        else jTarget.attr("disabled","disabled");
         TSM_ConfirmAdd();
     }
     else {
-        jTarget.selectmenu("disable");
+        jTarget.attr("disabled", "disabled");
         TSM_ConfirmAdd();
         if ($('#RequiredProgectId option:selected').text() != 'Choose project') {
             $('.rowlist').each(function () {
                 var jThis = $(this);
-                jThis.button('enable');
+                jThis.removeAttr("disabled");
             });
             $('#' + $('#RequiredProgectId option:selected').text() + '_display').val('Top Level');
 
@@ -433,21 +423,21 @@ function TSM_ConfirmAdd(show) {
     var lineclassGuid = $(".updatelineclass").val()
     var projectId = $('#RequiredProgectId').val();
     if (cGuid == '') {
-        $('.rowlist').each(function () { $(this).button('disable'); });
+        $('.rowlist').each(function () { $(this).attr('disabled','disabled'); });
         if (projectId == "-1") {
-            $(".updatelineclass").selectmenu('disable');
+            $(".updatelineclass").attr("disabled", "disabled");
         }
         else {
-            $(".updatelineclass").selectmenu('enable');
+            $(".updatelineclass").removeAttr("disabled");
         }
         return;
     }
 
     if (projectId == "-1") {
-        $(".updatelineclass").selectmenu('disable');
+        $(".updatelineclass").attr("disabled", "disabled");
     }
     else {
-        $(".updatelineclass").selectmenu('enable');
+        $(".updatelineclass").removeAttr("disabled");
     }
     $('.rowlist').each(function () {
         var jThis = $(this);
@@ -462,15 +452,15 @@ function TSM_ConfirmAdd(show) {
         if (((cGuid || '') != '') && ($('.currentperiodid').val() != '')) {
 
             if ($('.dynamictasks option:selected').text() == 'Top Level') {
-                if ($("." + assnid).length == 0) jThis.button('enable');
-                else jThis.button('disable');
+                if ($("." + assnid).length == 0) jThis.removeAttr("disabled");
+                else jThis.attr('disabled','disabled');
             }
             else {
                 if ($("." + rowId).length == 0) {
-                    jThis.button('enable');
+                    jThis.removeAttr("disabled");
                 }
                 else {
-                    jThis.button('disable');
+                    jThis.attr('disabled','disabled');
 
                 }
 
@@ -478,7 +468,7 @@ function TSM_ConfirmAdd(show) {
 
 
         }
-        else jThis.button('disable');
+        else jThis.attr('disabled','disabled');
     });
 }
 var TSM_CurrRowType = null;
@@ -488,12 +478,12 @@ function TSM_PrepareRowType(button) {
 }
 function TSM_PeriodsOptionsCallback(jTarget) {
     ////    if (jTarget[0].options.length > 0) {
-    jTarget.selectmenu("enable");
+    jTarget.removeAttr("disabled");
     $('#btnConfirmPeriod').prop('disabled', false);
     ////        
     ////    }
     ////    else {
-    ////        jTarget.selectmenu("disable");
+    ////        jTarget.attr('disabled','disabled')
     ////        $('#btnConfirmPeriod').prop('disabled', true);
     ////    }
     jTarget.selectmenu("refresh");
@@ -552,14 +542,13 @@ function TSM_ConfirmPeriod(x, y) {
 
 function TSM_ConfirmPeriodCallBack(data) {
     var s = data;
-    history.back();
     TSM_formDirty(false);
     TSM_UpdateMainLayout();
     $('.currstatus-d').text($('.currstatus').val() || '');
 }
 
 function TSM_UpdateMainLayout() {
-    $('.updatemainlayout').trigger('updatelayout');
+   // $('.updatemainlayout').trigger('updatelayout');
 
 
 
@@ -588,11 +577,6 @@ function TSM_ConfirmView() {
     if (rowC.length > 0) current.row = rowC.val();
     if (taskC.length > 0) current.task = taskC.val();
     configuration.set(current.row, current.task);
-    if (($('.currentperiodid').val() || '') == '') {
-        history.back();
-        return;
-    }
-    $.mobile.showPageLoadingMsg()
     $('#periodform').submit();
 }
 function TSM_startAddRow(origin) {
@@ -601,7 +585,7 @@ function TSM_startAddRow(origin) {
     TSM_jsonSubmit($('#rowRequest'));
 }
 function TSM_CompleteAddRow(data) {
-
+    data.ProjectId = $('#RequiredProgectId').val();
     TSM_formDirty(true);
     var rowType = $('.currentrowtype').val();
     var template = TSM_ChooseTemplate(rowType);
@@ -618,6 +602,8 @@ function TSM_CompleteAddRow(data) {
     prefix = prefix.substring(0, end_prefix);
 
     TSM_CopyObjectToRow(item, data, prefix);
+
+    
     var projectId = $('#RequiredProgectId').val();
     if (projectId != "-1") {
         if (data["CustomFieldItems"] != undefined) {
@@ -644,7 +630,7 @@ function TSM_CompleteAddRow(data) {
                         $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "_" + data.LineClass.Id + "-" + rowType);
                     }
                     $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
-                    item.find('.goto').trigger('click');
+                    TSM.init();
 
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -715,7 +701,7 @@ function TSM_CompleteAddRow(data) {
                             $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "_" + data.LineClass.Id + "-" + rowType);
                         }
                         $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
-                        item.find('.goto').trigger('click');
+                        TSM.init();
 
                     }
                 }
@@ -726,7 +712,7 @@ function TSM_CompleteAddRow(data) {
     else {
         $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "-" + rowType);
         $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
-        item.find('.goto').trigger('click');
+        TSM.init();
     }
 }
 
@@ -914,7 +900,8 @@ function TSM_ensurePositive() {
     });
 }
 
-function TSM_DeleteRow(prefix) {
+function TSM_DeleteRow() {
+    var prefix = $('#basedetail').data('chosen-row');
     prefix = prefix.replace("_remove", "");
     $(".detailTB").each(function () {
         var jThis = $(this);
@@ -1058,8 +1045,22 @@ function TSM_CopyFromRow(prefix) {
     });
 
 }
-function TSM_CopySummary(isTask) {
-    $('.updateerrormessage-d').text($('.updateerrormessage').val() || '');
+
+function reload() {
+    window.location.href = window.location.href;
+}
+
+function GotoUrl(url) {
+    window.location.href = url;
+}
+function TSM_CopySummary(isTask,msg) {
+    if (msg) {
+        $('.updateerrormessage-d').text(msg);
+    }
+    else {
+        $('.updateerrormessage-d').text($('.updateerrormessage').val() || '');
+    }
+
     if (!isTask) {
         $('.currstatus-d').text($('.currstatus').val() || '');
         $('.currcomments-d').text($('.currcomments').val() || '');
@@ -1119,7 +1120,8 @@ function daysBetween(sfirst, ssecond) {
     return Math.floor(days) + 1;
 }
 function TSM_PrepareDays(start, end) {
-    var container = $('#dayContainer');
+    var container = $('#dayTemplate');
+    var hdrContainer = $('#dayHdrTemplate');
     if (container.length == 0) return;
     var oldStart = container.data('oldStart') || '';
     var olddur = container.data('olddur') || '';
@@ -1128,21 +1130,29 @@ function TSM_PrepareDays(start, end) {
     if ((start == oldStart && dur == olddur)) {
         return;
     }
-    container.empty();
+   
     var template = $('#dayTemplate').html();
+    var hdrTemplate = $('#dayHdrTemplate').html();
+    container.empty();
+    hdrContainer.empty();
     var toBuild = "";
+    var toBuildhdr = "";
     var dateStart = MvcControlsToolkit_Parse(start, MvcControlsToolkit_DataType_DateTime);
     var curr = dateStart;
     var i = 0;
     while (i < dur) {
-        if (i != 0 && i % 2 == 0) toBuild = toBuild + "</br>";
         var ds = MvcControlsToolkit_Format(curr, 'ddd MM/dd', MvcControlsToolkit_DataType_DateTime, '', ' ');
-        toBuild = toBuild + template.replace(/_plh_/g, i + '').replace(/_p1lh_/g, ds);
+        toBuildhdr = toBuildhdr + hdrTemplate.replace(/_p1lh_/g, ds);
+        toBuild = toBuild + template.replace(/_plh_/g, i + '');
         i++;
         curr = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate() + 1);
     }
-    $(toBuild).appendTo(container);
-    $.validator.unobtrusive.parseExt('#dayContainer');
+    container.html(toBuild);
+    hdrContainer.html(toBuildhdr);
+    //$(toBuild).appendTo(container);
+    //$(toBuildhdr).appendTo(hdrContainer);
+    //$.validator.unobtrusive.parseExt('#dayContainer');
+    //$.validator.unobtrusive.parseExt('#dayhdrContainer');
     $(document).ready(function () { container.find("input:text").focus(function () { $(this).select(); }); });
     container.data('oldStart', start);
     container.data('olddur', dur);
@@ -1150,7 +1160,7 @@ function TSM_PrepareDays(start, end) {
 
 MvcControlsToolkit_ParseRegister.add(
 
- function (selector) { if (selector != '#dayContainer') $(selector).trigger('create'); },
+ function (selector) { if (selector != '#dayContainer' ) $(selector).trigger('create'); },
 
  false)
 

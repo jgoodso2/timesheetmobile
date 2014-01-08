@@ -3,54 +3,32 @@
 @using TimeSheetIBusiness
 @{
     ViewBag.Title = SiteResources.HomeMenuTasks;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section head{
 <script src="@Url.Content("~/Scripts/TasksScripts-1.0.js")" type="text/javascript"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('.menu-link').click(function () {
-            $.mobile.hidePageLoadingMsg();
-        });
-    })
+        $.mobile.hidePageLoadingMsg();
+    });
     </script>
 }
-<div data-role='page' id='tasks' data-title="@SiteResources.HomeMenuTasks" data-theme='a' data-leave-application='@SiteResources.LeaveApplication' class = 'ajaxLoader'>
-    <div data-role='header'class='wrapper updatemainlayout' data-theme='a' data-position='fixed'>
-        <div>
-         
-                                            
-            <div class='header' >
-                <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")"></div>
-                <h2>@SiteResources.HomeMenuTasks</h2>
-            </div>
-            <div data-role='content' data-theme='b' class='periodHeader'>
-               <span id="indexPeriod" class='currenttimesheet'>@Model.PeriodString</span>
-                
-                <input id  = 'periodid' type = "hidden" value = '@Model.Period' />
-            </div>
-            <form id="periodform" action = '@Url.Action("Index", "Tasks")' 
-                     data-ajax-url='@Url.Action("Refresh", "Tasks")' data-ajax-target='allTimesheetsEdit' 
-                                            data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
-            <div class="ui-grid-c">
-                <div class="ui-block-a" ><input id="btnAdd" type="button" value="" class='main-icon-submit main-icon-add goto' data-button-target='taskselection' data-button-selection="@Model.RowTypes[0].Code"/></div>
-                <div class="ui-block-b" ><input id="Button1" type="button" value="" class='main-icon-submit main-icon-save submit csubmit-mainform submit-mainform' data-action-confirm ="@SiteResources.ConfirmSave"
-                    data-action-value='False' data-action-container='@Html.PrefixedId(m => m.Submit)'/></div>
-                <div class="ui-block-c" ><input id="Button2" type="button" value="" class='main-icon-submit main-icon-send submit fsubmit-mainform submit-mainform' data-action-confirm ="@SiteResources.ConfirmSubmit"
-                    data-action-value='True' data-action-container='@Html.PrefixedId(m => m.Submit)'/></div>
-                <div class="ui-block-d" ><input  type="button" class='main-icon-submit main-icon-view goto' data-button-target='viewselection'/></div>
-            </div>
-            </form> 
-            <div class='maininfo'>
-                <div class ='maininfoheader' data-role='content' data-theme='a'>         
-                   
-                </div>
-            </div>
+<div  id='tasks' class='container timesheetContainer'>
+ <h1>@SiteResources.HomeMenuTasks
+	<span class="pull-right">@Context.Session["CurrentUser"].ToString()</span>
+	</h1>
+    <div class="date-container">
+
+    <span>
+			<ul>
+				<li class="icon-show-list" data-role="modal" data-target="#recallDelete">List</li>
+			</ul>
+		</span>
         </div>
-    </div>
-    <div data-role='content' class='wrapper' data-theme='a'>
-        <div>
-            <div class='maininfo'>
-                <div class='maininfocontent allrowsContainer' data-role='content' data-theme='c' id="allTimesheetsEdit">
+   
+    <div class="details-content">
+        <div class="listing">
+                <div class='maininfocontent allrowsContainer'  id="allTimesheetsEdit">
                 @if (Model != null && Model.PeriodRows != null)
                 {
                     @Html.Partial("Edit", Model)
@@ -60,28 +38,40 @@
             </div>
         </div>
     </div>
-     <div data-role='footer' data-position='fixed' class='wrapper updatemainlayout' data-theme='a'>
-        <div>
-            
-            
-            <div>
-                <div class='footer-dynamic'>
-                <hr />
-                </div>
-            </div>
-        </div>
-    </div> 
-    
-</div>
+     <footer>
+	<ul>
+		<li><a href='#' onclick='GotoUrl("@Url.Action("Index", "Home")")' class="icon-footer-home"></a>@SiteResources.Home</li>
+		<li><a href="" class="main-icon-submit main-icon-save submit csubmit-mainform submit-mainform icon-footer-save" data-action-confirm ="@SiteResources.ConfirmSave"
+                        data-action-value='False' data-action-container='@Html.PrefixedId(m => m.Submit)'></a>@SiteResources.Save</li>
+		<li><a href="" class="main-icon-submit main-icon-send submit fsubmit-mainform submit-mainform icon-footer-submit" data-action-confirm ="@SiteResources.ConfirmSubmit"
+                        data-action-value='True' data-action-container='@Html.PrefixedId(m => m.Submit)'></a>@SiteResources.Submit</li>
+	</ul>
+</footer>  
+<div id="taskSelection" style="display:none">
 @Html.Action("TaskSelection", "Tasks");
+</div>
+<div id="viewSelection" style="display:none">
 @Html.Partial("ViewSelection", new ViewDataDictionary<ViewSelectionView>(
     new ViewSelectionView {TaskUpdatorViewId=ViewConfigurationTask.Default.Id,  TimesheetViewId=ViewConfigurationRow.Default.Id, IsTask=true}));
+    </div>
+    <div id="recallDelete" style="display:none">
+@Html.Action("RecallDelete", "Tasks")
+</div>
+    <div id="updaterecallsummary" style="display:none">
 @Html.Partial("UpdateSummary")
+</div>
+<div id="detail" style="display:none">
 @Html.Partial("Detail", new ViewDataDictionary<BaseRowView>(new BaseRowView {TaskRow=true, Title = SiteResources.HomeMenuTaskDetail, PeriodLength=Model.PeriodLength }))
+</div>
+<div id="rowChoice" style="display:none">
 @if (Model != null && Model.RowTypes != null && Model.RowTypes.Length > 1)
 {
     @Html.Partial("RowChoice", new ViewDataDictionary<RowType[]>(Model.RowTypes))
 }
+</div>
+<div id="timeInput" style="display:none">
 @Html.Partial("TimeInput", new ViewDataDictionary<TimeInputView>())
+</div>
+<script src="@Url.Content("~/Scripts/main.js")" type="text/javascript"></script>
 
 

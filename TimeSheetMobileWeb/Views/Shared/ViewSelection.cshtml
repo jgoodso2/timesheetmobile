@@ -1,27 +1,26 @@
 ﻿@model TimeSheetMobileWeb.Models.ViewSelectionView
 @using TimeSheetMobileWeb.Models
 @using TimeSheetIBusiness
+<div  id='viewselection'>
+    <div id="view-display" class="modal" style="display: block;">
+     <a href="#" class="pull-right close" data-role="dismiss" data-target="#timesheet-display">
+            close</a>
 
-<div data-role='page' id='viewselection' class='wrapper' data-title="@SiteResources.ChangeViewTitle" data-theme='a' >
-    <div>
-        <div class='header' >
-            <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
-            <h2>@SiteResources.ChangeViewTitle</h2>
-        </div>
-        <div data-role='content' class='content' data-theme='a' >
-                <div data-role='content' data-theme='b' >
+         <div class="modal-content">
+         <h3>@SiteResources.ChangeViewTitle
+		</h3>
+
                 @if (!Model.IsTask)
                 {
                     <label for='@Html.PrefixedId(m => m.TimesheetViewId)'><strong>@SiteResources.RowViewLabel</strong></label>
-                    @Html.DropDownListFor(m => m.TimesheetViewId,
-                                           new Dictionary<string, object> 
-                                           { { "class", "mobilegadget updaterowview" }, 
-                                           { "data-native-menu", "false" }},
-                    ChoiceListHelper.Create(
-                        ViewConfigurationRow.All,
-                        m => m.Id,
-                        m => m.Name,
-                        usePrompt: false))
+                    <label>
+                    <select id="@Model.TimesheetViewId" class="updaterowview">
+                    @foreach (var value in ViewConfigurationRow.All)
+                    {
+                        <option value='@value.Id'>@value.Name</option>
+                    }
+                    </select>
+                        </label>
                     <script type="text/javascript">
                         var _rowViewDescriptions_ = {};
                         @foreach (var x in ViewConfigurationRow.All)
@@ -34,15 +33,14 @@
                 else
                 {
                       <label for='@Html.PrefixedId(m => m.TaskUpdatorViewId)'><strong>@SiteResources.TaskViewLabel</strong></label>
-                      @Html.DropDownListFor(m => m.TaskUpdatorViewId,
-                                           new Dictionary<string, object> 
-                                           { { "class", "mobilegadget updatetaskview" }, 
-                                           { "data-native-menu", "false" }},
-                    ChoiceListHelper.Create(
-                        ViewConfigurationTask.All,
-                        m => m.Id,
-                        m => m.Name,
-                        usePrompt: false))
+                    <label>
+                    <select id="@Model.TaskUpdatorViewId">
+                      @foreach (var value in ViewConfigurationTask.All)
+                      {
+                        <option value='@value.Id'>@value.Name</option>
+                      }
+                    </select>
+                        </label>
                         <script type="text/javascript">
                         var _taskViewDescriptions_ = {};
                         @foreach (var x in ViewConfigurationTask.All)
@@ -63,16 +61,15 @@
                     <p><strong><span >@SiteResources.CurrentRowView</span></strong></p><p class="maincontent"><strong><span class="currentrowview"></span></strong></p>
                     <p class="description rowViewDescription-o"></p>
                 }
-                    <form id="periodform" action = '@Url.Action("Index", "Timesheet")' 
-                     data-ajax-url='@Url.Action("Refresh", "Timesheet")' data-ajax-target='allTimesheetsEdit' 
+                    <form id="periodform" action = '@Url.Action("Index", (Model.IsTask ? "Tasks" : "Timesheet"))'
+                     data-ajax-url='@Url.Action("Refresh", (Model.IsTask ? "Tasks" : "Timesheet"))' data-ajax-target='allTimesheetsEdit' 
                                             data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
-                    <input id="btnConfirmView" type="button" value="@SiteResources.ChangeViewDone" class='main-submit loadConfirm' data-button-target='viewselection' />
-                    <input id="btnCancelView" type="button" value="@SiteResources.Cancel" class='main-submit cancel' data-button-target='viewselection' />
+
+                    <input id="btnConfirmView" data-role="dismiss" data-callback="TSM_ConfirmView" type="button" value="@SiteResources.ChangeViewDone" class='main-submit btn save' 
+                     data-target="#viewselection"/>
+                    <input id="btnCancelView" data-role="dismiss" data-target="#viewselection" type="button" value="@SiteResources.Cancel" class='main-submit btn cancel'  data-button-target='viewselection' />
                     </form>
                 </div>
         </div>
-        <div class='footer'>
-            <hr />
-        </div>
+       
     </div>
-</div>

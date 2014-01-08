@@ -26,96 +26,70 @@
          (!isTask && ViewConfigurationRow.Default.ActualWorkA))
     {
         ltemplates.Add(_S.H<ActualWorkRow>(
-    @<text> <span id='@(item.PrefixedId(m => m.ProjectName) + @item.ValueFor(m=>m.LineClass.Id) + "_display")' >@item.FormattedDisplay(m => m.ProjectName)</span>
-    @if (!isTask)
-    {
-        <a href="#" class='ui-link'  id='@item.PrefixedId("remove")' onclick="TSM_DeleteRow('@item.PrefixedId("remove")');">@SiteResources.Remove</a>
-    }
-    @if (editEnabled)
-    {
-        <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code">@SiteResources.Edit</a>
-    }
-    <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + @item.ValueFor(m=>m.LineClass.Id) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
-    <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualWorkA_Name : ViewConfigurationRow.Default.ActualWorkA_Name)</span>
-    &nbsp;
+             @<text>
+            <ul><li data-role="modal" class="goto" data-target="#detail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code">
+					<span id='@(item.PrefixedId(m => m.ProjectName) + "_display")'><strong>@item.FormattedDisplay(m => m.ProjectName)</strong></span>
+					<span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class=''>@item.FormattedDisplay(m => m.AssignementName)</span>
+                    <span id='@(item.PrefixedId(m => m.LineClass.Name) + "_display")' class=''>@item.FormattedDisplay(m => m.LineClass.Name)</span>
+
+				</li></ul>
+    
+   
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
     {
-        <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
+        
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code + "_header" })
-        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")' >@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
-        </text>
     }
-    <br />
+    
     @if ((isTask && ViewConfigurationTask.Default.WorkA) ||
                         (!isTask && ViewConfigurationRow.Default.WorkA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.WorkA_Name : ViewConfigurationRow.Default.WorkA_Name)</span>
         @item.HiddenFor(m => m.WorkA)
-        <span id='@(item.PrefixedId(m => m.WorkA) + "_display")'>@item.FormattedDisplay(m => m.WorkA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RegularWorkA) ||
                         (!isTask && ViewConfigurationRow.Default.RegularWorkA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RegularWorkA_Name : ViewConfigurationRow.Default.RegularWorkA_Name)</span>
         @item.HiddenFor(m => m.RegularWorkA)
-        <span id='@(item.PrefixedId(m => m.RegularWorkA) + "_display")'>@item.FormattedDisplay(m => m.RegularWorkA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RemainingWorkA) ||
                         (!isTask && ViewConfigurationRow.Default.RemainingWorkA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RemainingWorkA_Name : ViewConfigurationRow.Default.RemainingWorkA_Name)</span>
         @item.HiddenFor(m => m.RemainingWorkA)
-        <span id='@(item.PrefixedId(m => m.RemainingWorkA) + "_display")'>@item.FormattedDisplay(m => m.RemainingWorkA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.StartA) ||
                         (!isTask && ViewConfigurationRow.Default.StartA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.StartA_Name : ViewConfigurationRow.Default.StartA_Name)</span>
         @item.HiddenFor(m => m.StartA)
-        <span id='@(item.PrefixedId(m => m.StartA) + "_display")' data-format="@item.ClientFormatting(m => m.StartA)">@item.FormattedDisplay(m => m.StartA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.FinishA) ||
                         (!isTask && ViewConfigurationRow.Default.FinishA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.FinishA_Name : ViewConfigurationRow.Default.FinishA_Name)</span>
         @item.HiddenFor(m => m.FinishA)
-        <span id='@(item.PrefixedId(m => m.FinishA) + "_display")' data-format="@item.ClientFormatting(m => m.FinishA)">@item.FormattedDisplay(m => m.FinishA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ActualStartA) ||
                         (!isTask && ViewConfigurationRow.Default.ActualStartA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualStartA_Name : ViewConfigurationRow.Default.ActualStartA_Name)</span>
         @item.HiddenFor(m => m.ActualStartA)
-        <span id='@(item.PrefixedId(m => m.ActualStartA) + "_display")' data-format="@item.ClientFormatting(m => m.ActualStartA)">@item.FormattedDisplay(m => m.ActualStartA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ActualFinishA) ||
                         (!isTask && ViewConfigurationRow.Default.ActualFinishA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualFinishA_Name : ViewConfigurationRow.Default.ActualFinishA_Name)</span>
         @item.HiddenFor(m => m.ActualStartA)
-        <span id='@(item.PrefixedId(m => m.ActualFinishA) + "_display")' data-format="@item.ClientFormatting(m => m.ActualFinishA)">@item.FormattedDisplay(m => m.ActualFinishA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.PercentWorkCompleteA) ||
                         (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.PercentWorkCompleteA_Name : ViewConfigurationRow.Default.PercentWorkCompleteA_Name)</span>
         @item.HiddenFor(m => m.PercentWorkCompleteA)
-        <span id='@(item.PrefixedId(m => m.PercentWorkCompleteA) + "_display")' data-format="@item.ClientFormatting(m => m.PercentWorkCompleteA)">@item.FormattedDisplay(m => m.PercentWorkCompleteA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.AssignmentUnitsA) ||
                         (!isTask && ViewConfigurationRow.Default.AssignmentUnitsA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.AssignmentUnitsA_Name : ViewConfigurationRow.Default.AssignmentUnitsA_Name)</span>
         @item.HiddenFor(m => m.AssignmentUnitsA)
-        <span id='@(item.PrefixedId(m => m.AssignmentUnitsA) + "_display")' >@item.FormattedDisplay(m => m.AssignmentUnitsA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ConfirmedA) ||
                     (!isTask && ViewConfigurationRow.Default.ConfirmedA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ConfirmedA_Name : ViewConfigurationRow.Default.ConfirmedA_Name)</span>
         @item.HiddenFor(m => m.ConfirmedA)
-        <span id='@(item.PrefixedId(m => m.ConfirmedA) + "_display")'>@(item.ViewData.Model != null && item.ViewData.Model.ConfirmedA.HasValue && item.ViewData.Model.ConfirmedA.Value ? SiteResources.Checked : SiteResources.UnChecked)</span>
     }
     else
     {
@@ -124,109 +98,77 @@
     @if ((isTask && ViewConfigurationTask.Default.CommentsA) ||
                         (!isTask && ViewConfigurationRow.Default.CommentsA))
     {
-        <br />
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.CommentsA_Name : ViewConfigurationRow.Default.CommentsA_Name)</span>
         @item.HiddenFor(m => m.CommentsA)
-        <span id='@(item.PrefixedId(m => m.CommentsA) + "_display")'>@item.FormattedDisplay(m => m.CommentsA)</span>
-        <br />
     }
     @if ((isTask && ViewConfigurationTask.Default.WorkT) ||
                         (!isTask && ViewConfigurationRow.Default.WorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.WorkT_Name : ViewConfigurationRow.Default.WorkT_Name)</span>
         @item.HiddenFor(m => m.WorkT)
-        <span id='@(item.PrefixedId(m => m.WorkT) + "_display")'>@item.FormattedDisplay(m => m.WorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RegularWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.RegularWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RegularWorkT_Name : ViewConfigurationRow.Default.RegularWorkT_Name)</span>
         @item.HiddenFor(m => m.RegularWorkT)
-        <span id='@(item.PrefixedId(m => m.RegularWorkT) + "_display")'>@item.FormattedDisplay(m => m.RegularWorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RemainingWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.RemainingWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RemainingWorkT_Name : ViewConfigurationRow.Default.RemainingWorkT_Name)</span>
         @item.HiddenFor(m => m.RemainingWorkT)
-        <span id='@(item.PrefixedId(m => m.RemainingWorkT) + "_display")'>@item.FormattedDisplay(m => m.RemainingWorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ActualWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.ActualWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualWorkT_Name : ViewConfigurationRow.Default.ActualWorkT_Name)</span>
         @item.HiddenFor(m => m.ActualWorkT)
-        <span id='@(item.PrefixedId(m => m.ActualWorkT) + "_display")'>@item.FormattedDisplay(m => m.ActualWorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.StartT) ||
                         (!isTask && ViewConfigurationRow.Default.StartT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.StartT_Name : ViewConfigurationRow.Default.StartT_Name)</span>
         @item.HiddenFor(m => m.StartT)
-        <span id='@(item.PrefixedId(m => m.StartT) + "_display")' data-format="@item.ClientFormatting(m => m.StartT)">@item.FormattedDisplay(m => m.StartT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.FinishT) ||
                         (!isTask && ViewConfigurationRow.Default.FinishT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.FinishT_Name : ViewConfigurationRow.Default.FinishT_Name)</span>
         @item.HiddenFor(m => m.FinishT)
-        <span id='@(item.PrefixedId(m => m.FinishT) + "_display")' data-format="@item.ClientFormatting(m => m.FinishT)">@item.FormattedDisplay(m => m.FinishT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ResumeT) ||
                         (!isTask && ViewConfigurationRow.Default.ResumeT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ResumeT_Name : ViewConfigurationRow.Default.ResumeT_Name)</span>
         @item.HiddenFor(m => m.ResumeT)
-        <span id='@(item.PrefixedId(m => m.ResumeT) + "_display")' data-format="@item.ClientFormatting(m => m.ResumeT)">@item.FormattedDisplay(m => m.ResumeT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.DeadlineT) ||
                         (!isTask && ViewConfigurationRow.Default.DeadlineT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.DeadlineT_Name : ViewConfigurationRow.Default.DeadlineT_Name)</span>
         @item.HiddenFor(m => m.DeadlineT)
-        <span id='@(item.PrefixedId(m => m.DeadlineT) + "_display")' data-format="@item.ClientFormatting(m => m.DeadlineT)">@item.FormattedDisplay(m => m.DeadlineT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.DurationT) ||
                         (!isTask && ViewConfigurationRow.Default.DurationT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.DurationT_Name : ViewConfigurationRow.Default.DurationT_Name)</span>
         @item.HiddenFor(m => m.DurationT)
-        <span id='@(item.PrefixedId(m => m.DurationT) + "_display")'>@item.FormattedDisplay(m => m.DurationT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RemainingDurationT) ||
                         (!isTask && ViewConfigurationRow.Default.RemainingDurationT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RemainingDurationT_Name : ViewConfigurationRow.Default.RemainingDurationT_Name)</span>
         @item.HiddenFor(m => m.RemainingDurationT)
-        <span id='@(item.PrefixedId(m => m.RemainingDurationT) + "_display")'>@item.FormattedDisplay(m => m.RemainingDurationT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.TaskNameT) ||
                         (!isTask && ViewConfigurationRow.Default.TaskNameT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.TaskNameT_Name : ViewConfigurationRow.Default.TaskNameT_Name)</span>
         @item.HiddenFor(m => m.TaskNameT)
-        <span id='@(item.PrefixedId(m => m.TaskNameT) + "_display")'>@item.FormattedDisplay(m => m.TaskNameT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.PercentCompleteT) ||
                         (!isTask && ViewConfigurationRow.Default.PercentCompleteT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.PercentWorkCompleteT_Name : ViewConfigurationRow.Default.PercentWorkCompleteT_Name)</span>
         @item.HiddenFor(m => m.PercentCompleteT)
-        <span id='@(item.PrefixedId(m => m.PercentCompleteT) + "_display")' data-format="@item.ClientFormatting(m => m.PercentCompleteT)">@item.FormattedDisplay(m => m.PercentCompleteT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.PercentWorkCompleteT) ||
                         (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.PercentWorkCompleteT_Name : ViewConfigurationRow.Default.PercentWorkCompleteT_Name)</span>
         @item.HiddenFor(m => m.PercentWorkCompleteT)
-        <span id='@(item.PrefixedId(m => m.PercentWorkCompleteT) + "_display")' data-format="@item.ClientFormatting(m => m.PercentWorkCompleteT)">@item.FormattedDisplay(m => m.PercentWorkCompleteT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.PhysicalPercentCompleteT) ||
                         (!isTask && ViewConfigurationRow.Default.PhysicalPercentCompleteT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.PhysicalPercentCompleteT_Name : ViewConfigurationRow.Default.PhysicalPercentCompleteT_Name)</span>
         @item.HiddenFor(m => m.PhysicalPercentCompleteT)
-        <span id='@(item.PrefixedId(m => m.PhysicalPercentCompleteT) + "_display")' data-format="@item.ClientFormatting(m => m.PhysicalPercentCompleteT)">@item.FormattedDisplay(m => m.PhysicalPercentCompleteT)</span>
     }
     @if ((ViewConfigurationRow.Default.CustomFields != null)
                                     )
@@ -252,57 +194,43 @@
     @item.HiddenFor(m => m.ProjectName)
     @item.HiddenFor(m => m.AssignementName)
     @item.HiddenFor(m => m.ProjectId, new { @class = item.ViewData.Model == null ? "p-project-container" : "p-" + (item.ViewData.Model.AssignementId + item.ViewData.Model.ProjectId) + "-" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code })
-    </text>
+     </text>
             ));
         aw_index = rc;
         rc++;
+       
     }
 
     if ((isTask && ViewConfigurationTask.Default.ActualOvertimeWorkA && (!ViewConfigurationTask.Default.NoTPData)) ||
        (!isTask && ViewConfigurationRow.Default.ActualOvertimeWorkA))
     {
         ltemplates.Add(_S.H<ActualOvertimeWorkRow>(
-    @<text> <span id='@(item.PrefixedId(m => m.ProjectName) + "_display")' >@item.FormattedDisplay(m => m.ProjectName)</span>
-    @if (!isTask)
-    {
-        <a href="#"   id='@item.PrefixedId("remove")' onclick="TSM_DeleteRow('@item.PrefixedId("remove")');">@SiteResources.Remove</a>
-    }
-    @if (editEnabled)
-    {
-        <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code">@SiteResources.Edit</a>
-    }
-    <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
-    <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualOvertimeWorkA_Name : ViewConfigurationRow.Default.ActualOvertimeWorkA_Name)</span>
+    @<text> 
+    <ul><li data-role="modal" class="goto" data-target="#detail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code">
+					<strong>@item.FormattedDisplay(m => m.ProjectName)</strong>
+					<span>@item.FormattedDisplay(m => m.AssignementName)</span>
+				</li></ul>
+    <span class="">@(isTask ? ViewConfigurationTask.Default.ActualOvertimeWorkA_Name : ViewConfigurationRow.Default.ActualOvertimeWorkA_Name)</span>
     &nbsp;
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
     {
-        <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code + "_header" })
-        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")'>@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
-        </text>
     }
-    <br />
+   
     @if ((isTask && ViewConfigurationTask.Default.OvertimeWorkA) ||
                         (!isTask && ViewConfigurationRow.Default.OvertimeWorkA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.OvertimeWorkA_Name : ViewConfigurationRow.Default.OvertimeWorkA_Name)</span>
         @item.HiddenFor(m => m.OvertimeWorkA)
-        <span id='@(item.PrefixedId(m => m.OvertimeWorkA) + "_display")'>@item.FormattedDisplay(m => m.OvertimeWorkA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.OvertimeWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.OvertimeWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.OvertimeWorkT_Name : ViewConfigurationRow.Default.OvertimeWorkT_Name)</span>
         @item.HiddenFor(m => m.OvertimeWorkT)
-        <span id='@(item.PrefixedId(m => m.OvertimeWorkT) + "_display")'>@item.FormattedDisplay(m => m.OvertimeWorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RemainingOvertimeWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.RemainingOvertimeWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RemainingOvertimeWorkT_Name : ViewConfigurationRow.Default.RemainingOvertimeWorkT_Name)</span>
         @item.HiddenFor(m => m.RemainingOvertimeWorkT)
-        <span id='@(item.PrefixedId(m => m.RemainingOvertimeWorkT) + "_display")'>@item.FormattedDisplay(m => m.RemainingOvertimeWorkT, decimalFormat)</span>
     }
     
       @item.HiddenFor(m => m.LineClass.Id)
@@ -322,89 +250,69 @@
     {
         bool aNewLine = true;
         ltemplates.Add(_S.H<SingleValuesRow>(
-    @<text> <span id='@(item.PrefixedId(m => m.ProjectName) + "_display")' >@item.FormattedDisplay(m => m.ProjectName)</span>
-    <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code">@SiteResources.Edit</a>
-    <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
+    @<text>  <ul><li data-role="modal" class="goto" data-target="#detail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code">
+					<strong>@item.FormattedDisplay(m => m.ProjectName)</strong>
+					<span>@item.FormattedDisplay(m => m.AssignementName)</span>
+				</li></ul>
     @if ((isTask && ViewConfigurationTask.Default.WorkA) ||
                         (!isTask && ViewConfigurationRow.Default.WorkA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.WorkA_Name : ViewConfigurationRow.Default.WorkA_Name)</span>
         @item.HiddenFor(m => m.WorkA)
-        <span id='@(item.PrefixedId(m => m.WorkA) + "_display")'>@item.FormattedDisplay(m => m.WorkA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RegularWorkA) ||
                         (!isTask && ViewConfigurationRow.Default.RegularWorkA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RegularWorkA_Name : ViewConfigurationRow.Default.RegularWorkA_Name)</span>
         @item.HiddenFor(m => m.RegularWorkA)
-        <span id='@(item.PrefixedId(m => m.RegularWorkA) + "_display")'>@item.FormattedDisplay(m => m.RegularWorkA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RemainingWorkA) ||
                         (!isTask && ViewConfigurationRow.Default.RemainingWorkA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RemainingWorkA_Name : ViewConfigurationRow.Default.RemainingWorkA_Name)</span>
         @item.HiddenFor(m => m.RemainingWorkA)
-        <span id='@(item.PrefixedId(m => m.RemainingWorkA) + "_display")'>@item.FormattedDisplay(m => m.RemainingWorkA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.StartA) ||
                         (!isTask && ViewConfigurationRow.Default.StartA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.StartA_Name : ViewConfigurationRow.Default.StartA_Name)</span>
         @item.HiddenFor(m => m.StartA)
-        <span id='@(item.PrefixedId(m => m.StartA) + "_display")' data-format="@item.ClientFormatting(m => m.StartA)">@item.FormattedDisplay(m => m.StartA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.FinishA) ||
                         (!isTask && ViewConfigurationRow.Default.FinishA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.FinishA_Name : ViewConfigurationRow.Default.FinishA_Name)</span>
         @item.HiddenFor(m => m.FinishA)
-        <span id='@(item.PrefixedId(m => m.FinishA) + "_display")' data-format="@item.ClientFormatting(m => m.FinishA)">@item.FormattedDisplay(m => m.FinishA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ActualStartA) ||
                         (!isTask && ViewConfigurationRow.Default.ActualStartA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualStartA_Name : ViewConfigurationRow.Default.ActualStartA_Name)</span>
         @item.HiddenFor(m => m.ActualStartA)
-        <span id='@(item.PrefixedId(m => m.ActualStartA) + "_display")' data-format="@item.ClientFormatting(m => m.ActualStartA)">@item.FormattedDisplay(m => m.ActualStartA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ActualFinishA) ||
                         (!isTask && ViewConfigurationRow.Default.ActualFinishA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualFinishA_Name : ViewConfigurationRow.Default.ActualFinishA_Name)</span>
         @item.HiddenFor(m => m.ActualStartA)
-        <span id='@(item.PrefixedId(m => m.ActualFinishA) + "_display")' data-format="@item.ClientFormatting(m => m.ActualFinishA)">@item.FormattedDisplay(m => m.ActualFinishA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.PercentWorkCompleteA) ||
                         (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.PercentWorkCompleteA_Name : ViewConfigurationRow.Default.PercentWorkCompleteA_Name)</span>
         @item.HiddenFor(m => m.PercentWorkCompleteA)
-        <span id='@(item.PrefixedId(m => m.PercentWorkCompleteA) + "_display")' data-format="@item.ClientFormatting(m => m.PercentWorkCompleteA)">@item.FormattedDisplay(m => m.PercentWorkCompleteA)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.AssignmentUnitsA) ||
                         (!isTask && ViewConfigurationRow.Default.AssignmentUnitsA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.AssignmentUnitsA_Name : ViewConfigurationRow.Default.AssignmentUnitsA_Name)</span>
         @item.HiddenFor(m => m.AssignmentUnitsA)
-        <span id='@(item.PrefixedId(m => m.AssignmentUnitsA) + "_display")' >@item.FormattedDisplay(m => m.AssignmentUnitsA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ConfirmedA) ||
                     (!isTask && ViewConfigurationRow.Default.ConfirmedA))
     {
         aNewLine = false;
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ConfirmedA_Name : ViewConfigurationRow.Default.ConfirmedA_Name)</span>
         @item.HiddenFor(m => m.ConfirmedA)
-        <span id='@(item.PrefixedId(m => m.ConfirmedA) + "_display")'>@(item.ViewData.Model != null && item.ViewData.Model.ConfirmedA.HasValue && item.ViewData.Model.ConfirmedA.Value ? SiteResources.Checked : SiteResources.UnChecked)</span>
     }
     else
     {
@@ -413,135 +321,94 @@
     @if ((isTask && ViewConfigurationTask.Default.CommentsA) ||
                         (!isTask && ViewConfigurationRow.Default.CommentsA))
     {
-        if (!aNewLine)
-        {
-            aNewLine = true;
-        <br />
-        }     
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.CommentsA_Name : ViewConfigurationRow.Default.CommentsA_Name)</span>
+           
         @item.HiddenFor(m => m.CommentsA)
-        <span id='@(item.PrefixedId(m => m.CommentsA) + "_display")'>@item.FormattedDisplay(m => m.CommentsA)</span>
-        <br />
                         
     }
     @if ((isTask && ViewConfigurationTask.Default.WorkT) ||
                         (!isTask && ViewConfigurationRow.Default.WorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.WorkT_Name : ViewConfigurationRow.Default.WorkT_Name)</span>
         @item.HiddenFor(m => m.WorkT)
-        <span id='@(item.PrefixedId(m => m.WorkT) + "_display")'>@item.FormattedDisplay(m => m.WorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RegularWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.RegularWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RegularWorkT_Name : ViewConfigurationRow.Default.RegularWorkT_Name)</span>
         @item.HiddenFor(m => m.RegularWorkT)
-        <span id='@(item.PrefixedId(m => m.RegularWorkT) + "_display")'>@item.FormattedDisplay(m => m.RegularWorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RemainingWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.RemainingWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RemainingWorkT_Name : ViewConfigurationRow.Default.RemainingWorkT_Name)</span>
         @item.HiddenFor(m => m.RemainingWorkT)
-        <span id='@(item.PrefixedId(m => m.RemainingWorkT) + "_display")'>@item.FormattedDisplay(m => m.RemainingWorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ActualWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.ActualWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ActualWorkT_Name : ViewConfigurationRow.Default.ActualWorkT_Name)</span>
         @item.HiddenFor(m => m.ActualWorkT)
-        <span id='@(item.PrefixedId(m => m.ActualWorkT) + "_display")'>@item.FormattedDisplay(m => m.ActualWorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.StartT) ||
                         (!isTask && ViewConfigurationRow.Default.StartT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.StartT_Name : ViewConfigurationRow.Default.StartT_Name)</span>
         @item.HiddenFor(m => m.StartT)
-        <span id='@(item.PrefixedId(m => m.StartT) + "_display")' data-format="@item.ClientFormatting(m => m.StartT)">@item.FormattedDisplay(m => m.StartT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.FinishT) ||
                         (!isTask && ViewConfigurationRow.Default.FinishT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.FinishT_Name : ViewConfigurationRow.Default.FinishT_Name)</span>
         @item.HiddenFor(m => m.FinishT)
-        <span id='@(item.PrefixedId(m => m.FinishT) + "_display")' data-format="@item.ClientFormatting(m => m.FinishT)">@item.FormattedDisplay(m => m.FinishT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.ResumeT) ||
                         (!isTask && ViewConfigurationRow.Default.ResumeT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.ResumeT_Name : ViewConfigurationRow.Default.ResumeT_Name)</span>
         @item.HiddenFor(m => m.ResumeT)
-        <span id='@(item.PrefixedId(m => m.ResumeT) + "_display")' data-format="@item.ClientFormatting(m => m.ResumeT)">@item.FormattedDisplay(m => m.ResumeT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.DeadlineT) ||
                         (!isTask && ViewConfigurationRow.Default.DeadlineT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.DeadlineT_Name : ViewConfigurationRow.Default.DeadlineT_Name)</span>
         @item.HiddenFor(m => m.DeadlineT)
-        <span id='@(item.PrefixedId(m => m.DeadlineT) + "_display")' data-format="@item.ClientFormatting(m => m.DeadlineT)">@item.FormattedDisplay(m => m.DeadlineT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.DurationT) ||
                         (!isTask && ViewConfigurationRow.Default.DurationT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.DurationT_Name : ViewConfigurationRow.Default.DurationT_Name)</span>
         @item.HiddenFor(m => m.DurationT)
-        <span id='@(item.PrefixedId(m => m.DurationT) + "_display")'>@item.FormattedDisplay(m => m.DurationT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RemainingDurationT) ||
                         (!isTask && ViewConfigurationRow.Default.RemainingDurationT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RemainingDurationT_Name : ViewConfigurationRow.Default.RemainingDurationT_Name)</span>
         @item.HiddenFor(m => m.RemainingDurationT)
-        <span id='@(item.PrefixedId(m => m.RemainingDurationT) + "_display")'>@item.FormattedDisplay(m => m.RemainingDurationT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.TaskNameT) ||
                         (!isTask && ViewConfigurationRow.Default.TaskNameT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.TaskNameT_Name : ViewConfigurationRow.Default.TaskNameT_Name)</span>
         @item.HiddenFor(m => m.TaskNameT)
-        <span id='@(item.PrefixedId(m => m.TaskNameT) + "_display")'>@item.FormattedDisplay(m => m.TaskNameT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.PercentCompleteT) ||
                         (!isTask && ViewConfigurationRow.Default.PercentCompleteT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.PercentWorkCompleteT_Name : ViewConfigurationRow.Default.PercentWorkCompleteT_Name)</span>
         @item.HiddenFor(m => m.PercentCompleteT)
-        <span id='@(item.PrefixedId(m => m.PercentCompleteT) + "_display")' data-format="@item.ClientFormatting(m => m.PercentCompleteT)">@item.FormattedDisplay(m => m.PercentCompleteT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.PercentWorkCompleteT) ||
                         (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.PercentWorkCompleteT_Name : ViewConfigurationRow.Default.PercentWorkCompleteT_Name)</span>
         @item.HiddenFor(m => m.PercentWorkCompleteT)
-        <span id='@(item.PrefixedId(m => m.PercentWorkCompleteT) + "_display")' data-format="@item.ClientFormatting(m => m.PercentWorkCompleteT)">@item.FormattedDisplay(m => m.PercentWorkCompleteT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.PhysicalPercentCompleteT) ||
                         (!isTask && ViewConfigurationRow.Default.PhysicalPercentCompleteT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.PhysicalPercentCompleteT_Name : ViewConfigurationRow.Default.PhysicalPercentCompleteT_Name)</span>
         @item.HiddenFor(m => m.PhysicalPercentCompleteT)
-        <span id='@(item.PrefixedId(m => m.PhysicalPercentCompleteT) + "_display")' data-format="@item.ClientFormatting(m => m.PhysicalPercentCompleteT)">@item.FormattedDisplay(m => m.PhysicalPercentCompleteT)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.OvertimeWorkA) ||
                         (!isTask && ViewConfigurationRow.Default.OvertimeWorkA))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.OvertimeWorkA_Name : ViewConfigurationRow.Default.OvertimeWorkA_Name)</span>
         @item.HiddenFor(m => m.OvertimeWorkA)
-        <span id='@(item.PrefixedId(m => m.OvertimeWorkA) + "_display")'>@item.FormattedDisplay(m => m.OvertimeWorkA, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.OvertimeWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.OvertimeWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.OvertimeWorkT_Name : ViewConfigurationRow.Default.OvertimeWorkT_Name)</span>
         @item.HiddenFor(m => m.OvertimeWorkT)
-        <span id='@(item.PrefixedId(m => m.OvertimeWorkT) + "_display")'>@item.FormattedDisplay(m => m.OvertimeWorkT, decimalFormat)</span>
     }
     @if ((isTask && ViewConfigurationTask.Default.RemainingOvertimeWorkT) ||
                         (!isTask && ViewConfigurationRow.Default.RemainingOvertimeWorkT))
     {
-        <span class="ui-bar-c lowEnf">@(isTask ? ViewConfigurationTask.Default.RemainingOvertimeWorkT_Name : ViewConfigurationRow.Default.RemainingOvertimeWorkT_Name)</span>
         @item.HiddenFor(m => m.RemainingOvertimeWorkT)
-        <span id='@(item.PrefixedId(m => m.RemainingOvertimeWorkT) + "_display")'>@item.FormattedDisplay(m => m.RemainingOvertimeWorkT, decimalFormat)</span>
     }
      @if (isTask && (ViewConfigurationTask.Default.CustomFields != null)
                                     )
@@ -574,20 +441,13 @@
     if (!isTask && ViewConfigurationRow.Default.ActualWorkA)
     {
         ltemplates.Add(_S.H<AdministrativeRow>(
-    @<text> <span id='@(item.PrefixedId(m => m.ProjectName) + "_display")' >@item.FormattedDisplay(m => m.ProjectName)</span>
-    <a href="#" class='ui-link'  id='@item.PrefixedId("remove")' onclick="TSM_DeleteRow('@item.PrefixedId("remove")');">@SiteResources.Remove</a>
-    @if (editEnabled)
-    {
-        <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code">@SiteResources.Edit</a>
-    }
-    <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)</span><br />
+    @<text>  <ul><li data-role="modal" class="goto" data-target="#detail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code">
+					<strong>@item.FormattedDisplay(m => m.ProjectName)</strong>
+					<span>@item.FormattedDisplay(m => m.AssignementName)</span>
+				</li></ul>
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
     {
-        <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code + "_header" })
-        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")'>@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
-        </text>
     }
       @item.HiddenFor(m => m.LineClass.Id)
     @item.HiddenFor(m => m.LineClass.Name)
@@ -603,21 +463,14 @@
     if (!isTask && ViewConfigurationRow.Default.ActualNonBillableWorkA)
     {
         ltemplates.Add(_S.H<NonBillableActualWorkRow>(
-    @<text> <span id='@(item.PrefixedId(m => m.ProjectName) + "_display")' >@item.FormattedDisplay(m => m.ProjectName)</span>
-    <a href="#" class='ui-link'  id='@item.PrefixedId("remove")' onclick="TSM_DeleteRow('@item.PrefixedId("remove")');">@SiteResources.Remove</a>
-    @if (editEnabled)
-    {
-        <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code">@SiteResources.Edit</a>
-    }
-    <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
-    <span class="ui-bar-c lowEnf">@ViewConfigurationRow.Default.ActualNonBillableWorkA_Name</span>
+    @<text> <ul><li data-role="modal" class="goto" data-target="#detail" data-callback ="TSM_OpenTask()"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code">
+					<strong>@item.FormattedDisplay(m => m.ProjectName)</strong>
+					<span>@item.FormattedDisplay(m => m.AssignementName)</span>
+				</li></ul>
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays + 1); i++)
     {
-        <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code + "_header" })
-        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")'>@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
-        </text>
+        
     }
       @item.HiddenFor(m => m.LineClass.Id)
     @item.HiddenFor(m => m.LineClass.Name)
@@ -633,22 +486,15 @@
     if (!isTask && ViewConfigurationRow.Default.ActualNonBillableOvertimeWorkA)
     {
         ltemplates.Add(_S.H<NonBillableOvertimeWorkRow>(
-    @<text> <span id='@(item.PrefixedId(m => m.ProjectName) + "_display")' >@item.FormattedDisplay(m => m.ProjectName)</span>
-    <a href="#" class='ui-link'  id='@item.PrefixedId("remove")' onclick="TSM_DeleteRow('@item.PrefixedId("remove")');">@SiteResources.Remove</a>
-    @if (editEnabled)
-    {
-        <a href="#" class='goto' data-button-target='basedetail' data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code">@SiteResources.Edit</a>
-    }
-    <br />
-    <span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class='ui-bar-c lowEnf'>@item.FormattedDisplay(m => m.AssignementName)&nbsp;&nbsp;&nbsp;@item.FormattedDisplay(m => m.LineClass.Name)</span><br />
-    <span class="ui-bar-c lowEnf">@ViewConfigurationRow.Default.ActualNonBillableOvertimeWorkA_Name</span>
-    &nbsp;
+    @<text> <ul><li data-role="modal" class="goto" data-target="#detail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code">
+					<strong>@item.FormattedDisplay(m => m.ProjectName)</strong>
+					<span>@item.FormattedDisplay(m => m.AssignementName)</span>
+				</li></ul>
+    
     @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
     {
-        <text> <span class="ui-bar-c lowEnf">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code + "_header" })
         <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")'>@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
-        </text>
     }
     
       @item.HiddenFor(m => m.LineClass.Id)
@@ -711,6 +557,7 @@
 @Html.HiddenFor(m => m.CanDelete, new { @class = "candelete" })
 @Html.HiddenFor(m => m.CanRecall, new { @class = "canrecall" })
 @Html.HiddenFor(m => m.ErrorMessage, new { @class = "updateerrormessage" })
+
 @if (!isTask)
 {
     @Html.HiddenFor(m => m.HeaderInfos.Name, new { @class = "currname" })

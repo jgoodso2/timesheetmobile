@@ -1,7 +1,8 @@
 ﻿function timesheetsSubmittedOk() {
     TSM_formDirty(false);
     TSM_UpdateMainLayout();
-    TSM_ChangePage('updatesummary', null, null);
+    TSM_CopySummary(true);
+    OpenDialog('#updaterecallsummary');
 }
 $(document).ready(function () {
     TSM_formDirty(false);

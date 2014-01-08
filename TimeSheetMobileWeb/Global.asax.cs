@@ -48,7 +48,6 @@ namespace TimeSheetMobileWeb
             Uri uri = new Uri(url);
             string path = uri.Host + uri.AbsolutePath;
             TimeSheetMobileWeb.Models.GlobalViewsConfiguration.Load(path);
-
         }
     }
 }

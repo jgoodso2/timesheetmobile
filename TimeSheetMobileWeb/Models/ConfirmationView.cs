@@ -9,5 +9,9 @@ namespace TimeSheetMobileWeb.Models
     {
         public bool Success { get; set; }
         public bool IsRecall { get; set; }
+
+        public string ErrorMessage { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

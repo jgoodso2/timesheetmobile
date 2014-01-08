@@ -9,6 +9,7 @@ namespace TimeSheetMobileWeb.Models
     public class TaskSelectionView
     {
         public string Title { get; set; }
+        public string Period { get; set; }
         public IEnumerable<ProjectInfo> Projects { get; set; }
         public bool IsInTask { get; set; }
         public RowType[] RowTypes {get; set;}

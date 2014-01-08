@@ -11,10 +11,13 @@ namespace TimeSheetMobileWeb.Models
         public DateTime RDPeriodIStart { get; set; }
         public DateTime RDPeriodIStop { get; set; }
         public bool IsRecall { get; set; }
+        public bool IsTask { get; set; }
 
         public RecallDeleteView()
         {
             RDPeriodId = Guid.NewGuid().ToString();
         }
+
+        public string ErrorMessage { get; set; }
     }
 }

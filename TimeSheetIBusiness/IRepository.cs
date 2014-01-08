@@ -26,6 +26,7 @@ namespace TimeSheetIBusiness
 
         List<LineClass> GetLineClassifications();
         WindowsIdentity AppPoolUser { get; set; }
+        string GetUserName(string name);
         Dictionary<string,List<MyTimesheetApproval>> GetTimesheetApprovals(string user);
     }
 }

@@ -31,7 +31,6 @@
                 @Html.HiddenFor(m => m.RDPeriodId, new { @class = "currentperiodid" })
                 @Html.HiddenFor(m => m.RDPeriodIStart, new { @class = "currentperiodstart" })
                 @Html.HiddenFor(m => m.RDPeriodIStop, new { @class = "currentperiodstop" })
-                @Html.HiddenFor(m => m.IsTask, new { @class = "currentisTask" });
                 @Html.HiddenFor(m => m.IsRecall)
                 </form>
                 <form id="periodform" action = '@Url.Action("Index", (Model.IsTask ? "Tasks" : "Timesheet"))'

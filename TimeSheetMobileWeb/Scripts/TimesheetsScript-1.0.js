@@ -1,16 +1,21 @@
 ﻿function timesheetsSubmittedOk() {
     TSM_formDirty(false);
     TSM_UpdateMainLayout();
-    TSM_ChangePage('updatesummary', null, null);
+    TSM_CopySummary(false);
+    OpenDialog('#updatesummary');
 }
+
 function TSM_CompleteRD(data) {
     if (data) {
         if (data['IsRecall']) {
-            setTimeout(function () { TSM_partialSubmit($('#periodform')); }, 0);
-            return;
+            CloseDialog('#recalldelete');
+            TSM_CopySummary(true,data['ErrorMessage']);
+            OpenDialog('#updaterecallsummary');
+            //
+            return;setTimeout(function () { TSM_partialSubmit($('#periodform')); }, 0);
         }
         else {
-            window.location.href = $('#returnUrl').attr('data-url');
+            window.location.href = data['ReturnUrl'];
             return;
         }
     }

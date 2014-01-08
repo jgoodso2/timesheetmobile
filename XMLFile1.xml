@@ -1,40 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<SPAN id="PeriodRows___Values___1___Item_ProjectName_display"></SPAN>
-<A id="PeriodRows___Values___1___Item_remove" class="ui-link" onclick="TSM_DeleteRow('PeriodRows___Values___1___Item_remove');" href="#">remove</A>
-<A class="goto ui-link" href="#" data-button-target="basedetail" jQuery17109850651905543826="141" data-button-selection="AW" data-row-from="PeriodRows___Values___1___Item">edit</A>
-<BR>
-	<SPAN id="PeriodRows___Values___1___Item_AssignementName_display" class="ui-bar-c lowEnf">&nbsp;&nbsp;&nbsp;</SPAN>
-	<BR>
-		<SPAN class="ui-bar-c lowEnf">Act Work</SPAN> &nbsp; <SPAN class="ui-bar-c lowEnf">Mon </SPAN><INPUT id="PeriodRows___Values___1___Item_DayTimes_0_" class="AW_header" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.DayTimes"[0=""] data-val-number="The field Nullable`1 must be a number." data-val="true">
-			<SPAN id="PeriodRows___Values___1___Item_DayTimes_0__display"></SPAN>
-			<SPAN class="ui-bar-c lowEnf">Tue </SPAN>
-			<INPUT id="PeriodRows___Values___1___Item_DayTimes_1_" class="AW_header" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.DayTimes"[1=""] data-val-number="The field Nullable`1 must be a number." data-val="true">
-				<SPAN id="PeriodRows___Values___1___Item_DayTimes_1__display"></SPAN>
-				<SPAN class="ui-bar-c lowEnf">Wed </SPAN>
-				<INPUT id="PeriodRows___Values___1___Item_DayTimes_2_" class="AW_header" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.DayTimes"[2=""] data-val-number="The field Nullable`1 must be a number." data-val="true">
-					<SPAN id="PeriodRows___Values___1___Item_DayTimes_2__display"></SPAN>
-					<SPAN class="ui-bar-c lowEnf">Thu </SPAN>
-					<INPUT id="PeriodRows___Values___1___Item_DayTimes_3_" class="AW_header" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.DayTimes"[3=""] data-val-number="The field Nullable`1 must be a number." data-val="true">
-						<SPAN id="PeriodRows___Values___1___Item_DayTimes_3__display"></SPAN>
-						<SPAN class="ui-bar-c lowEnf">Fri </SPAN>
-						<INPUT id="PeriodRows___Values___1___Item_DayTimes_4_" class="AW_header" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.DayTimes"[4=""] data-val-number="The field Nullable`1 must be a number." data-val="true">
-							<SPAN id="PeriodRows___Values___1___Item_DayTimes_4__display"></SPAN>
-							<SPAN class="ui-bar-c lowEnf">Sat </SPAN>
-							<INPUT id="PeriodRows___Values___1___Item_DayTimes_5_" class="AW_header" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.DayTimes"[5=""] data-val-number="The field Nullable`1 must be a number." data-val="true">
-								<SPAN id="PeriodRows___Values___1___Item_DayTimes_5__display"></SPAN>
-								<SPAN class="ui-bar-c lowEnf">Sun </SPAN>
-								<INPUT id="PeriodRows___Values___1___Item_DayTimes_6_" class="AW_header" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.DayTimes"[6=""] data-val-number="The field Nullable`1 must be a number." data-val="true">
-									<SPAN id="PeriodRows___Values___1___Item_DayTimes_6__display"></SPAN>
-									<BR>
-										<INPUT id="PeriodRows___Values___1___Item_ConfirmedA" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.ConfirmedA">
-											<SPAN id="PeriodRows___Values___1___Item">
-												<SPAN id="PeriodRows___Values___1___Item_CustomFieldItems_ItemsContainer" class="innerRowsContainer" data-rows-prefix="PeriodRows___Values___1___Item_CustomFieldItems"></SPAN>
-												<INPUT id="PeriodRows___Values___1___Item_CustomFieldItems___1" value="MVCControlsToolkit.Controls.AutoEnumerableUpdater`1[[TimeSheetIBusiness.CustomFieldItem, TimeSheetIBusiness, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], MVC3ControlsToolkit, Version=1.8.5.0, Culture=neutral, PublicKeyToken=b6277d1c804403e7" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.CustomFieldItems.$$1">
-													<INPUT id="PeriodRows___Values___1___Item_CustomFieldItems___1_f_ields" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.CustomFieldItems.$$1.f$ields"> 
-											</SPAN>
-											<INPUT id="PeriodRows___Values___1___Item_LineClass_Id" class="currentlineclassid" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.LineClass.Id">
-												<INPUT id="PeriodRows___Values___1___Item_LineClass_Name" class="currentlineclassname" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.LineClass.Name">
-													<INPUT id="PeriodRows___Values___1___Item_AssignementId" class="p-guid-container" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.AssignementId">
-														<INPUT id="PeriodRows___Values___1___Item_ProjectName" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.ProjectName">
-															<INPUT id="PeriodRows___Values___1___Item_AssignementName" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.AssignementName">
-																<INPUT id="PeriodRows___Values___1___Item_ProjectId" class="p-project-container" type="hidden" name="PeriodRows.$.Values.$$1.$.Item.ProjectId">
+﻿"<Changes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	    <Proj ID="f78a3d7e-6f62-4f82-9c77-799eb76e6be9">
+		    <Assn ID="2fd71d8f-55fe-42c2-806c-b96e4204f525">
+			         <LookupTableCustomFieldChange IsMultiValued="false" CustomFieldType="Text" CustomFieldGuid="20b57036-6921-4f53-a610-e7342c34c5f2" CustomFieldName="Alt Location">
+				<LookupTableValue Guid="c2e2f118-57b2-42e3-a83b-01b9b975736a">Alabama</LookupTableValue>
+			</LookupTableCustomFieldChange>
+		</Assn>
+	</Proj>    <Proj ID="">
+		    <Assn ID="30a7a3ee-d6a2-471a-96ac-730569bb4ebd">
+			         <PeriodChange PID="251658250" Start="2014-01-06T00:00:00" End="2014-01-06T23:59:59">480000</PeriodChange>         
+				<PeriodChange PID="251658250" Start="2014-01-07T00:00:00" End="2014-01-07T23:59:59">480000</PeriodChange>         
+				<PeriodChange PID="251658250" Start="2014-01-08T00:00:00" End="2014-01-08T23:59:59">480000</PeriodChange>         
+				<PeriodChange PID="251658250" Start="2014-01-09T00:00:00" End="2014-01-09T23:59:59">0</PeriodChange>         
+				<PeriodChange PID="251658250" Start="2014-01-10T00:00:00" End="2014-01-10T23:59:59">0</PeriodChange>         
+				<PeriodChange PID="251658250" Start="2014-01-11T00:00:00" End="2014-01-11T23:59:59">0</PeriodChange>         
+				<PeriodChange PID="251658250" Start="2014-01-12T00:00:00" End="2014-01-12T23:59:59">0</PeriodChange>
+		</Assn>
+	</Proj>
+</Changes>"

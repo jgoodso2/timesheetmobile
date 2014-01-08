@@ -35,10 +35,38 @@ namespace TimeSheetBusiness
         public SvcQueueSystem.QueueSystemClient queueClient;
         public bool isImpersonated = false;
         private bool? allowTopLevel = null;
+        private string currentUserName;
         public Repository()
         {
-            if (DateTime.Today > new DateTime(2013, 12, 31)) throw new Exception("Demo Copy of Mobile Timesheet Expired");
+            if (DateTime.Today > new DateTime(2014, 12, 31)) throw new Exception("Demo Copy of Mobile Timesheet Expired");
 
+        }
+
+        public string GetUserName(string name)
+        {
+            //ntAccount = "i:0#.w|" + ntAccount;
+            SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
+
+            Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
+            filter.FilterTableName = rds.Resources.TableName;
+
+
+            Microsoft.Office.Project.Server.Library.Filter.Field ntAccountField1 = new Microsoft.Office.Project.Server.Library.Filter.Field(rds.Resources.TableName, rds.Resources.WRES_ACCOUNTColumn.ColumnName);
+            filter.Fields.Add(ntAccountField1);
+
+            Microsoft.Office.Project.Server.Library.Filter.Field ntAccountField2 = new Microsoft.Office.Project.Server.Library.Filter.Field(rds.Resources.TableName, rds.Resources.RES_NAMEColumn.ColumnName);
+            filter.Fields.Add(ntAccountField2);
+
+            Microsoft.Office.Project.Server.Library.Filter.FieldOperator op = new Microsoft.Office.Project.Server.Library.Filter.FieldOperator(Microsoft.Office.Project.Server.Library.Filter.FieldOperationType.Equal,
+                rds.Resources.WRES_ACCOUNTColumn.ColumnName, name);
+            filter.Criteria = op;
+
+
+
+            rds = resourceClient.ReadResources(filter.GetXml(), false);
+
+            string obj = rds.Resources.Rows[0]["RES_NAME"].ToString();
+            return obj;
         }
 
         public bool AllowToplevel
@@ -120,7 +148,8 @@ namespace TimeSheetBusiness
         public List<LineClass> GetLineClassifications()
         {
             List<LineClass> lineclasses = new List<LineClass>();
-            var tsLineClassDs = adminClient.ReadLineClasses(SvcAdmin.LineClassType.All, SvcAdmin.LineClassState.Enabled).LineClasses.Where(t => t.TS_LINE_CLASS_TYPE == 0);
+            var tsLineClassDs = adminClient.ReadLineClasses(SvcAdmin.LineClassType.All, SvcAdmin.LineClassState.Enabled).LineClasses.Where(t => t.TS_LINE_CLASS_TYPE == 0)
+                .OrderBy(t=>t.MOD_DATE);
             foreach (var lineclass in tsLineClassDs)
             {
                 lineclasses.Add(new LineClass(lineclass.TS_LINE_CLASS_UID.ToString(), lineclass.TS_LINE_CLASS_NAME));

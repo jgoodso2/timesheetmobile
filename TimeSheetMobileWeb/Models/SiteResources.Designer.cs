@@ -313,6 +313,15 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string Home {
+            get {
+                return ResourceManager.GetString("Home", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Row.
         /// </summary>
         public static string HomeMenuAddRow {
@@ -565,6 +574,15 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure to recall/delete the timesheet.
+        /// </summary>
+        public static string RecallMessage {
+            get {
+                return ResourceManager.GetString("RecallMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rejected.
         /// </summary>
         public static string Rejected {
@@ -624,15 +642,6 @@ namespace TimeSheetMobileWeb.Models {
         public static string StatusUpdateError {
             get {
                 return ResourceManager.GetString("StatusUpdateError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         

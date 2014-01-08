@@ -27,6 +27,19 @@ namespace TimeSheetMobileWeb.Controllers
         public TasksController(IRepository r)
         {
             repository = r;
+           
+        }
+
+        [ChildActionOnly]
+        [HttpGet]
+        public ActionResult UpdateSummary()
+        {
+            return PartialView("UpdateSummary");
+        }
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+            Session["CurrentUser"] = repository.GetUserName((User.Identity as System.Security.Principal.WindowsIdentity).Name);
         }
         public ActionResult Index(PeriodSelectedView period, string user)
         {
@@ -148,21 +161,29 @@ namespace TimeSheetMobileWeb.Controllers
             this.HttpContext.Trace.Warn("Returning from TaskSelection of TasksController");
             return PartialView(model);
         }
-        [System.Web.Mvc.OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
-        public ActionResult ProjectTasks(string projectId)
+        public string ProjectTasks(string projectId)
         {
             this.HttpContext.Trace.Warn("Starting ProjectTasks of TasksController");
-            var res = MVCControlsToolkit.Controls.ChoiceListHelper.Create(repository.ProjectAssignements(
+              var assignments = repository.ProjectAssignements(
                     (User.Identity as System.Security.Principal.WindowsIdentity).Name,
-                    projectId),
-                                m => m.Id,
-                                m => m.Name,null).PrepareForJson();
+                    projectId);
+            string returnValue = "<select id='assignments' class='dynamictasks'>";
+            returnValue += "<option value='' name=''>" + SiteResources.AssignementPrompt + "</option>";
+            foreach(var assignment in assignments)
+            {
+                returnValue += "<option value='" + assignment.Id + "'>" + assignment.Name + "</option>";
+            }
+            returnValue += "</select>";
             this.HttpContext.Trace.Warn("Returning from ProjectTasks of TasksController");
-            return Json(
-                res,
-                JsonRequestBehavior.AllowGet);
+           return returnValue;
         }
         
+        [ChildActionOnly]
+        [HttpGet]
+        public ActionResult RecallDelete()
+        {
+            return PartialView(new RecallDeleteView() { IsTask = true});
+        }
 
         [HttpPost]
         public ActionResult Edit(UpdateTasksView model)

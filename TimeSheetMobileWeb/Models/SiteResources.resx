@@ -381,4 +381,10 @@
   <data name="LineClassification" xml:space="preserve">
     <value>Line Classification</value>
   </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="RecallMessage" xml:space="preserve">
+    <value>Are you sure to recall/delete the timesheet</value>
+  </data>
 </root>

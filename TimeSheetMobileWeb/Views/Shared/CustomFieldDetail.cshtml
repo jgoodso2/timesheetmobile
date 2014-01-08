@@ -22,7 +22,7 @@
     }
     @*  @item.HiddenFor(m => (m.CustomFieldItems[i] as CustomFieldItem).FullName)
                                     @item.HiddenFor(m => (m.CustomFieldItems[i] as CustomFieldItem).Name)*@
-    <span class="ui-bar-c lowEnf">@item.ValueFor(mbox => mbox.FullName)</span>
+    
     @item.HiddenFor(mbox => mbox.DateValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Date" })
     @item.HiddenFor(mbox => mbox.CostValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Cost" })
     @item.HiddenFor(mbox => mbox.DurationValue, new { @class = item.ValueFor(mbox => mbox.Name), valuetype = "Duration" })
@@ -39,7 +39,6 @@
     
     @if (!string.IsNullOrEmpty(item.ValueFor(mbox => mbox.LookupTableGuid)) && item.ValueFor(mbox => mbox.LookupTableGuid) != Guid.Empty.ToString())
     {
-        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype="Lookup" data-format="@item.ClientFormatting(m => m.LookupValue)" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.LookupValue)</span>
         
         int count = 0;
         if (Int32.TryParse(item.ValueFor(mbox => mbox.LookupTableItems.Count), out count))
@@ -64,32 +63,7 @@
     }
     else
     {
-        switch (item.ValueFor(mbox => mbox.DataType))
-        {
-            case "Date":
-        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype="Date" data-format="@item.ClientFormatting(m => m.DateValue)" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.DateValue)</span>
-                                    
-                                                                                                                                                                                      break;
-            case "Cost":
-        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Cost" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.CostValue)
-        </span>
-                                                                                                                                 break;
-            case "Duration":
-        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Duration" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.DurationValue)
-        </span>
-                                                                                                                                     break;
-            case "Flag":
-        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Flag" name="@item.ValueFor(mbox => mbox.Name)">@(item.ValueFor(mbox => mbox.FlagValue) == "True" ? "Yes" : "No")
-        </span> break;
-            case "Number":
-        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Number" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.NumValue)
-        </span>
-                                                                                                                                   break;
-            case "Text":
-        <span class='@(item.ValueFor(mbox => mbox.Name) + "_cf_display")' valuetype = "Text" name="@item.ValueFor(mbox => mbox.Name)">@item.FormattedDisplay(mbox => mbox.TextTValue)
-        </span>
-                                                                                                                                 break;
-        }
+       
 
 
 

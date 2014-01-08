@@ -17,7 +17,6 @@ namespace TimeSheetMobileWeb.Controllers
         public static KeyValuePair<int, string>[] AllTimesheetSets;
         public string PWAURL { get; set; }
         public IRepository Repository { get { return repository; } }
-        
         static TimesheetController()
         {
             AllTimesheetSets = new KeyValuePair<int, string>[6];
@@ -31,7 +30,14 @@ namespace TimeSheetMobileWeb.Controllers
         public TimesheetController(IRepository r)
         {
             repository = r;
+            
            
+        }
+
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+            Session["CurrentUser"] =  repository.GetUserName((User.Identity as System.Security.Principal.WindowsIdentity).Name);
         }
         [HttpGet()]
         public ActionResult Index(string speriod,string user)
@@ -278,6 +284,7 @@ namespace TimeSheetMobileWeb.Controllers
             this.HttpContext.Trace.Warn("Starting TaskSelection of TimesheetController");
             TaskSelectionView model = new TaskSelectionView();
             model.Title = SiteResources.HomeMenuAddRow;
+            model.Period = Session["period"] != null ? Session["period"].ToString() : string.Empty;
             string timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name
                    : Session["user"].ToString();
             model.Projects = new List<ProjectInfo>() { new ProjectInfo { Id = "-1", Name = ViewConfigurationRow.Default.AdminDescription } }
@@ -312,7 +319,7 @@ namespace TimeSheetMobileWeb.Controllers
         [HttpGet]
         public ActionResult RecallDelete()
         {
-            return PartialView();
+            return PartialView(new RecallDeleteView() { IsTask = false});
         }
 
 
@@ -443,6 +450,7 @@ namespace TimeSheetMobileWeb.Controllers
         {
 
             this.HttpContext.Trace.Warn("Starting RecallDelete of TimesheetController");
+            try{
             repository.RecallDelete(
                     (User.Identity as System.Security.Principal.WindowsIdentity).Name,
                     model.RDPeriodId,
@@ -450,8 +458,16 @@ namespace TimeSheetMobileWeb.Controllers
                     model.RDPeriodIStop,
                     model.IsRecall
                     );
+            model.ErrorMessage = SiteResources.UpdateSuccesfull;
+            }
+            catch(Exception ex)
+            {
+                model.ErrorMessage = SiteResources.StatusUpdateError;
+            }
+
             this.HttpContext.Trace.Warn("Returning from RecallDelete of TimesheetController");
-            return Json(new ConfirmationView { Success = true, IsRecall=model.IsRecall });
+            return Json(new ConfirmationView { Success = true, IsRecall = model.IsRecall, ErrorMessage = model.ErrorMessage
+                , ReturnUrl = Url.Action("TimesheetHistory","Timesheet") });
         }
         
     }
