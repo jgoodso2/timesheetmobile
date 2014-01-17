@@ -1,0 +1,15 @@
+﻿@model TimeSheetMobileWeb.Models.TimesheetApprovalView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+
+
+ <form id="approvalform" action = '@Url.Action("ApproveTimesheet", "Timesheet")' data-ajax-url='@Url.Action("ApproveSingleTimesheet", "Timesheet")' 
+                                            data-ajax-oncomplete='TSM_ConfirmApproveTimesheet' data-ajax="false">
+
+        <a href="#" class="btn approve approvals" onclick="ApproveRejectTimesheet('approve');">Approve</a>
+			<a href="#" class="btn reject approvals" onclick= "ApproveRejectTimesheet('reject');">Reject</a>
+            @Html.HiddenFor(mbox=>mbox.TSUID)
+            @Html.HiddenFor(mbox => mbox.MGRUID)
+            @Html.HiddenFor(mbox => mbox.ErrorMessage)
+            @Html.HiddenFor(mbox => mbox.Success)
+            </form>

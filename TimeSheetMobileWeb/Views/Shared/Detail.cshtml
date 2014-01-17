@@ -2,15 +2,14 @@
 @using TimeSheetIBusiness
 @using TimeSheetMobileWeb.Models
 @using System.Globalization
-<div data-role='page' data-theme='a' id='basedetail' data-title="@SiteResources.HomeMenuTimesheetDetail" data-leave-application='@SiteResources.LeaveApplication'>
-    <div id="timesheet-display" class="modal" style="display: block;">
-        <a href="#" class="pull-right close" data-role="dismiss" data-target="#timesheet-display">
+<div data-role='page' data-theme='a' id='basedetail' data-title="@SiteResources.HomeMenuTimesheetDetail" class="modal">
+        <a href="#" class="pull-right close" data-role="dismiss" data-target="#basedetail">
             close</a>
         <div class="modal-content">
             <h3>@Model.Title</h3>
         
-        <span id='ProjectName_display' >period of time</span> <span
-            id='AssignementName_display' >period of time</span>
+        <span id='ProjectName_display' class='descriptiveDetail' >@Model.ProjectName</span> 
+        <span id='AssignementName_display' class='descriptiveDetail'> @Model.AssignementName</span>
         @if (this.ViewContext.FormContext == null)
         {
             this.ViewContext.FormContext = new FormContext();
@@ -28,9 +27,39 @@
         </script>
         @{decimal? dummy = null;}
         @if ((!Model.TaskRow) || (!ViewConfigurationTask.Default.NoTPData))
-        {  
-            
-            <div class='timephasedvalues'>
+        {
+            if (!Model.ApprovalMode && ( Model.Status.ToUpper() == "APPROVED" || Model.Status.ToUpper() == "SUBMITTED") )
+            {
+            <div class='timephasedvalues' class='ui-disabled'>
+                <div id='rowsTitle' class=" ">
+                </div>
+                
+                <table>
+
+                <tbody>
+               
+                    <tr id='dayHdrTemplate' class='ui-disabled' >
+                        <td >
+                            <span class=" ">_p1lh_</span>
+                        </td>
+                    </tr>
+                    
+                     
+                    <tr id='dayTemplate' class='ui-disabled' >
+                        <td >
+                          @Html.TypedTextBox("DayTimes[_plh_]", dummy, new { @class = "dayBox detailTB positive dayTime ui-disabled" }, null, ContentAlign.Right)
+                            @*@Html.ValidationMessage("DayTimes[_plh_]", "*")*@
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table> 
+               
+            </div>
+            }
+            else
+            {
+                <div class='timephasedvalues'>
                 <div id='rowsTitle' class=" ">
                 </div>
                 
@@ -56,12 +85,17 @@
             </table> 
                
             </div>
+            }
         }
+        @if (!Model.ApprovalMode && ( Model.Status.ToUpper() == "APPROVED" || Model.Status.ToUpper() == "SUBMITTED") )
+        {
+            <div disabled ='disabled' class='ui-disabled'>
         @Html.ViewList("row_choice", "row_choice_button")
         @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualWorkA && (!ViewConfigurationTask.Default.NoTPData)) ||
                         (!Model.TaskRow && ViewConfigurationRow.Default.ActualWorkA))
         {
-            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code)' class='row_choice'>
+            string className = Model.ApprovalMode ? "row_choice ui-disabled" : "row_choice";
+            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code)' class='@className'>
                 @{var h = Html.CrossHelper(new ActualWorkRow());}
                 @if ((Model.TaskRow && ViewConfigurationTask.Default.WorkA && ViewConfigurationTask.Default.WorkA_Edit) ||
                                     (!Model.TaskRow && ViewConfigurationRow.Default.WorkA && ViewConfigurationRow.Default.WorkA_Edit))
@@ -292,7 +326,8 @@
         @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualOvertimeWorkA && (!ViewConfigurationTask.Default.NoTPData)) ||
                         (!Model.TaskRow && ViewConfigurationRow.Default.ActualOvertimeWorkA))
         {
-            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code)' class='row_choice'>
+            string className = Model.ApprovalMode ? "row_choice ui-disabled" : "row_choice";
+            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code)' class='@className'>
                 @{var h = Html.CrossHelper(new ActualOvertimeWorkRow());}
                 @if ((Model.TaskRow && ViewConfigurationTask.Default.OvertimeWorkA && ViewConfigurationTask.Default.OvertimeWorkA_Edit) ||
                                     (!Model.TaskRow && ViewConfigurationRow.Default.OvertimeWorkA && ViewConfigurationRow.Default.OvertimeWorkA_Edit))
@@ -319,7 +354,8 @@
         }
         @if (Model.TaskRow && ViewConfigurationTask.Default.ActualWorkA && ViewConfigurationTask.Default.NoTPData)
         {
-            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code)' class='row_choice'>
+            string className = Model.ApprovalMode ? "row_choice ui-disabled" : "row_choice";
+            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code)' class='@className'>
                 @{var h = Html.CrossHelper(new SingleValuesRow());}
                 @if ((Model.TaskRow && ViewConfigurationTask.Default.WorkA && ViewConfigurationTask.Default.WorkA_Edit) ||
                                     (!Model.TaskRow && ViewConfigurationRow.Default.WorkA && ViewConfigurationRow.Default.WorkA_Edit))
@@ -583,19 +619,565 @@
             <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code)' class='row_choice'>
             </div>
         }
+        </div>
+        }
+        else
+        {
+            <div>
+        @Html.ViewList("row_choice", "row_choice_button")
+        @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualWorkA && (!ViewConfigurationTask.Default.NoTPData)) ||
+                        (!Model.TaskRow && ViewConfigurationRow.Default.ActualWorkA))
+        {
+            string className = Model.ApprovalMode ? "row_choice ui-disabled" : "row_choice";
+            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code)' class='@className'>
+                @{var h = Html.CrossHelper(new ActualWorkRow());}
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.WorkA && ViewConfigurationTask.Default.WorkA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.WorkA && ViewConfigurationRow.Default.WorkA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.WorkA_FullName : ViewConfigurationRow.Default.WorkA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.WorkA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.WorkA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RegularWorkA && ViewConfigurationTask.Default.RegularWorkA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RegularWorkA && ViewConfigurationRow.Default.RegularWorkA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RegularWorkA_FullName : ViewConfigurationRow.Default.RegularWorkA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RegularWorkA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RegularWorkA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RemainingWorkA && ViewConfigurationTask.Default.RemainingWorkA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RemainingWorkA && ViewConfigurationRow.Default.RemainingWorkA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RemainingWorkA_FullName : ViewConfigurationRow.Default.RemainingWorkA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RemainingWorkA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RemainingWorkA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.StartA && ViewConfigurationTask.Default.StartA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.StartA && ViewConfigurationRow.Default.StartA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.StartA_FullName : ViewConfigurationRow.Default.StartA_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.StartA, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.StartA) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartA)">@h.FormattedDisplay(m => m.StartA)</a>
+                    @h.ValidationMessageFor(m => m.StartA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.FinishA && ViewConfigurationTask.Default.FinishA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.FinishA && ViewConfigurationRow.Default.FinishA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.FinishA_FullName : ViewConfigurationRow.Default.FinishA_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.FinishA, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.FinishA) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishA)">@h.FormattedDisplay(m => m.FinishA)</a>
+                    @h.ValidationMessageFor(m => m.FinishA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualStartA && ViewConfigurationTask.Default.ActualStartA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ActualStartA && ViewConfigurationRow.Default.ActualStartA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualStartA_FullName : ViewConfigurationRow.Default.ActualStartA_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.ActualStartA, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.ActualStartA) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualStartA)">@h.FormattedDisplay(m => m.ActualStartA)</a>
+                    @h.ValidationMessageFor(m => m.ActualStartA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualFinishA && ViewConfigurationTask.Default.ActualFinishA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ActualFinishA && ViewConfigurationRow.Default.ActualFinishA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualFinishA_FullName : ViewConfigurationRow.Default.ActualFinishA_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.ActualFinishA, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.ActualFinishA) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualFinishA)">@h.FormattedDisplay(m => m.ActualFinishA)</a>
+                    @h.ValidationMessageFor(m => m.ActualFinishA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.PercentWorkCompleteA && ViewConfigurationTask.Default.PercentWorkCompleteA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.PercentWorkCompleteA && ViewConfigurationRow.Default.PercentWorkCompleteA_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.PercentWorkCompleteA_FullName : ViewConfigurationRow.Default.PercentWorkCompleteA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.PercentWorkCompleteA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.PercentWorkCompleteA, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.AssignmentUnitsA && ViewConfigurationTask.Default.AssignmentUnitsA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.AssignmentUnitsA && ViewConfigurationRow.Default.AssignmentUnitsA_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.AssignmentUnitsA_FullName : ViewConfigurationRow.Default.AssignmentUnitsA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.AssignmentUnitsA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.AssignmentUnitsA, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ConfirmedA && ViewConfigurationTask.Default.ConfirmedA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ConfirmedA && ViewConfigurationRow.Default.ConfirmedA_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ConfirmedA_FullName : ViewConfigurationRow.Default.ConfirmedA_FullName)</span>
+                    @h.CheckBox("ConfirmedA", false, new { @class = "workBox detailBoolean" })
+                    @h.ValidationMessageFor(m => m.ConfirmedA, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.CommentsA && ViewConfigurationTask.Default.CommentsA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.CommentsA && ViewConfigurationRow.Default.CommentsA_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.CommentsA_FullName : ViewConfigurationRow.Default.CommentsA_FullName)</span>
+                    <br />
+                    @h.TextAreaFor(m => m.CommentsA, new { @class = "fullscreen detailTB" })
+                    @h.ValidationMessageFor(m => m.CommentsA, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.WorkT && ViewConfigurationTask.Default.WorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.WorkT && ViewConfigurationRow.Default.WorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.WorkT_FullName : ViewConfigurationRow.Default.WorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.WorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.WorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RegularWorkT && ViewConfigurationTask.Default.RegularWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RegularWorkT && ViewConfigurationRow.Default.RegularWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RegularWorkT_FullName : ViewConfigurationRow.Default.RegularWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RegularWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RegularWorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RemainingWorkT && ViewConfigurationTask.Default.RemainingWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RemainingWorkT && ViewConfigurationRow.Default.RemainingWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RemainingWorkT_FullName : ViewConfigurationRow.Default.RemainingWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RemainingWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RemainingWorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualWorkT && ViewConfigurationTask.Default.ActualWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ActualWorkT && ViewConfigurationRow.Default.ActualWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualWorkT_FullName : ViewConfigurationRow.Default.ActualWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.ActualWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.ActualWorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.StartT && ViewConfigurationTask.Default.StartT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.StartT && ViewConfigurationRow.Default.StartT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.StartT_FullName : ViewConfigurationRow.Default.StartT_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.StartT, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.StartT) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartT)">@h.FormattedDisplay(m => m.StartT)</a>
+                    @h.ValidationMessageFor(m => m.StartT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.FinishT && ViewConfigurationTask.Default.FinishT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.FinishT && ViewConfigurationRow.Default.FinishT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.FinishT_FullName : ViewConfigurationRow.Default.FinishT_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.FinishT, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.FinishT) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishT)">@h.FormattedDisplay(m => m.FinishT)</a>
+                    @h.ValidationMessageFor(m => m.FinishT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ResumeT && ViewConfigurationTask.Default.ResumeT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ResumeT && ViewConfigurationRow.Default.ResumeT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ResumeT_FullName : ViewConfigurationRow.Default.ResumeT_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.ResumeT, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.ResumeT) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ResumeT)">@h.FormattedDisplay(m => m.ResumeT)</a>
+                    @h.ValidationMessageFor(m => m.ResumeT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.DeadlineT && ViewConfigurationTask.Default.DeadlineT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.DeadlineT && ViewConfigurationRow.Default.DeadlineT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.DeadlineT_FullName : ViewConfigurationRow.Default.DeadlineT_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.DeadlineT, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.DeadlineT) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.DeadlineT)">@h.FormattedDisplay(m => m.DeadlineT)</a>
+                    @h.ValidationMessageFor(m => m.DeadlineT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.DurationT && ViewConfigurationTask.Default.DurationT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.DurationT && ViewConfigurationRow.Default.DurationT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.DurationT_FullName : ViewConfigurationRow.Default.DurationT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.DurationT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.DurationT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RemainingDurationT && ViewConfigurationTask.Default.RemainingDurationT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RemainingDurationT && ViewConfigurationRow.Default.RemainingDurationT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RemainingDurationT_FullName : ViewConfigurationRow.Default.RemainingDurationT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RemainingDurationT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RemainingDurationT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.TaskNameT && ViewConfigurationTask.Default.TaskNameT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.TaskNameT && ViewConfigurationRow.Default.TaskNameT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.TaskNameT_FullName : ViewConfigurationRow.Default.TaskNameT_FullName)</span><br />
+                    @h.TextBoxFor(m => m.TaskNameT, new { @class = "fullscreen detailTB" })
+                    @h.ValidationMessageFor(m => m.TaskNameT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.PercentCompleteT && ViewConfigurationTask.Default.PercentCompleteT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.PercentCompleteT && ViewConfigurationRow.Default.PercentCompleteT_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.PercentCompleteT_FullName : ViewConfigurationRow.Default.PercentCompleteT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.PercentCompleteT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.PercentCompleteT, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.PercentWorkCompleteT && ViewConfigurationTask.Default.PercentWorkCompleteT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.PercentWorkCompleteT && ViewConfigurationRow.Default.PercentWorkCompleteT_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.PercentWorkCompleteT_FullName : ViewConfigurationRow.Default.PercentWorkCompleteT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.PercentWorkCompleteT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.PercentWorkCompleteT, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.PhysicalPercentCompleteT && ViewConfigurationTask.Default.PhysicalPercentCompleteT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.PhysicalPercentCompleteT && ViewConfigurationRow.Default.PhysicalPercentCompleteT_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.PhysicalPercentCompleteT_FullName : ViewConfigurationRow.Default.PhysicalPercentCompleteT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.PhysicalPercentCompleteT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.PhysicalPercentCompleteT, "*")
+                    <br />
+                }
+                @if ((ViewConfigurationRow.Default.CustomFields != null)
+                                    )
+                {
+                    foreach (var field in ViewConfigurationRow.Default.CustomFields)
+                    {
+                        if (field.Visible)
+                        {
+                    <span class=" ">@field.Name</span>
+
+                    <a href='#' id='@(h.PrefixedId("") + "_cf_date")' name ='@field.Name' class='datepicker detailTBCS Date' valuetype='Date'>
+                        No Date</a>
+                    @h.ValidationMessage("@field.Name", "*")
+                    <input id='@(h.PrefixedId("") + "_cf_cost")' name ='@field.Name' type="text"  class = "workBox detailTBCS positive Cost" valuetype='Cost'/>
+                    <input id='@(h.PrefixedId("") + "_cf_dur")' name ='@field.Name' type="text"  class = "workBox detailTBCS positive Duration" valuetype='Duration'/>
+                    <input id='@(h.PrefixedId("") + "_cf_num")' name ='@field.Name' type="text"  class = "workBox detailTBCS positive Number" valuetype='Number'/>
+                    <input id='@(h.PrefixedId("") + "_cf_text")' name ='@field.Name' type="text"  class = "workBox detailTBCS Text" valuetype='Text'/>
+                    <span id='@(h.PrefixedId("") + "_cf_flag")' name ='@field.Name' valuetype='Flag' class = "detailTBCS Flag">
+                        <input  type="radio"   name ='@field.Name'  value="Yes" />Yes<input  type="radio"   name ='@field.Name'  value="No" />No</span>
+                    <label id='@(h.PrefixedId("") + "_cf_lookup")' name ='@field.Name' valuetype='Lookup' class = "detailTBCS Lookup">
+                    </label>
+                    <br />
+                                      
+                        }
+                    }
+                }
+            </div> 
+        }
+        @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualOvertimeWorkA && (!ViewConfigurationTask.Default.NoTPData)) ||
+                        (!Model.TaskRow && ViewConfigurationRow.Default.ActualOvertimeWorkA))
+        {
+            string className = Model.ApprovalMode ? "row_choice ui-disabled" : "row_choice";
+            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code)' class='@className'>
+                @{var h = Html.CrossHelper(new ActualOvertimeWorkRow());}
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.OvertimeWorkA && ViewConfigurationTask.Default.OvertimeWorkA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.OvertimeWorkA && ViewConfigurationRow.Default.OvertimeWorkA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.OvertimeWorkA_FullName : ViewConfigurationRow.Default.OvertimeWorkA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.OvertimeWorkA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.OvertimeWorkA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.OvertimeWorkT && ViewConfigurationTask.Default.OvertimeWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.OvertimeWorkT && ViewConfigurationRow.Default.OvertimeWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.OvertimeWorkT_FullName : ViewConfigurationRow.Default.OvertimeWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.OvertimeWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.OvertimeWorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RemainingOvertimeWorkT && ViewConfigurationTask.Default.RemainingOvertimeWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RemainingOvertimeWorkT && ViewConfigurationRow.Default.RemainingOvertimeWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RemainingOvertimeWorkT_FullName : ViewConfigurationRow.Default.RemainingOvertimeWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RemainingOvertimeWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RemainingOvertimeWorkT, "*")<br />
+                }
+            </div>
+        }
+        @if (Model.TaskRow && ViewConfigurationTask.Default.ActualWorkA && ViewConfigurationTask.Default.NoTPData)
+        {
+            string className = Model.ApprovalMode ? "row_choice ui-disabled" : "row_choice";
+            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code)' class='@className'>
+                @{var h = Html.CrossHelper(new SingleValuesRow());}
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.WorkA && ViewConfigurationTask.Default.WorkA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.WorkA && ViewConfigurationRow.Default.WorkA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.WorkA_FullName : ViewConfigurationRow.Default.WorkA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.WorkA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.WorkA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RegularWorkA && ViewConfigurationTask.Default.RegularWorkA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RegularWorkA && ViewConfigurationRow.Default.RegularWorkA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RegularWorkA_FullName : ViewConfigurationRow.Default.RegularWorkA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RegularWorkA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RegularWorkA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RemainingWorkA && ViewConfigurationTask.Default.RemainingWorkA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RemainingWorkA && ViewConfigurationRow.Default.RemainingWorkA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RemainingWorkA_FullName : ViewConfigurationRow.Default.RemainingWorkA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RemainingWorkA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RemainingWorkA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.StartA && ViewConfigurationTask.Default.StartA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.StartA && ViewConfigurationRow.Default.StartA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.StartA_FullName : ViewConfigurationRow.Default.StartA_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.StartA, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.StartA) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartA)">@h.FormattedDisplay(m => m.StartA)</a>
+                    @h.ValidationMessageFor(m => m.StartA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.FinishA && ViewConfigurationTask.Default.FinishA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.FinishA && ViewConfigurationRow.Default.FinishA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.FinishA_FullName : ViewConfigurationRow.Default.FinishA_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.FinishA, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.FinishA) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishA)">@h.FormattedDisplay(m => m.FinishA)</a>
+                    @h.ValidationMessageFor(m => m.FinishA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualStartA && ViewConfigurationTask.Default.ActualStartA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ActualStartA && ViewConfigurationRow.Default.ActualStartA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualStartA_FullName : ViewConfigurationRow.Default.ActualStartA_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.ActualStartA, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.ActualStartA) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualStartA)">@h.FormattedDisplay(m => m.ActualStartA)</a>
+                    @h.ValidationMessageFor(m => m.ActualStartA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualFinishA && ViewConfigurationTask.Default.ActualFinishA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ActualFinishA && ViewConfigurationRow.Default.ActualFinishA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualFinishA_FullName : ViewConfigurationRow.Default.ActualFinishA_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.ActualFinishA, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.ActualFinishA) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ActualFinishA)">@h.FormattedDisplay(m => m.ActualFinishA)</a>
+                    @h.ValidationMessageFor(m => m.ActualFinishA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.PercentWorkCompleteA && ViewConfigurationTask.Default.PercentWorkCompleteA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.PercentWorkCompleteA && ViewConfigurationRow.Default.PercentWorkCompleteA_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.PercentWorkCompleteA_FullName : ViewConfigurationRow.Default.PercentWorkCompleteA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.PercentWorkCompleteA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.PercentWorkCompleteA, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.AssignmentUnitsA && ViewConfigurationTask.Default.AssignmentUnitsA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.AssignmentUnitsA && ViewConfigurationRow.Default.AssignmentUnitsA_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.AssignmentUnitsA_FullName : ViewConfigurationRow.Default.AssignmentUnitsA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.AssignmentUnitsA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.AssignmentUnitsA, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ConfirmedA && ViewConfigurationTask.Default.ConfirmedA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ConfirmedA && ViewConfigurationRow.Default.ConfirmedA_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ConfirmedA_FullName : ViewConfigurationRow.Default.ConfirmedA_FullName)</span>
+                    @h.CheckBox("ConfirmedA", false, new { @class = "workBox detailBoolean" })
+                    @h.ValidationMessageFor(m => m.ConfirmedA, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.CommentsA && ViewConfigurationTask.Default.CommentsA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.CommentsA && ViewConfigurationRow.Default.CommentsA_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.CommentsA_FullName : ViewConfigurationRow.Default.CommentsA_FullName)</span>
+                    <br />
+                    @h.TextAreaFor(m => m.CommentsA, new { @class = "fullscreen detailTB" })
+                    @h.ValidationMessageFor(m => m.CommentsA, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.WorkT && ViewConfigurationTask.Default.WorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.WorkT && ViewConfigurationRow.Default.WorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.WorkT_FullName : ViewConfigurationRow.Default.WorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.WorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.WorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RegularWorkT && ViewConfigurationTask.Default.RegularWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RegularWorkT && ViewConfigurationRow.Default.RegularWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RegularWorkT_FullName : ViewConfigurationRow.Default.RegularWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RegularWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RegularWorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RemainingWorkT && ViewConfigurationTask.Default.RemainingWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RemainingWorkT && ViewConfigurationRow.Default.RemainingWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RemainingWorkT_FullName : ViewConfigurationRow.Default.RemainingWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RemainingWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RemainingWorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ActualWorkT && ViewConfigurationTask.Default.ActualWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ActualWorkT && ViewConfigurationRow.Default.ActualWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ActualWorkT_FullName : ViewConfigurationRow.Default.ActualWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.ActualWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.ActualWorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.StartT && ViewConfigurationTask.Default.StartT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.StartT && ViewConfigurationRow.Default.StartT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.StartT_FullName : ViewConfigurationRow.Default.StartT_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.StartT, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.StartT) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.StartT)">@h.FormattedDisplay(m => m.StartT)</a>
+                    @h.ValidationMessageFor(m => m.StartT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.FinishT && ViewConfigurationTask.Default.FinishT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.FinishT && ViewConfigurationRow.Default.FinishT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.FinishT_FullName : ViewConfigurationRow.Default.FinishT_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.FinishT, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.FinishT) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.FinishT)">@h.FormattedDisplay(m => m.FinishT)</a>
+                    @h.ValidationMessageFor(m => m.FinishT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.ResumeT && ViewConfigurationTask.Default.ResumeT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.ResumeT && ViewConfigurationRow.Default.ResumeT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.ResumeT_FullName : ViewConfigurationRow.Default.ResumeT_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.ResumeT, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.ResumeT) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.ResumeT)">@h.FormattedDisplay(m => m.ResumeT)</a>
+                    @h.ValidationMessageFor(m => m.ResumeT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.DeadlineT && ViewConfigurationTask.Default.DeadlineT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.DeadlineT && ViewConfigurationRow.Default.DeadlineT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.DeadlineT_FullName : ViewConfigurationRow.Default.DeadlineT_FullName)</span>
+                                    
+                    @h.HiddenFor(m => m.DeadlineT, new { @class = "detailTB" })
+                    <a href='#' id="@(h.PrefixedId(m => m.DeadlineT) + h.ValueFor(m => m.LineClass.Id) + "_display")" class='datepicker' data-format="@h.ClientFormatting(m => m.DeadlineT)">@h.FormattedDisplay(m => m.DeadlineT)</a>
+                    @h.ValidationMessageFor(m => m.DeadlineT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.DurationT && ViewConfigurationTask.Default.DurationT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.DurationT && ViewConfigurationRow.Default.DurationT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.DurationT_FullName : ViewConfigurationRow.Default.DurationT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.DurationT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.DurationT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RemainingDurationT && ViewConfigurationTask.Default.RemainingDurationT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RemainingDurationT && ViewConfigurationRow.Default.RemainingDurationT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RemainingDurationT_FullName : ViewConfigurationRow.Default.RemainingDurationT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RemainingDurationT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RemainingDurationT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.TaskNameT && ViewConfigurationTask.Default.TaskNameT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.TaskNameT && ViewConfigurationRow.Default.TaskNameT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.TaskNameT_FullName : ViewConfigurationRow.Default.TaskNameT_FullName)</span><br />
+                    @h.TextBoxFor(m => m.TaskNameT, new { @class = "fullscreen detailTB" })
+                    @h.ValidationMessageFor(m => m.TaskNameT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.PercentCompleteT && ViewConfigurationTask.Default.PercentCompleteT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.PercentCompleteT && ViewConfigurationRow.Default.PercentCompleteT_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.PercentCompleteT_FullName : ViewConfigurationRow.Default.PercentCompleteT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.PercentCompleteT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.PercentCompleteT, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.PercentWorkCompleteT && ViewConfigurationTask.Default.PercentWorkCompleteT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.PercentWorkCompleteT && ViewConfigurationRow.Default.PercentWorkCompleteT_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.PercentWorkCompleteT_FullName : ViewConfigurationRow.Default.PercentWorkCompleteT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.PercentWorkCompleteT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.PercentWorkCompleteT, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.PhysicalPercentCompleteT && ViewConfigurationTask.Default.PhysicalPercentCompleteT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.PhysicalPercentCompleteT && ViewConfigurationRow.Default.PhysicalPercentCompleteT_Edit))
+                {    
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.PhysicalPercentCompleteT_FullName : ViewConfigurationRow.Default.PhysicalPercentCompleteT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.PhysicalPercentCompleteT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.PhysicalPercentCompleteT, "*")
+                    <br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.OvertimeWorkA && ViewConfigurationTask.Default.OvertimeWorkA_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.OvertimeWorkA && ViewConfigurationRow.Default.OvertimeWorkA_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.OvertimeWorkA_FullName : ViewConfigurationRow.Default.OvertimeWorkA_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.OvertimeWorkA, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.OvertimeWorkA, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.OvertimeWorkT && ViewConfigurationTask.Default.OvertimeWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.OvertimeWorkT && ViewConfigurationRow.Default.OvertimeWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.OvertimeWorkT_FullName : ViewConfigurationRow.Default.OvertimeWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.OvertimeWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.OvertimeWorkT, "*")<br />
+                }
+                @if ((Model.TaskRow && ViewConfigurationTask.Default.RemainingOvertimeWorkT && ViewConfigurationTask.Default.RemainingOvertimeWorkT_Edit) ||
+                                    (!Model.TaskRow && ViewConfigurationRow.Default.RemainingOvertimeWorkT && ViewConfigurationRow.Default.RemainingOvertimeWorkT_Edit))
+                {
+                    <span class=" ">@(Model.TaskRow ? ViewConfigurationTask.Default.RemainingOvertimeWorkT_FullName : ViewConfigurationRow.Default.RemainingOvertimeWorkT_FullName)</span>
+                    @h.TypedTextBoxFor(m => m.RemainingOvertimeWorkT, new { @class = "workBox detailTB positive" }, null, ContentAlign.Right)
+                    @h.ValidationMessageFor(m => m.RemainingOvertimeWorkT, "*")<br />
+                }
+                @if (Model.TaskRow && (ViewConfigurationTask.Default.CustomFields != null)
+                                    )
+                {
+                    foreach (var field in ViewConfigurationTask.Default.CustomFields)
+                    {
+                        if (field.Visible)
+                        {
+                    <span class=" ">@field.Name</span>
+
+                    <input type="text" id='@(h.PrefixedId("") + "_cf_date")' name ='@field.Name' class='datepicker detailTBCS Date' valuetype='Date' />
+                        
+                    @h.ValidationMessage("@field.Name", "*")
+                    <input id='@(h.PrefixedId("") + "_cf_cost")' name ='@field.Name' type="text"  class = "workBox detailTBCS positive Cost" valuetype='Cost'/>
+                    <input id='@(h.PrefixedId("") + "_cf_dur")' name ='@field.Name' type="text"  class = "workBox detailTBCS positive Duration" valuetype='Duration'/>
+                    <input id='@(h.PrefixedId("") + "_cf_num")' name ='@field.Name' type="text"  class = "workBox detailTBCS positive Number" valuetype='Number'/>
+                    <input id='@(h.PrefixedId("") + "_cf_text")' name ='@field.Name' type="text"  class = "workBox detailTBCS Text" valuetype='Text'/>
+                    <span id='@(h.PrefixedId("") + "_cf_flag")' name ='@field.Name' valuetype='Flag' class = "detailTBCS Flag">
+                        <input  type="radio"   name ='@field.Name'  value="Yes" />Yes<input  type="radio"   name ='@field.Name'  value="No" />No</span>
+                    <span id='@(h.PrefixedId("") + "_cf_lookup")' name ='@field.Name' valuetype='Lookup' class = "detailTBCS Lookup">
+                    </span>
+                    <br />
+                                      
+                        }
+                    }
+                }
+            </div> 
+        }
+        @if (!Model.TaskRow)
+        {
+            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code)' class='row_choice'>
+            </div>
+        }
+        @if (!Model.TaskRow && ViewConfigurationRow.Default.ActualNonBillableWorkA)
+        {
+            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code)' class='row_choice'>
+            </div>
+        }
+        @if (!Model.TaskRow && ViewConfigurationRow.Default.ActualNonBillableOvertimeWorkA)
+        {
+            <div id='@("property_group_" + UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code)' class='row_choice'>
+            </div>
+        }
+        </div>
+        }
         <p class="buttons-container">
-            <a href="#" data-role="dismiss" data-target="#detail" class="btn save" data-callback="TSM_SaveTask">@SiteResources.Save</a>
-            @if (!Model.TaskRow)
+        @if (!Model.TaskRow)
+        {
+            if (Model.ApprovalMode || !(Model.Status.ToUpper() == "APPROVED" || Model.Status.ToUpper() == "SUBMITTED"))
             {
+            <a href="#" data-role="dismiss" data-target="#basedetail" class="btn save" data-callback="TSM_SaveTask">@SiteResources.Save</a>
+                
             <a href="#" id='remove' onclick="TSM_DeleteRow();" 
-            data-role="dismiss" data-target="#detail" class="btn edit">@SiteResources.Delete</a>
+            data-role="dismiss" data-target="#basedetail" class="btn edit">@SiteResources.Delete</a>
             }
-            <a href="#" data-role="dismiss" data-target="#detail" class="btn cancel" data-callback="TSM_SaveTask">
+        }
+        else
+        {
+            if (!Model.ApprovalMode)
+            {
+                 <a href="#" data-role="dismiss" data-target="#basedetail" class="btn save" data-callback="TSM_SaveTask">@SiteResources.Save</a>
+            }
+        }
+            <a href="#" data-role="dismiss" data-target="#basedetail" class="btn cancel" >
                 @SiteResources.Cancel</a>
         </p>
         </form>
     </div>
-</div>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {

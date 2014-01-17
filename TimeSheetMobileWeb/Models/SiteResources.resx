@@ -387,4 +387,16 @@
   <data name="RecallMessage" xml:space="preserve">
     <value>Are you sure to recall/delete the timesheet</value>
   </data>
+  <data name="ApprovalError" xml:space="preserve">
+    <value>Error while approving timesheets</value>
+  </data>
+  <data name="ApprovalSuccessful" xml:space="preserve">
+    <value>Approvals Done successfuly</value>
+  </data>
+  <data name="ApprovalModeView" xml:space="preserve">
+    <value>New Approval View</value>
+  </data>
+  <data name="CurrentApprovalView" xml:space="preserve">
+    <value>Current Approval View :</value>
+  </data>
 </root>

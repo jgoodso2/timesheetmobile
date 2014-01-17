@@ -7,9 +7,9 @@
             <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
             <h2>@SiteResources.HomeMenuPeriods</h2>
         </div>
-        <div data-role='content' class='content' data-theme='a' >
-                <div data-role='content' data-theme='b' class='periodHeader'><span class='currenttimesheet'>period of time</span></div>
-                <div data-role='content' data-theme='b' >
+        <div  >
+                <div  class='periodHeader'><span class='currenttimesheet'>period of time</span></div>
+                <div>
                     
                     @Html.DropDownListFor(m => m.TimesheetSet,
                                            new Dictionary<string, object> 

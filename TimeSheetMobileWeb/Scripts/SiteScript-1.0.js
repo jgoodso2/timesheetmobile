@@ -27,19 +27,22 @@ function TSM_SaveTask() {
     var userField = "_user_";
     var taskIdField = "_task_";
     var TimesheetIdField = "_row_";
+    var ApprovalIdField = "_approval_";
     var cookieUpdatedField = "_updated_";
     window['configuration'] = {
         show: function () {
             var cookie = getCookie(cookiename, true);
             alert("task view: " + cookie[taskIdField] +
                   " row view: " + cookie[TimesheetIdField] +
+                  " approval view: " + cookie[ApprovalIdField] +
                   " user: " + cookie[userField] +
                   " updated: " + cookie[cookieUpdatedField]);
         },
-        set: function (row, task) {
+        set: function (row, task,approval) {
             var cookie = getCookie(cookiename, true);
             cookie[taskIdField] = task || '';
             cookie[TimesheetIdField] = row || '';
+            cookie[ApprovalIdField] = approval || '';
             cookie[cookieUpdatedField] = 'true';
             setCookie(cookiename, cookie, true, 365);
         },
@@ -47,7 +50,8 @@ function TSM_SaveTask() {
             var cookie = getCookie(cookiename, true);
             return {
                 task: cookie[taskIdField] || '',
-                row: cookie[TimesheetIdField] || ''
+                row: cookie[TimesheetIdField] || '',
+                approval: cookie[ApprovalIdField] || ''
             };
         }
 
@@ -74,7 +78,7 @@ function TSM_LeaveTo(target, application, options) {
 }
 function TSM_partialSubmit(jForm) {
     var target = $('#' + jForm.attr('data-ajax-target'));
-    $.mobile.showPageLoadingMsg();
+    TSM.initPreloader('show');
     $.post(jForm.attr('data-ajax-url'), jForm.serialize(), function (data) {
         target.html(data);
         $.validator.unobtrusive.reParse(target);
@@ -85,21 +89,21 @@ function TSM_partialSubmit(jForm) {
             onComplete(data);
 
         }
-        $.mobile.hidePageLoadingMsg();
+        TSM.initPreloader('hide');
     });
 }
 function TSM_jsonSubmit(jForm) {
-    $.mobile.showPageLoadingMsg()
+    TSM.initPreloader('show');
     $.post(jForm.attr('data-ajax-url'), jForm.serialize(), function (data) {
         var onComplete = jForm.attr('data-ajax-oncomplete') || null;
         if (onComplete != null) {
             onComplete = eval(onComplete);
             onComplete($.parseJSON(data));
-            
+
         }
     },
     "text");
-    $.mobile.hidePageLoadingMsg();
+    TSM.initPreloader('hide');
 }
 function TSM_formDirty(x, y) {
     y = y || 'mainform';
@@ -110,11 +114,32 @@ function TSM_formDirty(x, y) {
     var recallDeleteDisabled = ($('.currentperiodid').val() || '') == '';
     //var empty=$('.innerRowsContainer').children(':not(span)').length == 0;
     var empty = false;
-    $('.csubmit-' + y).prop('disabled', (!x) || empty || cantEdit);
-    $('.fsubmit-' + y).prop('disabled', (!x) || empty || cantEdit);
-    $('#btnRecall').prop('disabled', recallDeleteDisabled || $('.canrecall').val() != 'True');
-    $('#btnDelete').prop('disabled', recallDeleteDisabled || $('.candelete').val() != 'True');
-    $('#btnRecallDelete').prop('disabled', recallDeleteDisabled);
+    if ((!x) || empty || cantEdit) {
+        $('.csubmit-' + y).addClass('ui-disabled');
+        $('.fsubmit-' + y).addClass('ui-disabled');
+    }
+    else {
+        $('.csubmit-' + y).removeClass('ui-disabled');
+        $('.fsubmit-' + y).removeClass('ui-disabled');
+    }
+    if (recallDeleteDisabled || $('.canrecall').val() != 'True') {
+        $('#btnRecall').addClass('ui-disabled');
+    }
+    else {
+        $('#btnRecall').removeClass('ui-disabled');
+    }
+    if (recallDeleteDisabled || $('.candelete').val() != 'True') {
+        $('#btnDelete').addClass('ui-disabled');
+    }
+    else {
+        $('#btnDelete').removeClass('ui-disabled');
+    }
+    if (recallDeleteDisabled) {
+        $('#btnRecallDelete').addClass('ui-disabled');
+    }
+    else {
+        $('#btnRecallDelete').removeClass('ui-disabled');
+    }
     $('#currstatusdisplay').text($('.currstatus').val());
 }
 function TSM_formDelete(y) {
@@ -194,7 +219,7 @@ function TSM_prepareDatePicker(jField) {
 }
 
 function TSM_initButtons(options) {
-    
+
 
     if ($('.datapickerwidget').length > 0) {
         $('.datapickerwidget').datepicker({ onSelect: function (dateText, inst) {
@@ -230,7 +255,7 @@ function TSM_initButtons(options) {
         }
     );
 
-        
+
 
     $(".confirm").click(
         function (e) {
@@ -241,8 +266,9 @@ function TSM_initButtons(options) {
             TSM_Return($(this).attr('data-button-target'), options, 'confirm', e.target);
         }
     );
-        $(".loadConfirm").click(
+    $(".loadConfirm").click(
         function (e) {
+            if (TSM_isFormDirty() && !window.confirm($(this).attr('data-leave-application'))) { e.preventDefault(); return; }
             e.preventDefault();
             e.stopImmediatePropagation();
             if ($(this).hasClass('ui-disabled')) return;
@@ -255,14 +281,7 @@ function TSM_initButtons(options) {
             if (fs.validate().form()) TSM_partialSubmit(fs);
         }
     );
-    $(".cancel").click(
-        function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            if ($(this).hasClass('ui-disabled')) return;
-            TSM_Return($(this).attr('data-button-target'), options, 'cancel');
-        }
-    );
+
     $(".leaveApplication").click(
         function (e) {
             e.preventDefault();
@@ -271,19 +290,46 @@ function TSM_initButtons(options) {
             TSM_LeaveTo($(this).attr('data-button-target'), $(this).attr('data-button-application'));
         }
     );
-       
+
+        $(".TimesheetId").click(
+        function (e) {
+            //e.preventDefault();
+            e.stopPropagation();
+            EnableApprove($(this).attr('data-button-target'));
+        }
+        
+    );
+
+     $(".TaskId").click(
+        function (e) {
+            //e.preventDefault();
+            e.stopPropagation();
+            EnableApprove($(this).attr('data-button-target'));
+        }
+    );
+
+        $(".taskapprovals").click(
+        function (e) {
+            //e.preventDefault();
+            e.stopPropagation();
+            EnableTaskApprove();
+        }
+    );
+        
+
 }
 
 var TSM_PageChangeOptions = null;
 $(document).ready(function () {
     TSM_initButtons(TSM_PageChangeOptions);
-    $('#dateinput').bind('dateselected', function (e, data) {
-        var link = $($(this).data('_returnNode_'));
-        link.text(data);
-        var name = link.attr('id')
-        name = name.substring(0, name.lastIndexOf("_"));
-        var target = $('#' + name);
-        target.val(data);
+
+    $('.leaveapp').bind('click', function (e, data) {
+        if (TSM_isFormDirty() && !window.confirm($(this).attr('data-leave-application'))) { e.preventDefault(); return; }
+
+        GotoUrl($(this).attr('data-target'));
+    });
+    $(function () {
+        $(".datepicker").datepicker();
     });
 
     $('.updatelineclass').change(function () {
@@ -300,6 +346,7 @@ $(document).ready(function () {
     });
 
     $('.updatetasks').change(function () {
+        TSM.initPreloader('show');
         var jThis = $('.updatetasks');
         if (jThis.val() == "-1") {
             $('.normalRows').hide();
@@ -330,6 +377,7 @@ $(document).ready(function () {
                     $('.currentassid').val($(this).find('option:selected').val());
                     TSM_ConfirmAdd(true);
                 });
+                TSM.initPreloader('hide');
             }
         });
 
@@ -343,7 +391,7 @@ $(document).ready(function () {
 
         var jForm = $('#periodform');
         var target = $('#' + jForm.attr('data-ajax-target'));
-        $.mobile.showPageLoadingMsg()
+        TSM.initPreloader('show');
         var jForm = $('#periodform');
         $.post(jForm.attr('data-ajax-url') + '?speriod=' + $('.updatetimesheets').val(), jForm.serialize(), function (data) {
             target.html(data);
@@ -355,7 +403,7 @@ $(document).ready(function () {
                 onComplete();
 
             }
-            $.mobile.hidePageLoadingMsg();
+            TSM.initPreloader('hide');
         });
     });
     $('.updaterowview,  .updatetaskview').change(function () {
@@ -399,17 +447,17 @@ $(document).ready(function (e) {
 })
 function TSM_TasksOptionsCallback(jTarget) {
     if (jTarget.length > 0) {
-        if (jTarget[0].options.length > 1) jTarget.removeAttr("disabled");
-        else jTarget.attr("disabled","disabled");
+        if (jTarget[0].options.length > 1) jTarget.removeClass('ui-disabled');
+        else jTarget.addClass('ui-disabled');
         TSM_ConfirmAdd();
     }
     else {
-        jTarget.attr("disabled", "disabled");
+        jTarget.addClass('ui-disabled');
         TSM_ConfirmAdd();
         if ($('#RequiredProgectId option:selected').text() != 'Choose project') {
             $('.rowlist').each(function () {
                 var jThis = $(this);
-                jThis.removeAttr("disabled");
+                jThis.removeClass('ui-disabled');
             });
             $('#' + $('#RequiredProgectId option:selected').text() + '_display').val('Top Level');
 
@@ -423,21 +471,21 @@ function TSM_ConfirmAdd(show) {
     var lineclassGuid = $(".updatelineclass").val()
     var projectId = $('#RequiredProgectId').val();
     if (cGuid == '') {
-        $('.rowlist').each(function () { $(this).attr('disabled','disabled'); });
+        $('.rowlist').each(function () { $(this).addClass('ui-disabled'); });
         if (projectId == "-1") {
-            $(".updatelineclass").attr("disabled", "disabled");
+            $(".updatelineclass").addClass('ui-disabled');
         }
         else {
-            $(".updatelineclass").removeAttr("disabled");
+            $(".updatelineclass").removeClass('ui-disabled');
         }
         return;
     }
 
     if (projectId == "-1") {
-        $(".updatelineclass").attr("disabled", "disabled");
+        $(".updatelineclass").addClass('ui-disabled');
     }
     else {
-        $(".updatelineclass").removeAttr("disabled");
+        $(".updatelineclass").removeClass('ui-disabled');
     }
     $('.rowlist').each(function () {
         var jThis = $(this);
@@ -452,15 +500,15 @@ function TSM_ConfirmAdd(show) {
         if (((cGuid || '') != '') && ($('.currentperiodid').val() != '')) {
 
             if ($('.dynamictasks option:selected').text() == 'Top Level') {
-                if ($("." + assnid).length == 0) jThis.removeAttr("disabled");
-                else jThis.attr('disabled','disabled');
+                if ($("." + assnid).length == 0) jThis.removeClass('ui-disabled');
+                else jThis.addClass('ui-disabled');
             }
             else {
                 if ($("." + rowId).length == 0) {
-                    jThis.removeAttr("disabled");
+                    jThis.removeClass('ui-disabled');
                 }
                 else {
-                    jThis.attr('disabled','disabled');
+                    jThis.addClass('ui-disabled');
 
                 }
 
@@ -468,7 +516,7 @@ function TSM_ConfirmAdd(show) {
 
 
         }
-        else jThis.attr('disabled','disabled');
+        else jThis.addClass('ui-disabled');
     });
 }
 var TSM_CurrRowType = null;
@@ -478,12 +526,12 @@ function TSM_PrepareRowType(button) {
 }
 function TSM_PeriodsOptionsCallback(jTarget) {
     ////    if (jTarget[0].options.length > 0) {
-    jTarget.removeAttr("disabled");
+    jTarget.removeClass('ui-disabled');
     $('#btnConfirmPeriod').prop('disabled', false);
     ////        
     ////    }
     ////    else {
-    ////        jTarget.attr('disabled','disabled')
+    ////        jTarget.addClass('ui-disabled')
     ////        $('#btnConfirmPeriod').prop('disabled', true);
     ////    }
     jTarget.selectmenu("refresh");
@@ -548,7 +596,7 @@ function TSM_ConfirmPeriodCallBack(data) {
 }
 
 function TSM_UpdateMainLayout() {
-   // $('.updatemainlayout').trigger('updatelayout');
+    // $('.updatemainlayout').trigger('updatelayout');
 
 
 
@@ -557,10 +605,14 @@ function TSM_View() {
     var current = configuration.get();
     var oldTask = '';
     var oldRow = '';
+    var oldapproval = '';
     if (current.task) oldTask = $('.updatetaskview option[value="' + current.task + '"]').text();
     if (current.row) oldRow = $('.updaterowview option[value="' + current.row + '"]').text();
+    if (current.approval) oldapproval = $('.updateapprovalview option[value="' + current.approval + '"]').text();
+
     if (oldTask) $('.currenttaskview').text(oldTask);
     if (oldRow) $('.currentrowview').text(oldRow);
+    if (oldapproval) $('.currentapprovalview').text(oldapproval);
     if (window['_rowViewDescriptions_']) {
         $('.rowViewDescription-o').text(window['_rowViewDescriptions_'][current.row] || '');
         $('.rowViewDescription').text(window['_rowViewDescriptions_'][$('.updaterowview').val()] || '');
@@ -569,15 +621,23 @@ function TSM_View() {
         $('.taskViewDescription-o').text(window['_taskViewDescriptions_'][current.task] || '');
         $('.taskViewDescription').text(window['_taskViewDescriptions_'][$('.updatetaskview').val()] || '');
     }
+
+    if (window['_approvalViewDescriptions_']) {
+        $('.approvalViewDescriptions-o').text(window['_approvalViewDescriptions_'][current.task] || '');
+        $('.approvalViewDescriptions').text(window['_approvalViewDescriptions_'][$('.updateapprovalview').val()] || '');
+    }
 }
 function TSM_ConfirmView() {
     current = configuration.get();
     var rowC = $('.updaterowview');
     var taskC = $('.updatetaskview');
+    var approvalC = $('.updateapprovalview');
     if (rowC.length > 0) current.row = rowC.val();
-    if (taskC.length > 0) current.task = taskC.val();
-    configuration.set(current.row, current.task);
-    $('#periodform').submit();
+    var taskC = $('.updatetaskview');
+    var approvalC = $('.updateapprovalview');
+    configuration.set(current.row, current.task,current.approval);
+    GotoUrl($('#periodform').attr('data-ajax-url'));
+    //$('#periodform').submit();
 }
 function TSM_startAddRow(origin) {
     var currRowType = $(origin).attr('data-button-selection') || null;
@@ -603,7 +663,7 @@ function TSM_CompleteAddRow(data) {
 
     TSM_CopyObjectToRow(item, data, prefix);
 
-    
+
     var projectId = $('#RequiredProgectId').val();
     if (projectId != "-1") {
         if (data["CustomFieldItems"] != undefined) {
@@ -624,7 +684,7 @@ function TSM_CompleteAddRow(data) {
 
                     });
                     if (data.AssignementName == 'Top Level') {
-                        $(".p-guid-container").removeClass("p-guid-container").addClass("p-" +  "TopLevel_" + data.LineClass.Id +  data.ProjectId +"-" + rowType);
+                        $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + "TopLevel_" + data.LineClass.Id + data.ProjectId + "-" + rowType);
                     }
                     else {
                         $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "_" + data.LineClass.Id + "-" + rowType);
@@ -653,10 +713,10 @@ function TSM_CompleteAddRow(data) {
                                     if (jThis.attr('class').indexOf(datatype) >= 0) {
                                         if (datatype == 'Date') {
                                             if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() != '') {
-                                                jThis.text($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val().split(" ")[0]);
+                                                jThis.val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val().split(" ")[0]);
                                             }
                                             else {
-                                                jThis.text('No Date');
+                                                jThis.val('No Date');
                                             }
                                         }
                                         else if (datatype == 'Flag') {
@@ -714,6 +774,9 @@ function TSM_CompleteAddRow(data) {
         $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
         TSM.init();
     }
+    CloseDialog('#taskselection');
+    $('#RequiredProgectId').val('-100');
+    $('#assignments').val('-100');
 }
 
 function TSM_GetRowValue(name, prefix, value) {
@@ -770,8 +833,8 @@ function TSM_CopyObjectToRow(item, source, prefix) {
         if (property == "AssignementName") {
             var val = source[property] || null;
             if (val != null) {
-                TSM_SetRowValue(property, prefix, source[property] + " "  + source["LineClass"].Name);
-                $(prefix).find('.currentlineclassid').val(source["LineClass"].Id); 
+                TSM_SetRowValue(property, prefix, source[property] + " " + source["LineClass"].Name);
+                $(prefix).find('.currentlineclassid').val(source["LineClass"].Id);
                 continue;
             }
         }
@@ -829,7 +892,7 @@ function TSM_CopyToRow(prefix) {
                 txtval = 0.00;
             }
 
-             if (!isNaN(parseFloat($('#allTotal').text()))) {
+            if (!isNaN(parseFloat($('#allTotal').text()))) {
                 allTotal = parseFloat($('#allTotal').text());
             }
             else {
@@ -842,6 +905,10 @@ function TSM_CopyToRow(prefix) {
             if (!isNaN(parseFloat(oldvalue)) && !isNaN(parseFloat(jThis.val()))) {
                 $(tname).text((txtval + parseFloat(jThis.val()) - parseFloat(oldvalue)).toFixed(2));
                 $('#allTotal').text((allTotal + parseFloat(jThis.val()) - parseFloat(oldvalue)).toFixed(2));
+            }
+            else if (isNaN(parseFloat(jThis.val()))) {
+                $(tname).text(val.toFixed(2));
+                $('#allTotal').text((allTotal - parseFloat(oldvalue)).toFixed(2));
             }
             else if (isNaN(parseFloat(oldvalue))) {
                 $(tname).text((txtval + val).toFixed(2));
@@ -862,9 +929,9 @@ function TSM_CopyToRow(prefix) {
         var name = jThis.attr('name');
         var valuetype = jThis.attr('valuetype');
         if (valuetype == 'Date') {
-            $('#' + prefix).find('[class=' + name + '_cf_display][valuetype=' + valuetype + ']').text(jThis.text());
-            if (jThis.text() != 'No Date')
-                $('#' + prefix).find('[class=' + name + '][valuetype=' + valuetype + ']').val(jThis.text());
+            $('#' + prefix).find('[class=' + name + '_cf_display][valuetype=' + valuetype + ']').text(jThis.val());
+            if (jThis.val() != 'No Date')
+                $('#' + prefix).find('[class=' + name + '][valuetype=' + valuetype + ']').val(jThis.val());
         }
         else if (valuetype == 'Flag') {
             if (jThis[0].children.length > 0 && jThis[0].children[0].checked) {
@@ -941,13 +1008,14 @@ function TSM_DeleteRow() {
             var oldvalue = TSM_GetRowValue(name, prefix, jThis.val());
             if (!isNaN(parseFloat(oldvalue))) {
                 $(tname).text((txtval - parseFloat(oldvalue)).toFixed(2));
-              $('#allTotal').text((total - parseFloat(oldvalue)).toFixed(2));
+                $('#allTotal').text((total - parseFloat(oldvalue)).toFixed(2));
             }
         }
     });
 
 
     $('#' + prefix.replace("_remove", "") + '_Container').remove();
+    TSM_formDirty(true);
 }
 function TSM_CopyFromRow(prefix) {
     $(".detailBoolean").each(function () {
@@ -960,7 +1028,7 @@ function TSM_CopyFromRow(prefix) {
         var name = jThis.attr('id');
         jThis.text($('#' + prefix + '_' + name).text());
     });
-    
+
     $(".detailTB").each(function () {
         var jThis = $(this);
         var name = jThis.attr('id');
@@ -1004,10 +1072,10 @@ function TSM_CopyFromRow(prefix) {
             if (jThis.attr('class').indexOf(datatype) >= 0) {
                 if (datatype == 'Date') {
                     if ($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val() != '') {
-                        jThis.text($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val().split(" ")[0]);
+                        jThis.val($('#' + prefix).find('[class=' + name + ']' + '[valuetype=' + datatype + ']').val().split(" ")[0]);
                     }
                     else {
-                        jThis.text('No Date');
+                        jThis.val('No Date');
                     }
                 }
                 else if (datatype == 'Flag') {
@@ -1047,13 +1115,102 @@ function TSM_CopyFromRow(prefix) {
 }
 
 function reload() {
+    TSM.initPreloader("show");
     window.location.href = window.location.href;
 }
 
 function GotoUrl(url) {
+    TSM.initPreloader("show");
     window.location.href = url;
 }
-function TSM_CopySummary(isTask,msg) {
+
+function TSM_ConfirmApproveTimesheet(data) {
+    if (data) {
+        TSM_CopySummary(true, data['ErrorMessage']);
+        OpenDialog('#tskupdateSummary');
+    }
+}
+
+function EnableApprove(checkbox) {
+    if ($('.TimesheetId').is(':checked') || $('.TaskId').is(':checked')) {
+        $('.approvals').removeClass('ui-disabled');
+    }
+    else {
+        $('.approvals').addClass('ui-disabled');
+    }
+    $('#' + checkbox).children('.selectedtimeappr:first').val($('#' + checkbox).children('.TimesheetId:first').is(':checked'));
+    $('#' + checkbox).children('.selectedtaskappr:first').val($('#' + checkbox).children('.TaskId:first').is(':checked'));
+}
+
+function EnableTaskApprove(checkbox) {
+    if ($('.taskapprovals').is(':checked')) {
+        $('.tskbtns').removeClass('ui-disabled');
+    }
+    else {
+        $('.tskbtns').addClass('ui-disabled');
+    }
+}
+
+function ApproveRejectSelectedTimesheets(mode) {
+    var jForm = $('#approvalform');
+    TSM.initPreloader('show');
+    $.post(jForm.attr('data-ajax-url') + "/?mode=" + mode, jForm.serialize(), function (data) {
+        var onComplete = jForm.attr('data-ajax-oncomplete') || null;
+        if (onComplete != null) {
+            onComplete = eval(onComplete);
+            onComplete(data);
+
+        }
+        TSM.initPreloader('hide');
+    });
+
+}
+
+function ApproveRejectTimesheet(mode) {
+    var jForm = $('#approvalform');
+    TSM.initPreloader('show');
+    $.post(jForm.attr('data-ajax-url') + "/?mode=" + mode, jForm.serialize(), function (data) {
+        var onComplete = jForm.attr('data-ajax-oncomplete') || null;
+        if (onComplete != null) {
+            onComplete = eval(onComplete);
+            onComplete(data);
+
+        }
+        TSM.initPreloader('hide');
+    });
+}
+
+
+
+function ApproveSelectedTasks(aapprovalmode) {
+    var jForm = $('#approvalform');
+    TSM.initPreloader('show');
+    var selectedtasks = new Array();
+    var count = 0;
+    $('.taskapprovals').each(function () {
+        if ($(this).is(':checked')) {
+            selectedtasks[count] = $(this).attr('data-row-from');
+            count++;
+        }
+    });
+    
+    var arr = JSON.stringify(selectedtasks);
+    $.ajax({
+        cache: false,
+        type: "POST",
+        url: jForm.attr('data-ajax-url'),
+        async: "false",
+        contentType: 'application/json',
+        data: JSON.stringify({ assignments: selectedtasks, mode: aapprovalmode }),
+        success: function (data) {
+            TSM_ConfirmApproveTimesheet(data);
+            TSM.initPreloader('hide');
+        }
+    });
+}
+
+
+function TSM_CopySummary(isTask, msg) {
     if (msg) {
         $('.updateerrormessage-d').text(msg);
     }
@@ -1130,7 +1287,7 @@ function TSM_PrepareDays(start, end) {
     if ((start == oldStart && dur == olddur)) {
         return;
     }
-   
+
     var template = $('#dayTemplate').html();
     var hdrTemplate = $('#dayHdrTemplate').html();
     container.empty();
@@ -1160,7 +1317,7 @@ function TSM_PrepareDays(start, end) {
 
 MvcControlsToolkit_ParseRegister.add(
 
- function (selector) { if (selector != '#dayContainer' ) $(selector).trigger('create'); },
+ function (selector) { if (selector != '#dayContainer') $(selector).trigger('create'); },
 
  false)
 

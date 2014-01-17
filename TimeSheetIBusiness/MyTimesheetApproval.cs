@@ -10,7 +10,9 @@ namespace TimeSheetIBusiness
         public string Hours { get; set; }
         public string Name { get; set; }
         public string Period { get; set; }
-
-        
+        public string TimesheetId { get; set; }
+        public bool Selected { get; set; }
     }
+
+   
 }

@@ -1,10 +1,11 @@
 ﻿@using MVCControlsToolkit.Controls
 @using MVCControlsToolkit.Core
 
+
 @model TimeSheetMobileWeb.Models.TimeSheetView
-    <td class="editor-label gridcelllink" onclick='$.mobile.showPageLoadingMsg(); window.location.href="@Url.Action(
+    <td class="editor-label gridcelllink" onclick='GotoUrl("@Url.Action(
     "Index",
-"Timesheet", new { speriod = @Model.Period.Replace("(","-").Replace(")","-") }, "http")";'>
+"Timesheet", new { speriod = @Model.Period.Replace("(","-").Replace(")","-") }, "http")");'>
      
                                             @Model.Period
                                             

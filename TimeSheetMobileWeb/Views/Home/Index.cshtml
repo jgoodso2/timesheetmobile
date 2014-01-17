@@ -9,16 +9,13 @@
 <head>  
     <title>@SiteResources.HomeShortTitle</title>
    
-
+   
     <script type="text/javascript">
         $(document).ready(function () {
-            $.mobile.hidePageLoadingMsg();
-
-            $('.menu-link').click(function () {
-                $.mobile.loadingMessage = '@SiteResources.InitialLoadingMessage';
-                $.mobile.loadingMessageTheme = 'a';
-                $.mobile.loadingMessageTextVisible = true;
-                $.mobile.showPageLoadingMsg();
+            TSM.initPreloader('hide');
+            $('.menu-link').bind('click', function () {
+                $.mobile.loadingMessage = '';
+                TSM.initPreloader('show');
                 window.location.href = $(this).attr('data-action');
             });
         })
@@ -28,9 +25,9 @@
 <body class="tms time-details">
         <div class='container'>
         <div class="home-bg">
-		<a href="#" data-role="modal" class='menu-link' data-action='@Url.Action("TimesheetHistory", "Timesheet")'><span class="icon-timesheet"></span>@SiteResources.HomeMenuTimesheet</a>
-		<a href="#" data-role="modal" class='menu-link' data-action='@Url.Action("Index", "Tasks")'><span class="icon-tasks"></span>@SiteResources.HomeMenuTasks</a>
-		<a href="#" data-role="modal" class='menu-link' data-action='@Url.Action("MyApprovals", "Timesheet")'><span class="icon-approvals"></span>@SiteResources.MyApprovals</a>
+		<a href="#"   onclick='GotoUrl("@Url.Action("TimesheetHistory", "Timesheet")")'><span class="icon-timesheet" ></span>@SiteResources.HomeMenuTimesheet</a>
+		<a href="#"   onclick='GotoUrl("@Url.Action("Index", "Tasks")")'><span class="icon-tasks"></span>@SiteResources.HomeMenuTasks</a>
+		<a href="#"   onclick='GotoUrl("@Url.Action("MyApprovals", "Timesheet")")'><span class="icon-approvals"></span>@SiteResources.MyApprovals</a>
 	</div>
         </div>
         

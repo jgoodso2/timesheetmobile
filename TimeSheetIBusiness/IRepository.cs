@@ -17,8 +17,8 @@ namespace TimeSheetIBusiness
         void UpdateRows(bool isApprovalMode, string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, IEnumerable<Tracker<BaseRow>> rows, bool submit);
         TimesheetsSets DefaultTimesheetSet {get;}
         void RecallDelete(string user, string periodId, DateTime start, DateTime stop, bool isRecall);
-        UserConfigurationInfo UserConfiguration(string user, string rowField, string taskField);
-        void ChangeUserConfiguration(string user, UserConfigurationInfo conf,  string rowField, string taskField);
+        UserConfigurationInfo UserConfiguration(string user, string rowField, string taskField, string approvalFieldID);
+        void ChangeUserConfiguration(string user, UserConfigurationInfo conf, string rowField, string taskField, string approvalFieldID);
         bool SetClientEndpointsProg(string pwaUrl);
         string GetPeriodID(DateTime start, DateTime end);
         CustomFieldInfo GetCustomFieldType(Guid id,int type, string property);
@@ -27,6 +27,16 @@ namespace TimeSheetIBusiness
         List<LineClass> GetLineClassifications();
         WindowsIdentity AppPoolUser { get; set; }
         string GetUserName(string name);
-        Dictionary<string,List<MyTimesheetApproval>> GetTimesheetApprovals(string user);
+        List<TimesheetApprovalItem> GetTimesheetApprovals(string user);
+        void ApproveTimesheet(string tUID, string mgrUID,string action);
+        void RejectTimesheet(string tUID, string mgrUID);
+        List<TaskApprovalItem> GetTaskApprovals(string user);
+        string DefaultLineClass { get; }
+
+        string GetCurrentUserId();
+
+        void ApproveProjectTasks(string projectID, string mgrUID, string mode);
+        void ApproveTasks(string[] assnid, string mgrUID, string mode);
+        List<BaseRow> GetSubmittedRows(string projectId, string approver,string user, ViewConfigurationBase configuration);
     }
 }

@@ -1,9 +1,8 @@
 ﻿@model TimeSheetMobileWeb.Models.ViewSelectionView
 @using TimeSheetMobileWeb.Models
 @using TimeSheetIBusiness
-<div  id='viewselection'>
-    <div id="view-display" class="modal" style="display: block;">
-     <a href="#" class="pull-right close" data-role="dismiss" data-target="#timesheet-display">
+<div  id='viewselection' class="modal">
+     <a href="#" class="pull-right close" data-role="dismiss" data-target="#viewselection">
             close</a>
 
          <div class="modal-content">
@@ -30,6 +29,27 @@
                     </script>
                     <p class="description rowViewDescription"></p>
                 }
+
+                else if (Model.IsApprovalMode)
+                {
+                     <label for='@Html.PrefixedId(m => m.ApprovalViewId)'><strong>@SiteResources.ApprovalModeView</strong></label>
+                    <label>
+                    <select id="@Model.ApprovalViewId">
+                      @foreach (var value in ViewConfigurationApproval.All)
+                      {
+                        <option value='@value.Id'>@value.Name</option>
+                      }
+                    </select>
+                        </label>
+                        <script type="text/javascript">
+                        var _approvalViewDescriptions_ = {};
+                        @foreach (var x in ViewConfigurationApproval.All)
+                        {
+                            <text>_approvalViewDescriptions_['@x.Id']='@x.Description';</text>
+                        }
+                    </script>
+                        <p class="description approvalViewDescription"></p>
+                }
                 else
                 {
                       <label for='@Html.PrefixedId(m => m.TaskUpdatorViewId)'><strong>@SiteResources.TaskViewLabel</strong></label>
@@ -51,18 +71,24 @@
                         <p class="description taskViewDescription"></p>
                 }
                         
-                @if (Model.IsTask)
+                @if(Model.IsApprovalMode)
+                {
+                    <p><strong><span >@SiteResources.CurrentApprovalView</span></strong></p><p class="maincontent"><strong><span class="currentapprovalview"></span></strong></p>
+                    <p class="description approvalViewDescription-o"></p>
+                }
+                else if (Model.IsTask)
                 {
                     <p><strong><span >@SiteResources.CurrentTaskView</span></strong></p><p class="maincontent"><strong><span class="currenttaskview"></span></strong></p>
                     <p class="description taskViewDescription-o"></p>
                 }
+
                 else
                 {
                     <p><strong><span >@SiteResources.CurrentRowView</span></strong></p><p class="maincontent"><strong><span class="currentrowview"></span></strong></p>
                     <p class="description rowViewDescription-o"></p>
                 }
-                    <form id="periodform" action = '@Url.Action("Index", (Model.IsTask ? "Tasks" : "Timesheet"))'
-                     data-ajax-url='@Url.Action("Refresh", (Model.IsTask ? "Tasks" : "Timesheet"))' data-ajax-target='allTimesheetsEdit' 
+                    <form id="periodform" action = '@HttpContext.Current.Request.Url.AbsoluteUri'
+                     data-ajax-url='@HttpContext.Current.Request.Url.AbsoluteUri' data-ajax-target='allTimesheetsEdit' 
                                             data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
 
                     <input id="btnConfirmView" data-role="dismiss" data-callback="TSM_ConfirmView" type="button" value="@SiteResources.ChangeViewDone" class='main-submit btn save' 
@@ -71,5 +97,3 @@
                     </form>
                 </div>
         </div>
-       
-    </div>

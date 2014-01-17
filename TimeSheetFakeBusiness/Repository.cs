@@ -11,17 +11,42 @@ namespace TimeSheetFakeBusiness
     public class Repository: IRepository
     {
         public System.Security.Principal.WindowsIdentity AppPoolUser { get; set; }
+        public void ApproveTasks(string[] assnid, string mgrUID, string mode)
+        {
+        }
+        public string GetCurrentUserId()
+        {
+            return string.Empty;
+        }
+        public List<BaseRow> GetSubmittedRows(string projectId,string approver, string user, ViewConfigurationBase configuration)
+        {
+            return new List<BaseRow>();
+        }
+        public void ApproveProjectTasks(string projectID, string mgrUID, string mode)
+        {
+        }
+        public string DefaultLineClass { get { return string.Empty; } }
+        public void ApproveTimesheet(string tUID, string mgrUID,string action)
+        {
+        }
+        public void RejectTimesheet(string tUID, string mgrUID)
+        {
+        }
         public string GetUserName(string name)
         {
             return "";
         }
-        public UserConfigurationInfo UserConfiguration(string user, string rowField, string taskField)
+        public UserConfigurationInfo UserConfiguration(string user, string rowField, string taskField, string approvalField)
         {
             return new UserConfigurationInfo { TaskViewId = null, RowViewId = "RComplete" };
         }
         public CustomFieldInfo GetCustomFieldType(Guid guid,int t, string property)
         {
             return null;
+        }
+        public List<TaskApprovalItem> GetTaskApprovals(string user)
+        {
+            return new List<TaskApprovalItem>();
         }
         public LookupTableDisplayItem[] GetLookupTableValuesAsItems(Guid tableUid, string dataType)
         {
@@ -35,7 +60,7 @@ namespace TimeSheetFakeBusiness
         {
             return true;
         }
-        public void ChangeUserConfiguration(string user, UserConfigurationInfo conf, string rowField, string taskField)
+        public void ChangeUserConfiguration(string user, UserConfigurationInfo conf, string rowField, string taskField, string approvalField)
         {
             string dummy = rowField;
         }
@@ -120,7 +145,7 @@ namespace TimeSheetFakeBusiness
 
 
 
-        public Dictionary<string, List<MyTimesheetApproval>> GetTimesheetApprovals(string user)
+        public List<TimesheetApprovalItem> GetTimesheetApprovals(string user)
         {
             throw new ArgumentException();
         }

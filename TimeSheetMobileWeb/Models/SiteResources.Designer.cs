@@ -97,6 +97,33 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error while approving timesheets.
+        /// </summary>
+        public static string ApprovalError {
+            get {
+                return ResourceManager.GetString("ApprovalError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Approval View.
+        /// </summary>
+        public static string ApprovalModeView {
+            get {
+                return ResourceManager.GetString("ApprovalModeView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Approvals Done successfuly.
+        /// </summary>
+        public static string ApprovalSuccessful {
+            get {
+                return ResourceManager.GetString("ApprovalSuccessful", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Approved.
         /// </summary>
         public static string Approved {
@@ -219,6 +246,15 @@ namespace TimeSheetMobileWeb.Models {
         public static string ConfirmSubmit {
             get {
                 return ResourceManager.GetString("ConfirmSubmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current Approval View :.
+        /// </summary>
+        public static string CurrentApprovalView {
+            get {
+                return ResourceManager.GetString("CurrentApprovalView", resourceCulture);
             }
         }
         

@@ -13,8 +13,10 @@ namespace TimeSheetMobileWeb.Models
     {
         public ViewConfigurationRow[] RowsConfiguration;
         public ViewConfigurationTask[] TasksConfiguration;
+        public ViewConfigurationApproval[] ApprovalConfiguration;
         public string TaskUpdatorViewField { get; set; }
         public string TimesheetViewField { get; set; }
+        public string ApprovalViewField { get; set; }
         public void Save(string filename = null)
         {
             if (filename == null) filename=HttpContext.Current.Server.MapPath("~/ViewsConfiguration.config");
@@ -57,10 +59,13 @@ namespace TimeSheetMobileWeb.Models
                     GlobalViewsConfiguration res = serializer.Deserialize(stream) as GlobalViewsConfiguration;
                     ViewConfigurationTask.All = res.TasksConfiguration;
                     ViewConfigurationRow.All = res.RowsConfiguration;
+                    ViewConfigurationApproval.All = res.ApprovalConfiguration;
                     if (!string.IsNullOrWhiteSpace(res.TaskUpdatorViewField)) ViewConfigurationTask.ViewFieldName = res.TaskUpdatorViewField;
                     ViewConfigurationTask.Default = res.TasksConfiguration[0];
                     if (!string.IsNullOrWhiteSpace(res.TimesheetViewField)) ViewConfigurationRow.ViewFieldName = res.TimesheetViewField;
                     ViewConfigurationRow.Default = res.RowsConfiguration[0];
+                    if (!string.IsNullOrWhiteSpace(res.ApprovalViewField)) ViewConfigurationApproval.ViewFieldName = res.ApprovalViewField;
+                    ViewConfigurationApproval.Default = res.ApprovalConfiguration[0];
                 }
                 finally
                 {

@@ -2,9 +2,8 @@
 @using TimeSheetMobileWeb.Models
 @{var h = Html.CrossHelper(new RowSelectionInfosView());}
 
-<div id='taskselection'  data-title="@Model.Title">
-<div id="timesheet-display" class="modal" style="display: block;">
-        <a href="#" class="pull-right close" data-role="dismiss" data-target="#timesheet-display">
+<div id="taskselection"  data-title="@Model.Title" class="modal">
+        <a href="#" class="pull-right close" data-role="dismiss" data-target="#taskselection">
             close</a>
         <div class="modal-content">
     <h3>@Model.Title
@@ -19,7 +18,7 @@
          <label>
          <select id  ="RequiredProgectId" class="updatetasks" data-action='@Url.Action("ProjectTasks", "Tasks")' 
          data-ajax-oncomplete='TSM_CompleteAddRow' data-duplicate-message='@SiteResources.DuplicateTask' data-button-target="@h.PrefixedId(m => m.RequiredAssignementName)">
-         <option name="" value="" >@SiteResources.ProjectPrompt</option>
+         <option name="" value="-100" >@SiteResources.ProjectPrompt</option>
          @foreach (var project in Model.Projects)
          {
 			<option name="@project.Name" value="@project.Id" >@project.Name</option>
@@ -40,7 +39,7 @@
              <h3>@SiteResources.WorkTimeAssignement</h3>
             <label>
             <select id="assignments" class="dynamictasks" 
-             ><option value='' name=''>@SiteResources.AssignementPrompt</option></select>
+             ><option value='-100' name=''>@SiteResources.AssignementPrompt</option></select>
             </label>
         }
 
@@ -69,25 +68,28 @@
         
         @if (Model != null && Model.RowTypes != null && Model.RowTypes.Length > 0)
         {
-            <div data-role='content' >
+            <div>
                @* @if (!Model.IsProjectlineType)
                 {*@
-                <p class="buttons-container">
+                <p class="buttons-container normalRows">
                     @foreach (RowType rt in Model.RowTypes)
                     {
-                        <a disabled='disabled' id="@("btn_sel" + rt)" href="#" data-role="dismiss" data-target="#taskselection" class="btn save confirm rowlist" data-button-selection="@rt.Code" data-button-target='taskselection'>
+                        <a  id="@("btn_sel" + rt)" href="#"  class="btn save confirm rowlist ui-disabled" 
+                        data-button-selection="@rt.Code" data-button-target='taskselection'>
                         @rt.DisplayValue</a>
                 
                     }
-                    <a id="btnCancelTask" href="#" data-role="dismiss" data-target="#taskselection" class="btn cancel" data-button-target='taskselection' >@SiteResources.Cancel</a>
+                    <a id="btnCancelTask" href="#" data-role="dismiss" data-target="#taskselection" class="main-submit btn cancel" data-button-target='taskselection' >@SiteResources.Cancel</a>
                 </p>
                @* }*@
                 @if (Model != null && !Model.IsInTask && Model.Admin != null)
                 {
-                       <p class="adminRows" style="display:none">
-                       <a disabled='disabled' id="btnConfirmTaskA" href="#" data-role="dismiss" data-target="#taskselection" class="btn save confirm rowlist"  data-button-selection="@Model.Admin.Code">
+                       <p class="buttons-container adminRows" style="display:none">
+                       <a  id="btnConfirmTaskA" href="#"  data-button-target='taskselection' 
+                       class="btn save confirm rowlist ui-disabled" 
+                       data-button-selection="@Model.Admin.Code" >
                        @SiteResources.AddTaskConfirmed</a>
-                        <a id="btnCancelTask" href="#" data-role="dismiss" data-target="#taskselection" class="btn cancel"  >@SiteResources.Cancel</a>
+                        <a id="btnCancelTask" href="#" data-role="dismiss" data-target="#taskselection" class=" main-submit btn cancel"  data-button-target='taskselection' >@SiteResources.Cancel</a>
                        </p>
                 }
             
@@ -95,4 +97,3 @@
         }
         </div>
     </div>
-</div>

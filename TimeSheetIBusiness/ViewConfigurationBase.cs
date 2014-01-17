@@ -288,5 +288,29 @@ namespace TimeSheetIBusiness
 
         }
     }
+
+    [Serializable]
+    public class ViewConfigurationApproval : ViewConfigurationBase
+    {
+        public static ViewConfigurationApproval[] All { get; set; }
+        [ThreadStatic]
+        public static ViewConfigurationApproval Default;
+
+        public static string ViewFieldName;
+        public static Guid ViewFieldGuid;
+        public static ViewConfigurationApproval Find(string id)
+        {
+            foreach (var c in All)
+            {
+                if (c.Id == id) return c;
+            }
+            return null;
+        }
+        public ViewConfigurationApproval()
+            : base()
+        {
+
+        }
+    }
     
 }

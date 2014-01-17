@@ -11,5 +11,14 @@ namespace TimeSheetMobileWeb.Models
         public bool TaskRow { get; set; }
         public string Title { get; set; }
         public int PeriodLength;
+        public string Status { get; set; }
+
+        public bool ApprovalMode { get; set; }
+
+        public BaseRowView()
+            : base()
+        {
+            Status = "";
+        }
     }
 }

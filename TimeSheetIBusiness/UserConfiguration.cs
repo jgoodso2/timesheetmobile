@@ -9,5 +9,6 @@ namespace TimeSheetIBusiness
     {
         public string TaskViewId { get; set; }
         public string RowViewId { get; set; }
+        public string ApprovalViewId { get; set; }
     }
 }

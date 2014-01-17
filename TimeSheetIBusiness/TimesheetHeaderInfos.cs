@@ -19,6 +19,8 @@ namespace TimeSheetIBusiness
         public string Name { get; set; }
         public string Comments { get; set; }
         public int? Status { get; set; }
-        
+
+
+        public Guid TSUID { get; set; }
     }
 }

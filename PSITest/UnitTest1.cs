@@ -329,15 +329,30 @@ namespace PSITest
             {
                 SetImpersonation("CONTOSO\\ADMINISTRATOR");
                 var ds = timesheetClient.ReadTimesheetsPendingApproval(new DateTime(1984, 1, 1), new DateTime(2049, 12, 1), null);
-                var tds = timesheetClient.ReadTimesheet(ds.Timesheets[0].TS_UID);
-                bool isWindowsUser;
-                timesheetClient.QueueReviewTimesheet(Guid.NewGuid(), tds.Headers[0].TS_UID, 
-                    GetResourceUidFromNtAccount("CONTOSO\\ADMINISTRATOR", out isWindowsUser) 
-                    //Guid.Empty
-                    ,"Approved",SvcTimeSheet.Action.Approve);
-                //timesheetClient.ApproveProjectTimesheetLines(timesheetClient.ReadTimesheet(ds.Timesheets[0].TS_UID).Lines.Where(t=>t.TS_LINE_VALIDATION_TYPE == 1).Select(t => t.TS_LINE_UID).ToArray(), null, "Approved by unit test");
+                
+                timesheetClient.ApproveProjectTimesheetLines(ds.Timesheets.Select(t=>t.TS_UID).ToArray(), null, "Approved by unit test");
+                
                 
             }
+        }
+
+        [TestMethod] 
+        public void ApproveTasks()
+        {
+            #region Read status updates
+            // Get assignments waiting for approval.
+            var statusApprovalDs = statusingClient.ReadStatusApprovalsSubmitted(false);
+            for (int i = 0; i < statusApprovalDs.StatusApprovals.Count; i++)
+            { 
+               Console.WriteLine("Approving assignment update for {2} to {0} in {1}.", statusApprovalDs.StatusApprovals[i].TASK_NAME, statusApprovalDs.StatusApprovals[i].PROJ_NAME, statusApprovalDs.StatusApprovals[i].RES_NAME);
+               statusApprovalDs.StatusApprovals[i].ASSN_TRANS_ACTION_ENUM = (int)PSLib.TaskManagement.StatusApprovalType.Accepted;
+            }
+            Console.WriteLine("Saving status updates...");
+            statusingClient.UpdateStatusApprovals(statusApprovalDs);
+            #endregion
+            Console.WriteLine("Applying status updates...");
+            Guid jobUid = Guid.NewGuid();
+            statusingClient.QueueApplyStatusApprovals(jobUid,"Approving all status updates via utility");
         }
 
 

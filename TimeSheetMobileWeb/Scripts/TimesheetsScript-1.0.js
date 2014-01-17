@@ -2,15 +2,15 @@
     TSM_formDirty(false);
     TSM_UpdateMainLayout();
     TSM_CopySummary(false);
-    OpenDialog('#updatesummary');
+    OpenDialog('#tsSummary');
 }
 
 function TSM_CompleteRD(data) {
     if (data) {
         if (data['IsRecall']) {
-            CloseDialog('#recalldelete');
+            CloseDialog('#recallDelete');
             TSM_CopySummary(true,data['ErrorMessage']);
-            OpenDialog('#updaterecallsummary');
+            OpenDialog('#tskupdateSummary');
             //
             return;setTimeout(function () { TSM_partialSubmit($('#periodform')); }, 0);
         }
@@ -29,6 +29,7 @@ function TSM_CompleteRD(data) {
 
 $(document).ready(function () {
     TSM_formDirty(false);
+   
     $('.leaveApplication').attr('data-button-application', 'timesheet');
     $('#timesheet').bind('leaveApplication', function (e, data) {
         if (TSM_isFormDirty() && !window.confirm($('#timesheet').attr('data-leave-application'))) data.cancel = true;
@@ -48,11 +49,11 @@ $(document).ready(function () {
 
         }
         );
-        $('#periodselection').bind('gotoing', function (e, data) {
+    $('#periodselection').bind('gotoing', function (e, data) {
         if (TSM_isFormDirty() && !window.confirm($('#timesheet').attr('data-leave-application'))) data.cancel = true;
     })
     .bind('confirm', function () {
-        TSM_ConfirmPeriod(null,null);
+        TSM_ConfirmPeriod(null, null);
     });
     $('#viewselection').bind('gotoing', function (e, data) {
         if (TSM_isFormDirty() && !window.confirm($('#timesheet').attr('data-leave-application'))) data.cancel = true;
@@ -71,6 +72,8 @@ $(document).ready(function () {
 
         TSM_jsonSubmit($('#rDRequest'));
     })
+
+
     .bind('confirming', function (e, data) {
 
     })

@@ -1,19 +1,84 @@
-﻿"<Changes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	    <Proj ID="f78a3d7e-6f62-4f82-9c77-799eb76e6be9">
-		    <Assn ID="2fd71d8f-55fe-42c2-806c-b96e4204f525">
-			         <LookupTableCustomFieldChange IsMultiValued="false" CustomFieldType="Text" CustomFieldGuid="20b57036-6921-4f53-a610-e7342c34c5f2" CustomFieldName="Alt Location">
-				<LookupTableValue Guid="c2e2f118-57b2-42e3-a83b-01b9b975736a">Alabama</LookupTableValue>
-			</LookupTableCustomFieldChange>
-		</Assn>
-	</Proj>    <Proj ID="">
-		    <Assn ID="30a7a3ee-d6a2-471a-96ac-730569bb4ebd">
-			         <PeriodChange PID="251658250" Start="2014-01-06T00:00:00" End="2014-01-06T23:59:59">480000</PeriodChange>         
-				<PeriodChange PID="251658250" Start="2014-01-07T00:00:00" End="2014-01-07T23:59:59">480000</PeriodChange>         
-				<PeriodChange PID="251658250" Start="2014-01-08T00:00:00" End="2014-01-08T23:59:59">480000</PeriodChange>         
-				<PeriodChange PID="251658250" Start="2014-01-09T00:00:00" End="2014-01-09T23:59:59">0</PeriodChange>         
-				<PeriodChange PID="251658250" Start="2014-01-10T00:00:00" End="2014-01-10T23:59:59">0</PeriodChange>         
-				<PeriodChange PID="251658250" Start="2014-01-11T00:00:00" End="2014-01-11T23:59:59">0</PeriodChange>         
-				<PeriodChange PID="251658250" Start="2014-01-12T00:00:00" End="2014-01-12T23:59:59">0</PeriodChange>
-		</Assn>
-	</Proj>
-</Changes>"
+﻿
+/*
+*  @author : Srikrishna Gumma
+*  NameSpace : TSM
+*/
+
+var TSM = TSM || {};
+
+TSM  = (function ( $ ) {
+
+"use strict";
+var modalOverlay = '#modalOveray'
+, modalTarget;
+function enableTouchGuestures ( event ){
+
+}
+function initModalOverlay( event ){
+
+$('*[data-role]').on('click', function (argument) {
+var $role = $(this).data('role')
+, callBack = new Function($(this).data('callback'));
+
+
+modalTarget = $(this).data('target');
+
+
+if($role === 'modal'){
+$(modalOverlay)
+.fadeIn(400, function ( ) {
+$(modalTarget)
+.fadeIn('fast');
+
+});
+callBack(modalTarget);
+}else if($role === 'dismiss'){
+$(modalTarget)
+.fadeOut(400, function ( ) {
+$(modalOverlay)
+.fadeOut('fast');
+});
+}
+
+});
+$('*[data-url]').on('click', function ( event ) {
+var $this = $(this)
+, URI = $this.data('url');
+
+window.location.href= URI;
+});
+
+}
+
+
+
+return{
+init: function(){
+
+/* Act on the event */
+initModalOverlay();
+enableTouchGuestures();
+//initPreloader('show');
+},
+initPreloader: function( obj ){
+var $preloader = $('#preloader')
+, $backDrop = $(modalOverlay);
+if(obj === "show"){
+
+$backDrop.show();
+$preloader.show();
+
+}else if(obj === "hide"){
+if(!$('.modal').is(':visible')){
+$backDrop.hide();
+}
+
+$preloader.hide();
+}
+}
+};
+
+// Pull in jQuery and Underscore
+})( jQuery);
+
+TSM.init();

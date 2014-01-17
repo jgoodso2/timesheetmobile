@@ -2,7 +2,7 @@
     TSM_formDirty(false);
     TSM_UpdateMainLayout();
     TSM_CopySummary(true);
-    OpenDialog('#updaterecallsummary');
+    OpenDialog('#tskupdateSummary');
 }
 $(document).ready(function () {
     TSM_formDirty(false);

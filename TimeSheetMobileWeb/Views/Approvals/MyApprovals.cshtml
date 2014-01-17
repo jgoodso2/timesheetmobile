@@ -3,52 +3,129 @@
 @using TimeSheetIBusiness
 @{
     ViewBag.Title = SiteResources.MyApprovals;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section head{
 <script src="@Url.Content("~/Scripts/TimesheetsScript-1.0.js")" type="text/javascript"></script>
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $.mobile.hidePageLoadingMsg();
-
-        $('.menu-link').click(function () {
-            $.mobile.loadingMessage = '@SiteResources.InitialLoadingMessage';
-            $.mobile.loadingMessageTheme = 'a';
-            $.mobile.loadingMessageTextVisible = true;
-            $.mobile.showPageLoadingMsg();
-            window.location.href = $(this).attr('data-action');
-        });
+        TSM.initPreloader('hide');
     })
     </script>
 }
- <div>
-    <div>
-        <div class='header'>
-        <div></div>
+<form id="approvalform" action = '@Url.Action("ApproveReject", "Timesheet")'
+                     data-ajax-url='@Url.Action("ApproveReject", "Timesheet")' data-ajax-target='timesheet' 
+                                            data-ajax-oncomplete='TSM_ConfirmApproveTimesheet' data-ajax="false" >
+                                            @Html.HiddenFor(mbox=>mbox.IsTask)
+                                            @Html.HiddenFor(mbox=>mbox.NextMgr)
+                                            @Html.HiddenFor(mbox=>mbox.ErrorMessage)
+                                            @Html.HiddenFor(mbox=>mbox.Success)
+ <div  id='timesheet' class='container timesheetContainer'>
+         <h1>@SiteResources.MyApprovals
+	<span class="pull-right">@Context.Session["CurrentUser"].ToString()</span>
+	</h1>
+    <div class="date-container">
+			<span></span>
+             <span>
+			<a href="#" class="btn approve approvals ui-disabled" onclick="ApproveRejectSelectedTimesheets('approve');" >Approve</a>
+			<a href="#" class="btn reject approvals ui-disabled" onclick= "ApproveRejectSelectedTimesheets('reject');" >Reject</a>
+		</span>  
+			
         </div>
-        <div class='contentmenu'>
-        @foreach (KeyValuePair<string,List<MyTimesheetApproval>> pair in Model.TimesheetApprovals)
+        <div class="details-content accordion-wrapper">
+         
+        @for (int index = 0; index < Model.TimesheetApprovals.Count;index++)
         {
-            <div>
-            @pair.Key
-            </div>
+            var pair = Model.TimesheetApprovals[index];
+            
+            <div class="accordion">
+			<h2>
+				<strong><span>Name:</span> <span>@pair.UserName</span></strong>
+				<strong><span> </span><span></span></strong>
+			</h2>
+			
+			<div style="display: block;" class="listing">
+				
+			
+		
             <ul id='menu'>
-            @foreach (var timesheet in @pair.Value)
+           
+           @Html.HiddenFor(m => m.TimesheetApprovals[index].UserName)
+           @Html.HiddenFor(m => m.TimesheetApprovals[index].UserNTAccount)
+            @for (int count = 0; count < Model.TimesheetApprovals[index].TimesheetApprovals.Count(); count++)
             {
+                var timesheet = pair.TimesheetApprovals[count];
+                string newUser = @pair.UserNTAccount;
+                <li id='@timesheet.TimesheetId' onclick='GotoUrl("@Url.Action("Index", "Timesheet", new { speriod = "1-" + @timesheet.Period.Replace("(", "-").Replace(")", "-") + "-", user = newUser }, "http")")'>
+						<input  type="checkbox" class="TimesheetId" data-button-target='@timesheet.TimesheetId' />
+                                         @string.Format("{0} {1} {2}", timesheet.Hours, timesheet.Name, timesheet.Period)
 
-                string newUser = timesheet.UserNTAccount;
-                    
-                <li><a href="#" class='menu-link' data-action='@Url.Action("Index", "Timesheet", new { speriod = "1-" + @timesheet.Period.Replace("(", "-").Replace(")", "-") + "-", user = newUser }, "http")'>
-                @string.Format("{0} {1} {2}",timesheet.Hours,timesheet.Name, timesheet.Period)</a></li>
+					
+                
+                
+                @Html.HiddenFor(mbox => mbox.TimesheetApprovals[index].TimesheetApprovals[count].Hours)
+                @Html.HiddenFor(mbox => mbox.TimesheetApprovals[index].TimesheetApprovals[count].Name)
+                @Html.HiddenFor(mbox => mbox.TimesheetApprovals[index].TimesheetApprovals[count].Period)
+                @Html.HiddenFor(mbox => mbox.TimesheetApprovals[index].TimesheetApprovals[count].ProjectId)
+                @Html.HiddenFor(mbox => mbox.TimesheetApprovals[index].TimesheetApprovals[count].TimesheetId)
+                @Html.HiddenFor(mbox => mbox.TimesheetApprovals[index].TimesheetApprovals[count].Selected, new { @class = "selectedtimeappr" })
+                 </li> 
             }
             </ul>
+
+
+            </div>
+            </div>
+        }
+
+         @for (int index = 0; index < Model.TaskApprovals.Count;index++)
+        {
+            var pair = Model.TaskApprovals[index];
+            
+            <div class="accordion">
+			<h2>
+				<strong><span>Name:</span> <span>@pair.UserName</span></strong>
+				<strong><span> </span><span></span></strong>
+			</h2>
+			
+			<div style="display: block;" class="listing">
+				
+			
+		
+            <ul id='menu'>
+           
+           @Html.HiddenFor(m => m.TaskApprovals[index].UserName)
+           @Html.HiddenFor(m => m.TaskApprovals[index].UserNTAccount)
+            @for (int count = 0; count < Model.TaskApprovals[index].TaskApprovals.Count(); count++)
+            {
+                var task = pair.TaskApprovals[count];
+                string newUser = @pair.UserNTAccount;
+                var projectId = Model.TaskApprovals[index].TaskApprovals[count].ProjectId.ToString();
+                <li id='@task.ProjectId' onclick='GotoUrl("@Url.Action("Index", "Tasks",
+new { projectId = projectId,user = newUser }, "http")")'>
+						<input  type="checkbox" class="TaskId" data-button-target='@task.ProjectId' />
+                                         @string.Format("{0} {1}", "Progress Update", task.ProjectName)
+
+					
+                
+                
+                @Html.HiddenFor(mbox => mbox.TaskApprovals[index].TaskApprovals[count].ProjectId)
+                @Html.HiddenFor(mbox => mbox.TaskApprovals[index].TaskApprovals[count].ProjectName)
+                @Html.HiddenFor(mbox => mbox.TaskApprovals[index].TaskApprovals[count].Selected, new { @class = "selectedtaskappr" })
+                 </li> 
+            }
+            </ul>
+
+
+            </div>
+            </div>
         }
         </div>
-        
+        @Html.Action("UpdateSummary", "Tasks")
         <div class='footer' >
-         <hr />
         </div>
         </div>
-        </div>
+        </form>
 
 

@@ -81,6 +81,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RowBase.cs" />
     <Compile Include="Timesheet.cs" />
+    <Compile Include="TimesheetApprovalItem.cs" />
     <Compile Include="TimesheetHeaderInfos.cs" />
     <Compile Include="UpdateException.cs" />
     <Compile Include="UserConfiguration.cs" />

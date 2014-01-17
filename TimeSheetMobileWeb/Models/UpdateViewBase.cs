@@ -15,7 +15,12 @@ namespace TimeSheetMobileWeb.Models
     }
     public class UpdateViewBase
     {
+        public UpdateViewBase(string defaultLineClass)
+        {
+            DefaultLineClass = defaultLineClass;
+        }
         public PeriodSelectionView PeriodSelectionInfos;
+        public string DefaultLineClass { get; set; }
         [Display(ResourceType = typeof(SiteResources), Name = "HomeMenuPeriods")]
         public string Period { get; set; }
         public string PeriodString { get;set;}
@@ -32,7 +37,7 @@ namespace TimeSheetMobileWeb.Models
         public string ErrorMessage { get; set; }
         public decimal[] Totals { get; set; }
         public bool ApprovalMode { get; set; }
-
+        public Guid TSUID { get; set; }
         
         public static RowType GetRowType(Type rowClass)
         {
@@ -60,11 +65,13 @@ namespace TimeSheetMobileWeb.Models
         }
         public string TimesheetStatusString(int status)
         {
+            //TODO Remove Site Resources not required here
             if (status == 0) return SiteResources.InProgress;
             else if (status == 1) return SiteResources.Submitted;
             else if (status == 2) return SiteResources.Acceptable;
             else if (status == 3) return SiteResources.Approved;
             else if (status == 4) return SiteResources.Rejected;
+            else if (status == 5) return "Pending Submit";
             else return string.Empty;
 
         }

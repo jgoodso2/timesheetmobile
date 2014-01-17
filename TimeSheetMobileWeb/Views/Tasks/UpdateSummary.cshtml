@@ -1,24 +1,16 @@
 ﻿@model TimeSheetMobileWeb.Models.UpdateTasksView
 @using TimeSheetMobileWeb.Models
 @using TimeSheetIBusiness
-<div  id="updaterecallsummary">
-<div id="timesheet-display" class="modal" style="display: block;">
-        <a href="#" class="pull-right close" data-role="dismiss" data-target="#timesheet-display">
-            close</a>
+<div id="tskupdateSummary" class="modal">
+       
         <div class="modal-content">
-        <div >
-            <div data-theme='b' style="min-height:100px;">
+        
                
-                        <p><span class=' updateerrormessage-d'></span></p>
+                        <p><span class='updateerrormessage-d'></span></p>
 
-            </div>
              <p class="buttons-container">
-            <input id="btnDone" type="button" value="@SiteResources.OK" class='main-submit cancel btn' data-role="dismiss" data-target='#updatesummary' 
-            data-callback='reload'/>  
+            <input id="btnTaskDone" type="button" value="@SiteResources.OK" class='main-submit cancel btn' data-role="dismiss" data-target='#tskupdateSummary' 
+             data-callback='GotoUrl' data-row-from="@HttpContext.Current.Request.Url"/>  
              </p> 
         </div>
     </div>
-</div>
-<div class='footer'>
-    </div>
-</div>

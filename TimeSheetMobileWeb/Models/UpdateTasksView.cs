@@ -8,9 +8,13 @@ namespace TimeSheetMobileWeb.Models
 {
     public class UpdateTasksView:UpdateViewBase
     {
-        public UpdateTasksView()
+        public UpdateTasksView(string defaultLineClass) : base(defaultLineClass)
         {
             Submit = true;
+        }
+        public UpdateTasksView()
+            : base(string.Empty)
+        {
         }
     }
 }

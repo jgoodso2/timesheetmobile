@@ -36,12 +36,30 @@ namespace TimeSheetBusiness
         public bool isImpersonated = false;
         private bool? allowTopLevel = null;
         private string currentUserName;
+        private string defaultLineClass = string.Empty;
         public Repository()
         {
             if (DateTime.Today > new DateTime(2014, 12, 31)) throw new Exception("Demo Copy of Mobile Timesheet Expired");
 
         }
 
+        public string GetCurrentUserId()
+        {
+            return resourceClient.GetCurrentUserUid().ToString();
+        }
+
+        public string DefaultLineClass
+        {
+            get
+            {
+                if (defaultLineClass == string.Empty)
+                {
+                    defaultLineClass = GetLineClassifications().FirstOrDefault().Name;
+                }
+                return defaultLineClass;
+            }
+
+        }
         public string GetUserName(string name)
         {
             //ntAccount = "i:0#.w|" + ntAccount;
@@ -85,10 +103,42 @@ namespace TimeSheetBusiness
             }
         }
 
-        public Dictionary<string, List<MyTimesheetApproval>> GetTimesheetApprovals(string user)
+        public void ApproveTimesheet(string tUID,string mgrUID,string action)
+        {
+            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+            {
+                SetImpersonation(resourceClient.ReadResource(new Guid(mgrUID)).Resources[0].WRES_ACCOUNT);
+                if (action.ToUpper() == "APPROVE")
+                {
+                    timesheetClient.QueueReviewTimesheet(Guid.NewGuid(), new Guid(tUID), new Guid(mgrUID),
+                            "Approved", SvcTimeSheet.Action.Approve);
+                }
+                else
+                {
+                    timesheetClient.QueueReviewTimesheet(Guid.NewGuid(), new Guid(tUID), new Guid(mgrUID),
+                            "Rejected", SvcTimeSheet.Action.Reject);
+                }
+                bool res = QueueHelper.WaitForQueueJobCompletion(this, Guid.NewGuid(), (int)SvcQueueSystem.QueueMsgType.StatusApproval, queueClient);
+                if (!res) throw new TimesheetUpdateException();
+            }
+        }
+
+        public void RejectTimesheet(string tUID,string mgrUID)
+        {
+            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+            {
+                SetImpersonation(resourceClient.ReadResource(new Guid(mgrUID)).Resources[0].WRES_ACCOUNT);
+                timesheetClient.QueueReviewTimesheet(Guid.NewGuid(), new Guid(tUID), new Guid(mgrUID),
+                        "Rejected", SvcTimeSheet.Action.Reject);
+                bool res = QueueHelper.WaitForQueueJobCompletion(this, Guid.NewGuid(), (int)SvcQueueSystem.QueueMsgType.StatusApproval, queueClient);
+                if (!res) throw new TimesheetUpdateException();
+            }
+        }
+
+        public List<TimesheetApprovalItem> GetTimesheetApprovals(string user)
         {
 
-            Dictionary<string, List<MyTimesheetApproval>> returnValues = new Dictionary<string, List<MyTimesheetApproval>>();
+           List<TimesheetApprovalItem> returnValues = new List<TimesheetApprovalItem>();
             SvcTimeSheet.TimesheetListDataSet ds = new SvcTimeSheet.TimesheetListDataSet();
             using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
             {
@@ -103,18 +153,23 @@ namespace TimeSheetBusiness
                     var sx = new PSLib.PSClientError(ex);
                 }
             }
+
+            // DO a group y user so that one PSI call is made per user for ReadResource
             var tsGroups = ds.Timesheets.GroupBy(t => t.RES_UID);
+            int count=0;
             foreach (var value in tsGroups)
             {
                 string resName;
                 string resNTAcct="";
-                List<MyTimesheetApproval> MyApprovalList = new List<MyTimesheetApproval>();
+                TimesheetApprovalItem item = new TimesheetApprovalItem();
+                item.TimesheetApprovals = new List<MyTimesheetApproval>();
                 var tsList = value.ToList();
                 if (value.ToList().Count > 0)
                 {
                     var resource  = resourceClient.ReadResource(tsList[0].RES_UID).Resources.First();
-                    resName = resource.RES_NAME;
-                    resNTAcct = resource.WRES_ACCOUNT;
+                    item.UserName = resource.RES_NAME;
+                    item.UserNTAccount = resource.WRES_ACCOUNT;
+                    
                 }
                 else
                 {
@@ -127,11 +182,125 @@ namespace TimeSheetBusiness
                     myTimesheetApproval.Hours = ts.IsTS_TOTAL_ACT_VALUENull() ? "0Hrs" : (ts.TS_TOTAL_ACT_VALUE / 60000).ToString() + "Hrs";
                     myTimesheetApproval.Name = ts.TS_NAME;
                     myTimesheetApproval.Period = ts.WPRD_START_DATE.ToShortDateString() + "-" + ts.WPRD_FINISH_DATE.ToShortDateString();
-                    myTimesheetApproval.UserNTAccount = resNTAcct;
-                    MyApprovalList.Add(myTimesheetApproval);
+                    myTimesheetApproval.TimesheetId = ts.TS_UID.ToString();
+                    item.TimesheetApprovals.Add(myTimesheetApproval);
                 }
-                returnValues.Add(resName, MyApprovalList);
+                
+                returnValues.Add(item);
             }
+            
+            return returnValues;
+        }
+
+        public void ApproveTasks(string[] assignments, string mgrUID, string mode)
+        {
+            SvcStatusing.StatusApprovalDataSet statusApprovalDs = new SvcStatusing.StatusApprovalDataSet();
+
+            using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
+            {
+                SetImpersonation(resourceClient.ReadResource(new Guid(mgrUID)).Resources[0].WRES_ACCOUNT);
+                try
+                {
+                    statusApprovalDs = pwaClient.ReadStatusApprovalsSubmitted(false);
+                    //var projectTasks = ds.StatusApprovals.Where(t => t.PROJ_UID.ToString() == projectID);
+                    for (int i = 0; i < statusApprovalDs.StatusApprovals.Count; i++)
+                    {
+                        if (assignments.Any(t=>t == statusApprovalDs.StatusApprovals[i].ASSN_UID.ToString()))
+                            statusApprovalDs.StatusApprovals[i].ASSN_TRANS_ACTION_ENUM = (int)PSLib.TaskManagement.StatusApprovalType.Accepted;
+                    }
+                }
+                catch (SoapException ex)
+                {
+                    var sx = new PSLib.PSClientError(ex);
+                }
+                pwaClient.UpdateStatusApprovals(statusApprovalDs);
+                pwaClient.QueueApplyStatusApprovals(Guid.NewGuid(), "Approved");
+                bool res = QueueHelper.WaitForQueueJobCompletion(this, Guid.NewGuid(), (int)SvcQueueSystem.QueueMsgType.StatusApproval, queueClient);
+                if (!res) throw new StatusUpdateException();
+            }
+
+        }
+        public void ApproveProjectTasks(string projectID, string mgrUID, string mode)
+        {
+            SvcStatusing.StatusApprovalDataSet statusApprovalDs = new SvcStatusing.StatusApprovalDataSet();
+
+            using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
+            {
+                SetImpersonation(resourceClient.ReadResource(new Guid(mgrUID)).Resources[0].WRES_ACCOUNT);
+                try
+                {
+                    statusApprovalDs = pwaClient.ReadStatusApprovalsSubmitted(false);
+                    //var projectTasks = ds.StatusApprovals.Where(t => t.PROJ_UID.ToString() == projectID);
+                    for (int i = 0; i < statusApprovalDs.StatusApprovals.Count; i++)
+                    {
+                        if (statusApprovalDs.StatusApprovals[i].PROJ_UID.ToString() == projectID)
+                            statusApprovalDs.StatusApprovals[i].ASSN_TRANS_ACTION_ENUM = (int)PSLib.TaskManagement.StatusApprovalType.Accepted;
+                    }
+                }
+                catch (SoapException ex)
+                {
+                    var sx = new PSLib.PSClientError(ex);
+                }
+                pwaClient.UpdateStatusApprovals(statusApprovalDs);
+                pwaClient.QueueApplyStatusApprovals(Guid.NewGuid(), "Approved");
+                bool res = QueueHelper.WaitForQueueJobCompletion(this, Guid.NewGuid(), (int)SvcQueueSystem.QueueMsgType.StatusApproval, queueClient);
+                if (!res) throw new StatusUpdateException();
+            }
+            
+        }
+        public List<TaskApprovalItem> GetTaskApprovals(string user)
+        {
+
+            List<TaskApprovalItem> returnValues = new List<TaskApprovalItem>();
+            SvcStatusing.StatusApprovalDataSet ds = new SvcStatusing.StatusApprovalDataSet();
+            using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
+            {
+                bool temp;
+                SetImpersonation(user);
+                try
+                {
+                    ds = pwaClient.ReadStatusApprovalsSubmitted(false);
+                }
+                catch (SoapException ex)
+                {
+                    var sx = new PSLib.PSClientError(ex);
+                }
+            }
+
+            // DO a group by user so that one PSI call is made per user for ReadResource
+            var tsGroups = ds.StatusApprovals.GroupBy(t => t.RES_UID);
+            int count = 0;
+            foreach (var value in tsGroups)
+            {
+                string resName;
+                string resNTAcct = "";
+                TaskApprovalItem item = new TaskApprovalItem();
+                item.TaskApprovals = new List<MyTaskApproval>();
+                var tsList = value.ToList();
+                if (value.ToList().Count > 0)
+                {
+                    var resource = resourceClient.ReadResource(tsList[0].RES_UID).Resources.First();
+                    item.UserName = resource.RES_NAME;
+                    item.UserNTAccount = resource.WRES_ACCOUNT;
+
+                }
+                else
+                {
+                    resNTAcct = "";
+                    continue;
+                }
+                var projectGroups = tsList.GroupBy(t => t.PROJ_UID);
+                foreach (var ts in projectGroups)
+                {
+                    var myTaskApproval = new MyTaskApproval();
+                    myTaskApproval.ProjectName = ts.ElementAt(0).PROJ_NAME;
+                    myTaskApproval.ProjectId = ts.Key.ToString();
+                    item.TaskApprovals.Add(myTaskApproval);
+                }
+
+                returnValues.Add(item);
+            }
+
             return returnValues;
         }
 
@@ -157,13 +326,16 @@ namespace TimeSheetBusiness
             return lineclasses;
         }
 
-        public UserConfigurationInfo UserConfiguration(string user, string rowField, string taskField)
+        public UserConfigurationInfo UserConfiguration(string user, string rowField, string taskField,string approvalField)
         {
 
             Guid defaultTimesheetViewUID = ViewConfigurationRow.ViewFieldGuid;
             Guid defaultStatusViewUID = ViewConfigurationTask.ViewFieldGuid;
+            Guid defaultApprovalViewUID = ViewConfigurationApproval.ViewFieldGuid;
             if ((!string.IsNullOrWhiteSpace(rowField) && (defaultTimesheetViewUID == null || defaultTimesheetViewUID == Guid.Empty)) ||
-                (!string.IsNullOrWhiteSpace(taskField) && (defaultStatusViewUID == null || defaultStatusViewUID == Guid.Empty)))
+                (!string.IsNullOrWhiteSpace(taskField) && (defaultStatusViewUID == null || defaultStatusViewUID == Guid.Empty)) ||
+                (!string.IsNullOrWhiteSpace(approvalField) && (defaultApprovalViewUID == null || defaultApprovalViewUID == Guid.Empty))
+                )
             {
                 //this code gets the name of default views stored on the server.
                 //get the list of custom fields first
@@ -193,11 +365,24 @@ namespace TimeSheetBusiness
                     }
                 }
 
+                if (!string.IsNullOrWhiteSpace(approvalField))
+                {
+                    SvcCustomFields.CustomFieldDataSet.CustomFieldsRow[] approvalviewrow;
+                    approvalviewrow = (SvcCustomFields.CustomFieldDataSet.CustomFieldsRow[])cds.CustomFields.Select("MD_PROP_NAME = '" + approvalField + "'");
+                    if (approvalviewrow.Length > 0)
+                    {
+                        ViewConfigurationApproval.ViewFieldGuid = defaultApprovalViewUID = approvalviewrow[0].MD_PROP_UID;
+                    }
+                }
+
             }
             //
             string defaultTimesheetView = string.Empty;
             string defaultStatusView = string.Empty;
-            if ((defaultTimesheetViewUID != null && defaultTimesheetViewUID != Guid.Empty) || (defaultStatusViewUID != null && defaultStatusViewUID != Guid.Empty))
+            string defaultApprovalView = string.Empty;
+            if ((defaultTimesheetViewUID != null && defaultTimesheetViewUID != Guid.Empty) 
+                || (defaultStatusViewUID != null && defaultStatusViewUID != Guid.Empty)
+                || (defaultApprovalViewUID != null && defaultApprovalViewUID != Guid.Empty))
             {
                 //now read the values of the custom fields.
                 SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
@@ -224,19 +409,30 @@ namespace TimeSheetBusiness
                     defaultStatusView = statusViewFieldsRow.Length == 0 ? null : statusViewFieldsRow[0].TEXT_VALUE;
                     if (string.IsNullOrWhiteSpace(defaultStatusView)) defaultStatusView = string.Empty;
                 }
+                if (defaultApprovalViewUID != null && defaultApprovalViewUID != Guid.Empty)
+                {
+                    SvcResource.ResourceDataSet.ResourceCustomFieldsRow[] approvalViewFieldsRow =
+                         (SvcResource.ResourceDataSet.ResourceCustomFieldsRow[])rds.ResourceCustomFields.Select("MD_PROP_UID = '" + defaultApprovalViewUID + "'");
+                    defaultApprovalView = approvalViewFieldsRow.Length == 0 ? null : approvalViewFieldsRow[0].TEXT_VALUE;
+                    if (string.IsNullOrWhiteSpace(defaultApprovalView)) defaultApprovalView = string.Empty;
+                }
 
 
             }
-            return new UserConfigurationInfo { TaskViewId = defaultStatusView, RowViewId = defaultTimesheetView };
+            return new UserConfigurationInfo { TaskViewId = defaultStatusView, RowViewId = defaultTimesheetView ,ApprovalViewId = defaultApprovalView};
         }
 
-        public void ChangeUserConfiguration(string user, UserConfigurationInfo conf, string rowField, string taskField)
+        public void ChangeUserConfiguration(string user, UserConfigurationInfo conf, string rowField, string taskField,string approvalField)
         {
 
             Guid defaultTimesheetViewUID = ViewConfigurationRow.ViewFieldGuid;
             Guid defaultStatusViewUID = ViewConfigurationTask.ViewFieldGuid;
+            Guid defaultApprovalViewUID = ViewConfigurationApproval.ViewFieldGuid;
             if ((!string.IsNullOrWhiteSpace(rowField) && (defaultTimesheetViewUID == null || defaultTimesheetViewUID == Guid.Empty)) ||
-                (!string.IsNullOrWhiteSpace(taskField) && (defaultStatusViewUID == null || defaultStatusViewUID == Guid.Empty)))
+                (!string.IsNullOrWhiteSpace(taskField) && (defaultStatusViewUID == null || defaultStatusViewUID == Guid.Empty)) ||
+                (!string.IsNullOrWhiteSpace(approvalField) && (defaultApprovalViewUID == null || defaultApprovalViewUID == Guid.Empty))
+                
+                )
             {
                 //this code gets the name of default views stored on the server.
                 //get the list of custom fields first
@@ -264,8 +460,21 @@ namespace TimeSheetBusiness
                     }
                 }
 
+                if (!string.IsNullOrWhiteSpace(approvalField))
+                {
+                    SvcCustomFields.CustomFieldDataSet.CustomFieldsRow[] approvalviewrow;
+                    approvalviewrow = (SvcCustomFields.CustomFieldDataSet.CustomFieldsRow[])cds.CustomFields.Select("MD_PROP_NAME = '" + approvalField + "'");
+                    if (approvalviewrow.Length > 0)
+                    {
+                        ViewConfigurationApproval.ViewFieldGuid = defaultApprovalViewUID = approvalviewrow[0].MD_PROP_UID;
+                    }
+                }
+
             }
-            if ((defaultTimesheetViewUID != null && defaultTimesheetViewUID != Guid.Empty) || (defaultStatusViewUID != null && defaultStatusViewUID != Guid.Empty))
+            if ((defaultTimesheetViewUID != null && defaultTimesheetViewUID != Guid.Empty) 
+                || (defaultStatusViewUID != null && defaultStatusViewUID != Guid.Empty)
+                || (defaultApprovalViewUID != null && defaultApprovalViewUID != Guid.Empty)
+                )
             {
                 ///////////////////
                 //now read the values of the custom fields.
@@ -283,12 +492,11 @@ namespace TimeSheetBusiness
 
                     if (row.IsNull("RES_CHECKOUTBY"))  //if true, the resource can be modified
                     {
-                        if (defaultTimesheetViewUID != null && defaultTimesheetViewUID != Guid.Empty)
+                        if (defaultTimesheetViewUID != null && defaultTimesheetViewUID != Guid.Empty && defaultApprovalViewUID != Guid.Empty)
                         {
                             SvcResource.ResourceDataSet.ResourceCustomFieldsRow[] foundrowTS = (SvcResource.ResourceDataSet.ResourceCustomFieldsRow[])rds.ResourceCustomFields.Select("MD_PROP_UID = '" + defaultTimesheetViewUID + "'");
                             if (foundrowTS.Length != 0)
                             {
-
                                 foundrowTS[0].TEXT_VALUE = conf.RowViewId == null ? "" : conf.RowViewId;
                             }
                             else if (!string.IsNullOrWhiteSpace(conf.RowViewId))  //the user does not have a default timesheet mobile view... 
@@ -316,6 +524,26 @@ namespace TimeSheetBusiness
                                 newrow.MD_PROP_UID = defaultStatusViewUID;
                                 newrow.CUSTOM_FIELD_UID = Guid.NewGuid();
                                 newrow.TEXT_VALUE = conf.TaskViewId == null ? "" : conf.TaskViewId;
+                                rds.ResourceCustomFields.AddResourceCustomFieldsRow(newrow);
+
+                            }
+
+                        }
+
+                        if (defaultApprovalViewUID != null && defaultApprovalViewUID != Guid.Empty)
+                        {
+                            SvcResource.ResourceDataSet.ResourceCustomFieldsRow[] foundrowStatus = (SvcResource.ResourceDataSet.ResourceCustomFieldsRow[])rds.ResourceCustomFields.Select("MD_PROP_UID = '" + defaultStatusViewUID + "'");
+                            if (foundrowStatus.Length != 0)
+                            {
+                                foundrowStatus[0].TEXT_VALUE = conf.ApprovalViewId == null ? "" : conf.ApprovalViewId;
+                            }
+                            else if (!string.IsNullOrWhiteSpace(conf.ApprovalViewId))    //the user does not have a default status mobile view...
+                            {
+                                SvcResource.ResourceDataSet.ResourceCustomFieldsRow newrow = rds.ResourceCustomFields.NewResourceCustomFieldsRow(); //add a new row to set value of custom field.
+                                newrow.RES_UID = resUID;
+                                newrow.MD_PROP_UID = defaultStatusViewUID;
+                                newrow.CUSTOM_FIELD_UID = Guid.NewGuid();
+                                newrow.TEXT_VALUE = conf.ApprovalViewId == null ? "" : conf.ApprovalViewId;
                                 rds.ResourceCustomFields.AddResourceCustomFieldsRow(newrow);
 
                             }
@@ -403,7 +631,9 @@ namespace TimeSheetBusiness
                         TotalActualWork = rw.TS_TOTAL_ACT_VALUE / 60000m,
                         TotalOverTimeWork = rw.TS_TOTAL_ACT_OVT_VALUE / 60000m,
                         TotalNonBillable = rw.TS_TOTAL_ACT_NON_BILLABLE_VALUE / 60000m,
-                        TotalNonBillableOvertime = rw.TS_TOTAL_ACT_NON_BILLABLE_OVT_VALUE / 60000m
+                        TotalNonBillableOvertime = rw.TS_TOTAL_ACT_NON_BILLABLE_OVT_VALUE / 60000m,
+                        TSUID = tuid,
+
                     };
 
             }
@@ -1461,7 +1691,63 @@ namespace TimeSheetBusiness
             }
             return res.OrderBy(t => t.RowType).ToList();
         }
+        public List<BaseRow> GetSubmittedRows(string projectId,string approver,string user, ViewConfigurationBase configuration)
+        {
+            if (configuration is ViewConfigurationApproval)
+            {
+                ActualWorkRow actual = null;
+                ActualOvertimeWorkRow overtime = null;
+                SingleValuesRow onlySingleValues = null;
+                var tres = new List<BaseRow>();
+                SvcStatusing.StatusApprovalDataSet ds = new SvcStatusing.StatusApprovalDataSet();
+                bool isuser;
+                 var resName = resourceClient.ReadResource(GetResourceUidFromNtAccount(user,out isuser)).Resources[0].RES_NAME;
+                using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
+                {
+                    SetImpersonation(approver);
+                    ds = pwaClient.ReadStatusApprovalsSubmitted(false);
+                }
 
+                var projectTasks = ds.StatusApprovals.Where(t => t.PROJ_UID.ToString() == projectId && t.RES_NAME == resName);
+                var lineclassifications = GetLineClassifications();
+                var customFieldDataSet = GetCustomFields(configuration);
+                foreach (var row in projectTasks)
+                {
+                    if (configuration.NoTPData)
+                    {
+                        onlySingleValues = new SingleValuesRow();
+                        BuildBaseRow(onlySingleValues, row);
+                    }
+                    else
+                    {
+                        if (configuration.ActualWorkA)
+                        {
+                            actual = new ActualWorkRow();
+                            BuildBaseRow(actual, row);
+                        }
+                    }
+                    if (actual != null) tres.Add(actual);
+                    if (onlySingleValues != null) tres.Add(onlySingleValues);
+                    GetAllSingleValues(lineclassifications, null, new SvcTimeSheet.TimesheetDataSet(), customFieldDataSet, user, configuration, ""
+                        , DateTime.MinValue, DateTime.MaxValue, row.PROJ_UID.ToString(), row.ASSN_UID.ToString(), actual, overtime, onlySingleValues);
+                }
+                return tres;
+
+            }
+            else
+            {
+                return new List<BaseRow>();
+            }
+        }
+
+        private void BuildBaseRow(BaseRow onlySingleValues, SvcStatusing.StatusApprovalDataSet.StatusApprovalsRow row)
+        {
+            onlySingleValues.ProjectId = row.PROJ_UID.ToString();
+            onlySingleValues.ProjectName = row.PROJ_NAME;
+            onlySingleValues.AssignementId = row.ASSN_UID.ToString();
+            onlySingleValues.AssignementName = row.TASK_NAME;
+            onlySingleValues.DayTimes = new List<decimal?>();
+        }
         private void ReadTimePhasedData(string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, bool iscreate, SvcCustomFields.CustomFieldDataSet customfieldDataSet, List<LineClass> lineClasses, SvcTimeSheet.TimesheetDataSet timesheetDS, int dayCount, SvcTimeSheet.TimesheetDataSet tsDs, List<BaseRow> res, decimal[] alltotalsarray)
         {
             foreach (var row in tsDs.Lines)

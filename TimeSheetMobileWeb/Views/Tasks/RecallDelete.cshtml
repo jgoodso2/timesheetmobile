@@ -1,32 +1,34 @@
 ﻿@model TimeSheetMobileWeb.Models.RecallDeleteView
 @using TimeSheetMobileWeb.Models
-<div id="show_options" class="modal" style="display: block;">
-<a href="#" class="pull-right close" data-role="dismiss" data-target="#show_options">X</a>
+<div id="updaterecallsummary" class="modal">
+<a href="#" class="pull-right close" data-role="dismiss" data-target="#updaterecallsummary">Close</a>
     <div class="modal-content">
-       
-            @*<div data-role='content' data-theme='b' class='periodHeader'>
-                <span class='currenttimesheet'>period of time</span></div>
-            <div data-theme='b' style="min-height: 100px;">*@
                 <form id="rDRequest" data-ajax-url= '@Url.Action("RecallDelete", "Timesheet")'  data-ajax-oncomplete='TSM_CompleteRD'>
                  <div class="icons-view">
                  @if (!Model.IsTask)
                  {
-        <a href="#" id="btnRecall" class="main-submit  loadConfirm" data-button-target='recalldelete' data-action-confirm ="@SiteResources.RecallMessage"
+                     <span id = id="btnRecall">
+        <a href="#"  class="main-submit  loadConfirm" data-button-target='recalldelete' data-action-confirm ="@SiteResources.RecallMessage"
                         data-action-value='True' data-action-container='@Html.PrefixedId(m => m.IsRecall)'>
 				<span class="recall"> </span>
 				@SiteResources.Recall
 			</a>
-            <a href="#" id="btnDelete" class="main-submit  loadConfirm" data-button-target='recalldelete' data-action-confirm ="@SiteResources.RecallMessage"
+            </span>
+                     <span id="btnDelete">
+            <a href="#"  class="main-submit  loadConfirm" data-button-target='recalldelete' data-action-confirm ="@SiteResources.RecallMessage"
                         data-action-value='False'   data-action-container='@Html.PrefixedId(m => m.IsRecall)'>
 				<span class="delete"></span>
 				@SiteResources.Delete
 			</a>
+            </span>
                  }
-            <a href="#" id="btnView" class="main-submit loadview goto" onclick="CloseDialog('#show_options');OpenDialog('#viewSelection');"
-                data-action-container='@Html.PrefixedId(m => m.IsRecall)' data-target="#show_options">
+                 <span id="btnView">
+            <a href="#"  class="main-submit loadview goto" onclick="CloseDialog('#updaterecallsummary');OpenDialog('#viewselection');"
+                data-action-container='@Html.PrefixedId(m => m.IsRecall)' data-target="#viewselection">
 				<span class="changeview"></span>
 				@SiteResources.ChangeView
 			</a>
+            </span>
         </div>
                 @Html.HiddenFor(m => m.RDPeriodId, new { @class = "currentperiodid" })
                 @Html.HiddenFor(m => m.RDPeriodIStart, new { @class = "currentperiodstart" })
@@ -42,7 +44,7 @@
                 }
                 </form>
                 <p class="buttons-container">
-			<a href="#" data-role="dismiss" data-target="#show_options" class="btn cancel main-submit">Cancel</a>
+			<a href="#" data-role="dismiss" data-target="#updaterecallsummary" class="btn cancel main-submit">Cancel</a>
 		</p>
             </div>
         </div>
