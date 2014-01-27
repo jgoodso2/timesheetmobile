@@ -34,10 +34,12 @@ namespace TimeSheetMobileWeb.Models
                 {
                     model.ErrorMessage = SiteResources.StatusUpdateError;
                 }
+                HttpContext.Current.Trace.Warn("An exception occured in updateRows and error = " + uex.Message);
                 return;
             }
-            catch 
+            catch(Exception ex)
             {
+                HttpContext.Current.Trace.Warn("An exception occured in updateRows and error = " + ex.Message);
                 model.ErrorMessage = SiteResources.GenericUpdateError;
                 return;
             }

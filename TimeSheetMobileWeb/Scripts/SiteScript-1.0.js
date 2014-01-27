@@ -900,6 +900,9 @@ function TSM_CopyToRow(prefix) {
             }
 
             var oldvalue = TSM_GetRowValue(name, prefix, jThis.val());
+            if (isNaN(parseFloat(oldvalue))) {
+                oldvalue = 0.00;
+            }
 
             TSM_SetRowValue(name, prefix, val);
             if (!isNaN(parseFloat(oldvalue)) && !isNaN(parseFloat(jThis.val()))) {

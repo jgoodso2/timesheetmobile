@@ -27,7 +27,8 @@
     {
         ltemplates.Add(_S.H<ActualWorkRow>(
              @<text>
-            <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code">
+            <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' 
+            data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code">
 					<span id='@(item.PrefixedId(m => m.ProjectName) + "_display")'><strong>@item.FormattedDisplay(m => m.ProjectName)</strong></span>
 					<span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class=''>@item.FormattedDisplay(m => m.AssignementName)</span>
                     @if (@item.ValueFor(m => m.LineClass.Name) != Model.DefaultLineClass)
@@ -51,11 +52,7 @@
               	
                 </ul>
     
-    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
-    {
-        
-        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code + "_header" })
-    }
+    
     
     @if ((isTask && ViewConfigurationTask.Default.WorkA) ||
                         (!isTask && ViewConfigurationRow.Default.WorkA))
@@ -668,7 +665,8 @@
     if (!isTask && ViewConfigurationRow.Default.ActualWorkA)
     {
         ltemplates.Add(_S.H<AdministrativeRow>(
-    @<text>  <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code">
+    @<text>  <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' 
+    data-button-selection="@UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code">
 					<span id='@(item.PrefixedId(m => m.ProjectName) + "_display")'><strong>@item.FormattedDisplay(m => m.ProjectName)</strong></span>
 					<span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class=''>@item.FormattedDisplay(m => m.AssignementName)</span>
 				<table style="background:none">
@@ -678,7 +676,7 @@
         <td>
         <span class="">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
         <br />
-        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code + "_header" })
+        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code + "_header" })
         <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")' >@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
          </td>
     }
@@ -687,13 +685,11 @@
                 </li>
                 </ul>
 
-    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
-    {
-        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code + "_header" })
-    }
+   
       @item.HiddenFor(m => m.LineClass.Id)
     @item.HiddenFor(m => m.LineClass.Name)
-    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code })
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + 
+    UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code })
     @item.HiddenFor(m => m.ProjectId)
     @item.HiddenFor(m => m.ProjectName)
     @item.HiddenFor(m => m.AssignementName)
