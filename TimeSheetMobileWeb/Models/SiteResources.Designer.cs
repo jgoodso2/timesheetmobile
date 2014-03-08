@@ -403,7 +403,7 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to My Tasks.
+        ///   Looks up a localized string similar to Tasks.
         /// </summary>
         public static string HomeMenuTasks {
             get {
@@ -421,7 +421,7 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to My Timesheet.
+        ///   Looks up a localized string similar to Timesheet.
         /// </summary>
         public static string HomeMenuTimesheet {
             get {
@@ -439,7 +439,7 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to My Timesheets.
+        ///   Looks up a localized string similar to Timesheets.
         /// </summary>
         public static string HomeMenuTimesheets {
             get {
@@ -457,7 +457,7 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to My Timesheets.
+        ///   Looks up a localized string similar to Timesheets.
         /// </summary>
         public static string HomeTimesheets {
             get {
@@ -511,7 +511,7 @@ namespace TimeSheetMobileWeb.Models {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to My Approvals.
+        ///   Looks up a localized string similar to Approvals.
         /// </summary>
         public static string MyApprovals {
             get {

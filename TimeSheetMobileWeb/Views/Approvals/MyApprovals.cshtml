@@ -120,11 +120,20 @@ new { projectId = projectId,user = newUser }, "http")")'>
 
             </div>
             </div>
+             
+            
         }
+         @if(Model.TimesheetApprovals.Count == 0 && Model.TaskApprovals.Count == 0)
+             {
+                 <span>There are no new approvals to review at this time.</span>
+             }
         </div>
         @Html.Action("UpdateSummary", "Tasks")
-        <div class='footer' >
-        </div>
+        <footer>
+        <ul>
+        <li><a href='#'  data-target='@Url.Action("Index", "Home")' class="icon-footer-home leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.Home</li>
+        </ul>
+        </footer>
         </div>
         </form>
 

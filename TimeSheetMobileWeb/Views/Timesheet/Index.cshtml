@@ -6,8 +6,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section head{
-<script src="@Url.Content("~/Scripts/TimesheetsScript-1.0.js")" type="text/javascript"></script>
-<script src="@Url.Content("~/Scripts/main.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/TimesheetsScript-1.0.min.js")" type="text/javascript"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         TSM.initPreloader('hide');
@@ -114,11 +113,14 @@
 		@*icon-approvals*@
         @if (Model.ApprovalMode)
         {
-            <li><a href="#"   data-target='@Url.Action("MyApprovals", "Timesheet")'  class="icon-approvals leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.MyApprovals</li>
+            <li>
+            <a href="#"   data-target='@Url.Action("MyApprovals", "Timesheet")'  class="icon-footer-approval leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>
+            @SiteResources.MyApprovals</li>
         }
         else
         {
-        <li><a href="#"   data-target='@Url.Action("TimesheetHistory", "Timesheet")'  class="icon-footer-time leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.HomeMenuTimesheets</li>
+        <li><a href="#"   data-target='@Url.Action("TimesheetHistory", "Timesheet")'  class="icon-footer-time leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>
+        @SiteResources.HomeMenuTimesheet</li>
         }
 		<li><a href='#'  data-target='@Url.Action("Index", "Home")' class="icon-footer-home leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.Home</li>
 		<li><a href="" class="main-icon-submit main-icon-save submit csubmit-mainform submit-mainform icon-footer-save" data-action-confirm ="@SiteResources.ConfirmSave"
@@ -136,7 +138,8 @@
 @Html.Action("RecallDelete", "Timesheet")
 @Html.Partial("UpdateSummary")
 @Html.Action("UpdateSummary", "Tasks")
-@Html.Partial("Detail", new ViewDataDictionary<BaseRowView>(new BaseRowView { TaskRow = false, Title = SiteResources.HomeMenuTimesheetDetail, PeriodLength = Model.PeriodLength, Status = Model.Status, ApprovalMode = Model.ApprovalMode }))
+@Html.Partial("Detail", new ViewDataDictionary<BaseRowView>(new BaseRowView { TaskRow = false, Title = SiteResources.HomeMenuTimesheetDetail, 
+   PeriodStart = Model.CurrentPeriodStart.ToString(),   PeriodLength = Model.PeriodLength, Status = Model.Status, ApprovalMode = Model.ApprovalMode }))
 <div id="rowChoice" style="display:none">
     @Html.Partial("RowChoice", new ViewDataDictionary<RowType[]>(Model.RowTypes))
     </div>

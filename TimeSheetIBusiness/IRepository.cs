@@ -34,6 +34,7 @@ namespace TimeSheetIBusiness
         string DefaultLineClass { get; }
 
         string GetCurrentUserId();
+        Guid GetResourceUidFromNtAccount(String ntAccount);
 
         void ApproveProjectTasks(string projectID, string mgrUID, string mode);
         void ApproveTasks(string[] assnid, string mgrUID, string mode);

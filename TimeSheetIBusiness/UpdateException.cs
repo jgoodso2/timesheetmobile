@@ -7,6 +7,8 @@ namespace TimeSheetIBusiness
 {
     public class UpdateException:Exception
     {
+        public UpdateException() : base() { }
+        public UpdateException(string message) : base(message) { }
     }
     public class TimesheetUpdateException : UpdateException
     {

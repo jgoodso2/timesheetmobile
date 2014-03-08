@@ -38,7 +38,7 @@ function TSM_SaveTask() {
                   " user: " + cookie[userField] +
                   " updated: " + cookie[cookieUpdatedField]);
         },
-        set: function (row, task,approval) {
+        set: function (row, task, approval) {
             var cookie = getCookie(cookiename, true);
             cookie[taskIdField] = task || '';
             cookie[TimesheetIdField] = row || '';
@@ -291,16 +291,16 @@ function TSM_initButtons(options) {
         }
     );
 
-        $(".TimesheetId").click(
+    $(".TimesheetId").click(
         function (e) {
             //e.preventDefault();
             e.stopPropagation();
             EnableApprove($(this).attr('data-button-target'));
         }
-        
+
     );
 
-     $(".TaskId").click(
+    $(".TaskId").click(
         function (e) {
             //e.preventDefault();
             e.stopPropagation();
@@ -308,14 +308,14 @@ function TSM_initButtons(options) {
         }
     );
 
-        $(".taskapprovals").click(
+    $(".taskapprovals").click(
         function (e) {
             //e.preventDefault();
             e.stopPropagation();
             EnableTaskApprove();
         }
     );
-        
+
 
 }
 
@@ -635,7 +635,7 @@ function TSM_ConfirmView() {
     if (rowC.length > 0) current.row = rowC.val();
     var taskC = $('.updatetaskview');
     var approvalC = $('.updateapprovalview');
-    configuration.set(current.row, current.task,current.approval);
+    configuration.set(current.row, current.task, current.approval);
     GotoUrl($('#periodform').attr('data-ajax-url'));
     //$('#periodform').submit();
 }
@@ -774,6 +774,7 @@ function TSM_CompleteAddRow(data) {
         $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
         TSM.init();
     }
+    TSM.init();
     CloseDialog('#taskselection');
     $('#RequiredProgectId').val('-100');
     $('#assignments').val('-100');
@@ -858,6 +859,7 @@ function TSM_CopyObjectToRow(item, source, prefix) {
 }
 
 function TSM_CopyToRow(prefix) {
+$("#" + prefix + "_Container").addClass("dirty");
     $(".detailBoolean").each(function () {
         var jThis = $(this);
         var val = jThis.prop('checked');
@@ -900,6 +902,9 @@ function TSM_CopyToRow(prefix) {
             }
 
             var oldvalue = TSM_GetRowValue(name, prefix, jThis.val());
+            if (isNaN(parseFloat(oldvalue))) {
+                oldvalue = 0.00;
+            }
 
             TSM_SetRowValue(name, prefix, val);
             if (!isNaN(parseFloat(oldvalue)) && !isNaN(parseFloat(jThis.val()))) {
@@ -1193,7 +1198,7 @@ function ApproveSelectedTasks(aapprovalmode) {
             count++;
         }
     });
-    
+
     var arr = JSON.stringify(selectedtasks);
     $.ajax({
         cache: false,
@@ -1283,7 +1288,9 @@ function TSM_PrepareDays(start, end) {
     var oldStart = container.data('oldStart') || '';
     var olddur = container.data('olddur') || '';
     if (start == '' || end == '' || start == undefined || end == undefined) return;
-    var dur = daysBetween(start, end);
+
+    var dur = parseInt($('#noOfDays').val());
+    var periodStart = $('#periodStart').val();
     if ((start == oldStart && dur == olddur)) {
         return;
     }
@@ -1294,16 +1301,13 @@ function TSM_PrepareDays(start, end) {
     hdrContainer.empty();
     var toBuild = "";
     var toBuildhdr = "";
-    var dateStart = MvcControlsToolkit_Parse(start, MvcControlsToolkit_DataType_DateTime);
-    var curr = dateStart;
+    var dateStart = periodStart;
     var i = 0;
-    while (i < dur) {
-        var ds = MvcControlsToolkit_Format(curr, 'ddd MM/dd', MvcControlsToolkit_DataType_DateTime, '', ' ');
-        toBuildhdr = toBuildhdr + hdrTemplate.replace(/_p1lh_/g, ds);
+    $('.shortPeriods').each(function () {
+        toBuildhdr = toBuildhdr + hdrTemplate.replace(/_p1lh_/g,  $(this).val());
         toBuild = toBuild + template.replace(/_plh_/g, i + '');
         i++;
-        curr = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate() + 1);
-    }
+    });
     container.html(toBuild);
     hdrContainer.html(toBuildhdr);
     //$(toBuild).appendTo(container);

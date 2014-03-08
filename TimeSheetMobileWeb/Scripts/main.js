@@ -32,10 +32,14 @@ TSM = (function ($) {
     *             data-row-from : to tell the server which row it is from
     */
     function initModalOverlay() {
-
+        $('.modal').each(function (argument) {
+            var ht = $(this).outerHeight()
+            $(this).css({
+                bottom: -ht + 'px'
+            });
+        })
         $('*[data-role]')
-       .removeAttr('click');
-        $('*[data-role]')
+       .removeAttr('click')
        .on('click', function (argument) {
            var $this = $(this)
             , $role = $this.data('role')
@@ -49,12 +53,13 @@ TSM = (function ($) {
            }
 
            if ($role === 'modal') {
+               var $ht = $(modalTarget).outerHeight();
 
                $(modalOverlay)
                .fadeIn(400, function () {
                    $(modalTarget)
-                   .fadeIn('fast');
-                   $(modalTarget).find('.modal-content').hide()
+                   .delay(200).show().animate({ opacity: 1, bottom: 0 }, 'slow');
+                   $(modalTarget).find('.modal-content').hide();
                    $(modalTarget).find('.modal-content:first').show()
                });
                postscript(callback, fromRow);
@@ -71,6 +76,12 @@ TSM = (function ($) {
 
        });
 
+        $('*[data-url]').on('click', function (event) {
+            var $this = $(this)
+          , URI = $this.data('url');
+            window.location.href = URI;
+
+        });
 
         $('*[data-display]').on('click', function (event) {
             var $this = $(this)
@@ -96,7 +107,17 @@ TSM = (function ($) {
         });
     }
 
+    function updateFooterWidth(argument) {
+        var $footer = $('footer'),
+          $li = $footer.find('li'),
+          $liWidth = $li.width(),
+          $liCount = $li.length,
+          $ul = $footer.find('ul');
 
+        $ul.css({
+            width: $liWidth * $liCount + "px"
+        });
+    }
 
     return {
         /* 
@@ -105,6 +126,7 @@ TSM = (function ($) {
         init: function () {
 
             initModalOverlay();
+            updateFooterWidth();
 
         },
         /* @function initPreloader(obj), this triggers the preloader when required,
@@ -138,11 +160,19 @@ TSM = (function ($) {
         */
         loadModal: function (container, bool) {
             if (bool) {
-                $(container).fadeIn('fast');
-                $(modalOverlay).fadeIn('fast');
+                $(modalOverlay)
+               .fadeIn(400, function () {
+                   $(container)
+                   .delay(200).show().animate({ opacity: 1, bottom: 0 }, 'slow');
+                   $(container).find('.modal-content').hide();
+                   $(container).find('.modal-content:first').show()
+               });
             } else {
-                $(container).fadeOut('fast');
-                $(modalOverlay).fadeOut('fast');
+               $(container)
+                .fadeOut(400, function () {
+                    $(modalOverlay)
+                    .fadeOut('fast');
+                });
             }
         }
 

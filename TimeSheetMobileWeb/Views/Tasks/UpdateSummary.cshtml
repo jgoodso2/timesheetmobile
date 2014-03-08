@@ -9,8 +9,16 @@
                         <p><span class='updateerrormessage-d'></span></p>
 
              <p class="buttons-container">
-            <input id="btnTaskDone" type="button" value="@SiteResources.OK" class='main-submit cancel btn' data-role="dismiss" data-target='#tskupdateSummary' 
-             data-callback='GotoUrl' data-row-from="@HttpContext.Current.Request.Url"/>  
+            @if (HttpContext.Current.Session["user"] != null)
+            {
+                <input id="btnTaskDone" type="button" value="@SiteResources.OK" class='main-submit cancel btn' data-role="dismiss" 
+                data-target='#tskupdateSummary' data-callback='GotoUrl' data-row-from='@Url.Action("MyApprovals","Timesheet")'/>   
+            }
+            else
+            {
+            <input id="btnTaskDone" type="button" value="@SiteResources.OK" class='main-submit cancel btn' data-role="dismiss" 
+            data-target='#tskupdateSummary'  data-callback='GotoUrl' data-row-from="@HttpContext.Current.Request.Url"/>  
+            }
              </p> 
         </div>
     </div>

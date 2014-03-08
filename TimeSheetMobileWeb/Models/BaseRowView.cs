@@ -12,7 +12,7 @@ namespace TimeSheetMobileWeb.Models
         public string Title { get; set; }
         public int PeriodLength;
         public string Status { get; set; }
-
+        public string PeriodStart { get; set; }
         public bool ApprovalMode { get; set; }
 
         public BaseRowView()

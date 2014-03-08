@@ -56,7 +56,7 @@ namespace TimeSheetMobileWeb.Controllers
                     speriod = string.Format("({0} - {1})", period.SelectedPeriodStart.ToShortDateString(), period.SelectedPeriodStop.ToShortDateString());
                     if (!string.IsNullOrEmpty(user))
                     {
-                        Session["user"] = user;
+                        Session["user"] = user.Replace("i:0#.w|", "");
                     }
                     else
                     {
@@ -84,7 +84,7 @@ namespace TimeSheetMobileWeb.Controllers
             this.HttpContext.Trace.Warn("Starting Index of TimesheetController");
             ConfigurationHelper.UserConfiguration(repository, timesheetUser);
             UpdateTimesheetsView model = new UpdateTimesheetsView(repository.DefaultLineClass);
-            model.CurrentUserGuid = repository.GetCurrentUserId();
+            model.CurrentUserGuid = repository.GetResourceUidFromNtAccount((User.Identity as System.Security.Principal.WindowsIdentity).Name).ToString();
             model.PrepareRowTypes();
             Timesheet selection = null;
             model.PeriodString = speriod;
@@ -148,7 +148,7 @@ namespace TimeSheetMobileWeb.Controllers
             MyApprovalView model = new MyApprovalView();
             model.TimesheetApprovals = Repository.GetTimesheetApprovals((User.Identity as System.Security.Principal.WindowsIdentity).Name);
             model.TaskApprovals = Repository.GetTaskApprovals((User.Identity as System.Security.Principal.WindowsIdentity).Name);
-            model.NextMgr = repository.GetCurrentUserId();
+            model.NextMgr = repository.GetResourceUidFromNtAccount((User.Identity as System.Security.Principal.WindowsIdentity).Name).ToString();
             this.HttpContext.Trace.Warn("Returning from MyApprovals of TimesheetController");
             return View("../Approvals/MyApprovals", model);
         }
@@ -259,7 +259,7 @@ namespace TimeSheetMobileWeb.Controllers
             model.CurrentPeriodStart = pmodel.SelectedPeriodStart;
             model.CurrentPeriodStop = pmodel.SelectedPeriodStop;
             model.Period = pmodel.SelectedPeriodId;
-            model.CurrentUserGuid = repository.GetCurrentUserId();
+            model.CurrentUserGuid = repository.GetResourceUidFromNtAccount((User.Identity as System.Security.Principal.WindowsIdentity).Name).ToString();
             int status;
             bool canDelete;
             bool canRecall;

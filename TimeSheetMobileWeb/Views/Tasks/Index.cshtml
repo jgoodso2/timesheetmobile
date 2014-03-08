@@ -52,7 +52,7 @@
 		<li><a href='#' data-target='@Url.Action("Index", "Home")' class="icon-footer-home leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.Home</li>
          @if (Model.ApprovalMode)
         {
-            <li><a href="#"   data-target='@Url.Action("MyApprovals", "Timesheet")'  class="icon-approvals leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.MyApprovals</li>
+            <li><a href="#"   data-target='@Url.Action("MyApprovals", "Timesheet")'  class="icon-approvals icon-footer-approval leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.MyApprovals</li>
         }
         
         @if (!Model.ApprovalMode)

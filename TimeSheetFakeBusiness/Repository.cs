@@ -14,6 +14,10 @@ namespace TimeSheetFakeBusiness
         public void ApproveTasks(string[] assnid, string mgrUID, string mode)
         {
         }
+        public Guid GetResourceUidFromNtAccount(String ntAccount)
+        {
+            return new Guid();
+        }
         public string GetCurrentUserId()
         {
             return string.Empty;

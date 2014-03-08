@@ -142,6 +142,26 @@
     <Compile Include="Views\Utility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\BP\css\main.css" />
+    <Content Include="Content\BP\images\global-homepage-bp-logo-image.png" />
+    <Content Include="Content\BP\images\icon-add-approve-26x26.png" />
+    <Content Include="Content\BP\images\icon-add-reject-26x26.png" />
+    <Content Include="Content\BP\images\icon-add-timesheet-26x26.png" />
+    <Content Include="Content\BP\images\icon-approval-32x32.png" />
+    <Content Include="Content\BP\images\icon-bulk-save-26X26.png" />
+    <Content Include="Content\BP\images\icon-bulk-send-26X26.png" />
+    <Content Include="Content\BP\images\icon-change-view-26x26.png" />
+    <Content Include="Content\BP\images\icon-delete-26x26.png" />
+    <Content Include="Content\BP\images\icon-home-26X26.png" />
+    <Content Include="Content\BP\images\icon-recall-26x26.png" />
+    <Content Include="Content\BP\images\icon-tasks-32x32.png" />
+    <Content Include="Content\BP\images\icon-timesheet-26x26.png" />
+    <Content Include="Content\BP\images\icon-timesheet-32x32.png" />
+    <Content Include="Content\BP\images\icon-view-26x26.png" />
+    <Content Include="Content\BP\images\loader.gif" />
+    <Content Include="Content\BP\images\logo.png" />
+    <Content Include="Content\BP\images\logo_2.png" />
+    <Content Include="Content\BP\images\taskitem-bg.png" />
     <Content Include="Content\home-1.0.css" />
     <Content Include="Content\images\1Add-2.png" />
     <Content Include="Content\images\2Save-3.png" />
@@ -198,6 +218,8 @@
     <Content Include="Content\jquery.treeview.css" />
     <Content Include="Content\license.txt" />
     <Content Include="Content\MenuStyle.css" />
+    <Content Include="Content\Parallon\css\fonts\icomoon.svg" />
+    <Content Include="Content\Parallon\css\main-themed.css" />
     <Content Include="Content\Parallon\images\icon-add-timesheet-26x26.png" />
     <Content Include="Content\Parallon\images\icon-approval-32x32.png" />
     <Content Include="Content\Parallon\images\icon-bulk-save-26X26.png" />
@@ -212,6 +234,7 @@
     <Content Include="Content\Parallon\images\icon-view-26x26.png" />
     <Content Include="Content\Parallon\images\loader.gif" />
     <Content Include="Content\Parallon\images\logo.png" />
+    <Content Include="Content\Parallon\images\logo_2.png" />
     <Content Include="Content\Parallon\images\taskitem-bg.png" />
     <Content Include="Content\Parallon\css\main.css" />
     <Content Include="Content\site.jquery.mobile-1.0.css.css" />
@@ -634,6 +657,7 @@
     <Content Include="Scripts\cultures\globalize.cultures.js" />
     <Content Include="Scripts\globalize.js" />
     <Content Include="Scripts\globalize.min.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
@@ -671,6 +695,8 @@
     <Content Include="Scripts\SiteScript-1.0.js" />
     <Content Include="Scripts\SiteScript-1.0.min.js" />
     <Content Include="Scripts\TasksScripts-1.0.js" />
+    <Content Include="Scripts\TasksScripts-1.0.min.js" />
+    <Content Include="Scripts\Timesheetscript-1.0.min.js" />
     <Content Include="Scripts\TimesheetsScript-1.0.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
@@ -688,15 +714,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
     <Content Include="Copy %282%29 of Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -709,6 +726,9 @@
     <Content Include="Views\Shared\ViewSelection.cshtml" />
     <Content Include="Views\Timesheet\UpdateSummary.cshtml" />
     <Content Include="Views\Tasks\UpdateSummary.cshtml" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="_bin_deployableAssemblies\TimeSheetModules.dll" />
     <Content Include="Views\Timesheet\TimesheetHistory.cshtml" />
     <Content Include="Views\Shared\TSHistoryDetail.cshtml" />
@@ -720,6 +740,14 @@
     <Content Include="Views\Tasks\RecallDelete.cshtml" />
     <Content Include="Views\Shared\TimesheetApprovalView.cshtml" />
     <Content Include="Views\Shared\TaskApprovalView.cshtml" />
+    <None Include="Content\BP\css\fonts\.DS_Store" />
+    <None Include="Content\BP\css\fonts\icomoon.eot" />
+    <None Include="Content\BP\css\fonts\icomoon.svg" />
+    <None Include="Content\BP\css\fonts\icomoon.ttf" />
+    <None Include="Content\BP\css\fonts\icomoon.woff" />
+    <None Include="Content\Parallon\css\fonts\icomoon.eot" />
+    <None Include="Content\Parallon\css\fonts\icomoon.ttf" />
+    <None Include="Content\Parallon\css\fonts\icomoon.woff" />
     <None Include="_bin_deployableAssemblies\System.Web.Mvc.dll" />
     <None Include="_bin_deployableAssemblies\WebMatrix.WebData.xml" />
     <None Include="_bin_deployableAssemblies\WebMatrix.WebData.dll" />

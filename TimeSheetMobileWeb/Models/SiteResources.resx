@@ -163,13 +163,13 @@
     <value>Edit Task</value>
   </data>
   <data name="HomeMenuTasks" xml:space="preserve">
-    <value>My Tasks</value>
+    <value>Tasks</value>
   </data>
   <data name="HomeMenuTimeInput" xml:space="preserve">
     <value>Select Date</value>
   </data>
   <data name="HomeMenuTimesheet" xml:space="preserve">
-    <value>My Timesheet</value>
+    <value>Timesheet</value>
   </data>
   <data name="HomeMenuTimesheetDetail" xml:space="preserve">
     <value>Edit Row</value>
@@ -370,13 +370,13 @@
     <value>Updates Report</value>
   </data>
   <data name="HomeTimesheets" xml:space="preserve">
-    <value>My Timesheets</value>
+    <value>Timesheets</value>
   </data>
   <data name="HomeMenuTimesheets" xml:space="preserve">
-    <value>My Timesheets</value>
+    <value>Timesheets</value>
   </data>
   <data name="MyApprovals" xml:space="preserve">
-    <value>My Approvals</value>
+    <value>Approvals</value>
   </data>
   <data name="LineClassification" xml:space="preserve">
     <value>Line Classification</value>

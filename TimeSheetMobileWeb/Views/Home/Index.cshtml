@@ -25,9 +25,11 @@
 <body class="tms time-details">
         <div class='container'>
         <div class="home-bg">
-		<a href="#"   onclick='GotoUrl("@Url.Action("TimesheetHistory", "Timesheet")")'><span class="icon-timesheet" ></span>@SiteResources.HomeMenuTimesheet</a>
-		<a href="#"   onclick='GotoUrl("@Url.Action("Index", "Tasks")")'><span class="icon-tasks"></span>@SiteResources.HomeMenuTasks</a>
-		<a href="#"   onclick='GotoUrl("@Url.Action("MyApprovals", "Timesheet")")'><span class="icon-approvals"></span>@SiteResources.MyApprovals</a>
+
+		<a href="#"   onclick='GotoUrl("@Url.Action("TimesheetHistory", "Timesheet")")'><i></i><em></em><span class="icon-timesheet" ></span><strong>
+        @SiteResources.HomeMenuTimesheet</strong></a>
+		<a href="#"   onclick='GotoUrl("@Url.Action("Index", "Tasks")")'><i></i><em></em><span class="icon-tasks"></span><strong>@SiteResources.HomeMenuTasks</strong></a>
+		<a href="#"   onclick='GotoUrl("@Url.Action("MyApprovals", "Timesheet")")'><i></i><em></em><span class="icon-approvals"></span><strong>@SiteResources.MyApprovals</strong></a>
 	</div>
         </div>
         

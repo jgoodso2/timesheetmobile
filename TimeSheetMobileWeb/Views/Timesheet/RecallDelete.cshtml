@@ -13,19 +13,25 @@
                  {
         <a href="#" id="btnRecall" class="main-submit  loadConfirm" data-button-target='recalldelete' data-action-confirm ="@SiteResources.RecallMessage"
                         data-action-value='True' data-action-container='@Html.PrefixedId(m => m.IsRecall)'>
+                        <i></i>
+                        <em></em>
 				<span class="recall"> </span>
-				@SiteResources.Recall
+				<strong>@SiteResources.Recall</strong>
 			</a>
             <a href="#" id="btnDelete" class="main-submit  loadConfirm" data-button-target='recalldelete' data-action-confirm ="@SiteResources.RecallMessage"
                         data-action-value='False'   data-action-container='@Html.PrefixedId(m => m.IsRecall)'>
+                         <i></i>
+                        <em></em>
 				<span class="delete"></span>
-				@SiteResources.Delete
+				<strong>@SiteResources.Delete</strong>
 			</a>
                  }
             <a href="#" id="btnView" class="main-submit loadview goto" onclick="CloseDialog('#recallDelete');OpenDialog('#viewselection');"
                 data-action-container='@Html.PrefixedId(m => m.IsRecall)' data-target="#viewselection">
+                 <i></i>
+                        <em></em>
 				<span class="changeview"></span>
-				@SiteResources.ChangeView
+				<strong>@SiteResources.ChangeView</strong>
 			</a>
         </div>
                 @Html.HiddenFor(m => m.RDPeriodId, new { @class = "currentperiodid" })

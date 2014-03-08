@@ -71,7 +71,7 @@ namespace TimeSheetMobileWeb.Controllers
                 timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name : Session["user"].ToString();
                 if (!string.IsNullOrEmpty(user))
                 {
-                    model.ReceiveRows(repository.GetSubmittedRows(projectId, (User.Identity as System.Security.Principal.WindowsIdentity).Name,user, ViewConfigurationApproval.Default));
+                    model.ReceiveRows(repository.GetSubmittedRows(projectId, (User.Identity as System.Security.Principal.WindowsIdentity).Name,user.Replace("i:0#.w|",""), ViewConfigurationApproval.Default));
                     model.ApprovalMode = true;
                 }
                 else
@@ -291,7 +291,7 @@ namespace TimeSheetMobileWeb.Controllers
                     
                     try
                     {
-                        repository.ApproveTasks(assignments, repository.GetCurrentUserId(), mode);
+                        repository.ApproveTasks(assignments, repository.GetResourceUidFromNtAccount((User.Identity as System.Security.Principal.WindowsIdentity).Name).ToString(), mode);
                         
                             errorMessage = SiteResources.ApprovalSuccessful;
                             success = true;
