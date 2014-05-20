@@ -1163,11 +1163,11 @@
             DateTime periodStart = Convert.ToDateTime(Model.PeriodStart); 
             <input id="noOfDays" type="hidden" value="@Model.PeriodLength" />
              
-            @for(int i=0;i<Model.PeriodLength;i++)
+            for(int i=0;i<Model.PeriodLength;i++)
             {
               var format = DateTimeFormatInfo.CurrentInfo.ShortDatePattern.Replace("Y", "").Replace("y","").Trim(DateTimeFormatInfo.CurrentInfo.DateSeparator.ToCharArray());
-             <input id="periodStart" class="shortPeriods" type="hidden" value="periodStart.ToString(format)" />
-             period.AddDays(1);
+             <input id="periodStart" class="shortPeriods" type="hidden" value='@string.Format("{0} {1}",periodStart.DayOfWeek.ToString().Substring(0,3),  periodStart.ToString(format))' />
+                periodStart = periodStart.AddDays(1);
             }
                 <a href="#" data-role="dismiss" data-target="#basedetail" class="btn save" data-callback="TSM_SaveTask">@SiteResources.Save</a>
                 

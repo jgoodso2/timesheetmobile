@@ -1,5 +1,29 @@
-﻿
-function TSM_OpenTask(id) {
+﻿function Approvals_selectAll() {
+    if ($('#selectAll')[0].checked) {
+        $('.TimesheetId').each(function () {
+        $(this).prop('checked', true);
+
+        });
+        $('.TaskId').each(function () {
+        $(this).prop('checked', true);
+
+        });
+        
+    }
+    else {
+        $('.TimesheetId').each(function () {
+        $(this).prop('checked', false);
+
+        });
+    $('.TaskId').each(function () {
+        $(this).prop('checked', false);
+
+        });
+}
+EnableAllApprovals();
+}
+
+function TSM_OpenTask(id,open) {
     var data = $('[data-row-from=' + id + ']');
     var row_type = data.attr('data-button-selection');
     row_choice_ViewList.Select("property_group_" + row_type);
@@ -7,6 +31,9 @@ function TSM_OpenTask(id) {
     var prefix = data.attr('data-row-from');
     $('#basedetail').data('chosen-row', prefix);
     TSM_CopyFromRow(prefix);
+    if (open == true) {
+    OpenDialog('#basedetail');
+    }
 }
 
 function TSM_SaveTask() {
@@ -343,6 +370,7 @@ $(document).ready(function () {
         $('.currentassname').val($(this).find('option:selected').text());
         $('.currentassid').val($(this).find('option:selected').val());
         TSM_ConfirmAdd(true);
+
     });
 
     $('.updatetasks').change(function () {
@@ -660,13 +688,14 @@ function TSM_CompleteAddRow(data) {
     var prefix = item.attr("id");
     var end_prefix = prefix.lastIndexOf("_");
     prefix = prefix.substring(0, end_prefix);
-
+    
     TSM_CopyObjectToRow(item, data, prefix);
 
 
     var projectId = $('#RequiredProgectId').val();
     if (projectId != "-1") {
         if (data["CustomFieldItems"] != undefined) {
+            TSM.initPreloader('show');
             $.ajax({
                 cache: false,
                 type: "POST",
@@ -691,6 +720,8 @@ function TSM_CompleteAddRow(data) {
                     }
                     $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
                     TSM.init();
+                    TSM.initPreloader('hide');
+                    TSM_OpenTask(item[0].children[2].id, true);
 
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -762,8 +793,10 @@ function TSM_CompleteAddRow(data) {
                         }
                         $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
                         TSM.init();
-
+                        TSM.initPreloader('hide');
+                        TSM_OpenTask(item[0].children[2].id, true);
                     }
+                    
                 }
 
             });
@@ -773,11 +806,13 @@ function TSM_CompleteAddRow(data) {
         $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "-" + rowType);
         $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
         TSM.init();
+        TSM_OpenTask(item[0].children[2].id, true);
     }
     TSM.init();
     CloseDialog('#taskselection');
     $('#RequiredProgectId').val('-100');
     $('#assignments').val('-100');
+    
 }
 
 function TSM_GetRowValue(name, prefix, value) {
@@ -1134,6 +1169,24 @@ function TSM_ConfirmApproveTimesheet(data) {
         TSM_CopySummary(true, data['ErrorMessage']);
         OpenDialog('#tskupdateSummary');
     }
+}
+function EnableAllApprovals() {
+    if ($('.TimesheetId').is(':checked') || $('.TaskId').is(':checked')) {
+        $('.approvals').removeClass('ui-disabled');
+    }
+    else {
+        $('.approvals').addClass('ui-disabled');
+    }
+    $('.TimesheetId').each(function () {
+    var checkbox =$(this).attr('data-button-target');
+    $('#' + checkbox).children('.selectedtimeappr:first').val($('#' + checkbox).children('.TimesheetId:first').is(':checked'));
+    $('#' + checkbox).children('.selectedtaskappr:first').val($('#' + checkbox).children('.TaskId:first').is(':checked'));
+    });
+    $('.TaskId').each(function () {
+        var checkbox = $(this).attr('data-button-target');
+        $('#' + checkbox).children('.selectedtimeappr:first').val($('#' + checkbox).children('.TimesheetId:first').is(':checked'));
+        $('#' + checkbox).children('.selectedtaskappr:first').val($('#' + checkbox).children('.TaskId:first').is(':checked'));
+    });
 }
 
 function EnableApprove(checkbox) {

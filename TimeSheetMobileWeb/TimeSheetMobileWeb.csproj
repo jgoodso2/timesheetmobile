@@ -48,7 +48,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -66,9 +66,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="MVC3ControlsToolkit, Version=1.8.0.0, Culture=neutral, PublicKeyToken=b6277d1c804403e7, processorArchitecture=MSIL">
+    <Reference Include="MVC3ControlsToolkit, Version=1.8.5.0, Culture=neutral, PublicKeyToken=b6277d1c804403e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MVC3ControlsToolkit.1.8.0\lib\MVC3ControlsToolkit.dll</HintPath>
+      <HintPath>..\dlls\MVC3ControlsToolkit.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\dlls\IoC\StructureMap.dll</HintPath>
@@ -745,9 +745,20 @@
     <None Include="Content\BP\css\fonts\icomoon.svg" />
     <None Include="Content\BP\css\fonts\icomoon.ttf" />
     <None Include="Content\BP\css\fonts\icomoon.woff" />
+    <None Include="Content\Parallon\css\fonts\.DS_Store" />
     <None Include="Content\Parallon\css\fonts\icomoon.eot" />
     <None Include="Content\Parallon\css\fonts\icomoon.ttf" />
     <None Include="Content\Parallon\css\fonts\icomoon.woff" />
+    <None Include="Content\Parallon\css\__MACOSX\._fonts" />
+    <None Include="Content\Parallon\css\__MACOSX\fonts\._.DS_Store" />
+    <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon.eot" />
+    <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon.svg" />
+    <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon.ttf" />
+    <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon.woff" />
+    <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon_new.eot" />
+    <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon_new.svg" />
+    <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon_new.ttf" />
+    <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon_new.woff" />
     <None Include="_bin_deployableAssemblies\System.Web.Mvc.dll" />
     <None Include="_bin_deployableAssemblies\WebMatrix.WebData.xml" />
     <None Include="_bin_deployableAssemblies\WebMatrix.WebData.dll" />

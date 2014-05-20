@@ -268,7 +268,7 @@
 		}
 	});
 
-	//========================== Private helper functions, used by code above ==========================
+	//===== Private helper functions, used by code above =====
 
 	function build( tmplItem, nested, content ) {
 		// Convert hierarchical content into flat string array

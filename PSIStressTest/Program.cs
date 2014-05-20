@@ -48,7 +48,7 @@ namespace PSIStressTest
                                         }
                                         else
                                         {
-                                            UpdateTimesheet(timesheet, repository, resource, period, resDS, false);
+                                            UpdateTimesheet(timesheet, repository, resource, period, resDS, true);
                                         }
                                     }
                                     else
@@ -92,7 +92,7 @@ namespace PSIStressTest
                     {
                         repository.CreateActuals(timesheet, timesheet.Lines[0], period.WPRD_START_DATE, period.WPRD_FINISH_DATE);
                     }
-                    timesheet.Lines[0].GetActualsRows()[0].TS_ACT_VALUE = (8 * 6000);
+                    timesheet.Lines[0].GetActualsRows()[0].TS_ACT_VALUE = (8 * 60000);
                 }
             }
             if (save)

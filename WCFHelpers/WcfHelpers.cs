@@ -17,9 +17,13 @@ namespace WCFHelpers
     public class WcfHelpers
     {
         // Use the Authentication class in the Microsoft SharePoint Foundation web services, not in the PSI.
+        [ThreadStatic]
         private static Authentication authentication = null;
+        [ThreadStatic]
         private static AuthenticationMode mode = AuthenticationMode.Windows;
+        [ThreadStatic]
         private static CookieContainer cookieContainer = null;
+        [ThreadStatic]
         private static String impersonationContextString = String.Empty; 
 
         public static CookieContainer CookieContainer

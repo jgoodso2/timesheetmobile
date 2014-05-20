@@ -13,6 +13,7 @@ using System.Web.Services.Protocols;
 using SvcAdmin;
 using PSLib = Microsoft.Office.Project.Server.Library;
 using System.Globalization;
+using System.Xml;
 namespace PSITest
 {
     [TestClass]
@@ -277,6 +278,209 @@ namespace PSITest
         }
 
         [TestMethod]
+        public void CreateTaskHierarchy()
+        {
+            //PSLib.Task.AddPositionType.
+        }
+
+
+        private void CreateTimesheet(string userUid,Guid ruid, Guid periodUID, ref Guid tuid, ref SvcTimeSheet.TimesheetDataSet tsDs)
+        {
+            tsDs = new SvcTimeSheet.TimesheetDataSet();
+            SvcTimeSheet.TimesheetDataSet.HeadersRow headersRow = tsDs.Headers.NewHeadersRow();
+            headersRow.RES_UID = ruid;  // cant be null.
+            tuid = Guid.NewGuid();
+            headersRow.TS_UID = tuid;
+            headersRow.WPRD_UID = periodUID;
+            headersRow.TS_NAME = "Timesheet";
+            headersRow.TS_COMMENTS = "Timesheet Created via custom Prepopulation";
+            headersRow.TS_ENTRY_MODE_ENUM = (byte)PSLib.TimesheetEnum.EntryMode.Daily;
+            tsDs.Headers.AddHeadersRow(headersRow);
+
+            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+            {
+                SetImpersonation(userUid);
+                timesheetClient.CreateTimesheet(tsDs, SvcTimeSheet.PreloadType.Default);
+            }
+            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+            {
+                SetImpersonation(userUid);
+                tsDs = timesheetClient.ReadTimesheet(tuid); //calling ReadTimesheet to pre populate with default server settings
+            }
+        }
+        [Ignore] public void SaveNextTimesheet()
+        {
+            var UserGuid = "Contoso\\Jgoodson";
+            bool isWindows;
+            var guid = GetResourceUidFromNtAccount(UserGuid, out isWindows);
+            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+            {
+                var timesheet = timesheetClient.ReadTimesheet(new Guid("2e6b50a2-e2cd-4216-a53b-908e8fd177d1"));
+                SetImpersonation(UserGuid);
+
+                var currentGuid = timesheet.Headers[0].WPRD_UID;
+                var periods = adminClient.ReadPeriods(SvcAdmin.PeriodState.All).TimePeriods.OrderBy(t => t.WPRD_START_DATE).ToList();
+                int index = periods.FindIndex(t => t.WPRD_UID == currentGuid);
+                var nextPeriod = (index == periods.Count() - 1) ? periods.ElementAt(index) : periods.ElementAt(index + 1);
+                if (periods[index].WPRD_UID != nextPeriod.WPRD_UID)
+                {
+                    var previousTimesheet = timesheetClient.ReadTimesheetByPeriod(guid, nextPeriod.WPRD_UID, SvcTimeSheet.Navigation.Current);
+                    
+                    if(previousTimesheet.Headers.Count == 0)
+                    {
+                        Guid TSUID =Guid.Empty;
+                        CreateTimesheet(UserGuid,guid, nextPeriod.WPRD_UID, ref TSUID, ref previousTimesheet);
+                         foreach (var line in timesheet.Lines)
+                    {
+                        var lineRow = previousTimesheet.Lines.AddLinesRow(Guid.NewGuid(), previousTimesheet.Headers[0], line.ASSN_UID, line.TASK_UID, line.PROJ_UID,
+                            line.TS_LINE_CLASS_UID, line.TS_LINE_COMMENT, line.TS_LINE_VALIDATION_TYPE, line.TS_LINE_CACHED_ASSIGN_NAME,
+                           line.TS_LINE_CACHED_PROJ_NAME, line.TS_LINE_CACHED_PROJ_REVISION_COUNTER, line.TS_LINE_CACHED_PROJ_REVISION_RANK, line.TS_LINE_IS_CACHED, 0,
+                           line.TS_LINE_STATUS,
+                           0, line.TS_LINE_TASK_HIERARCHY);
+                             var date = nextPeriod.WPRD_START_DATE;
+                             Guid[] uids = new Guid[] { lineRow.TS_LINE_UID };
+                             timesheetClient.PrepareTimesheetLine(TSUID, ref previousTimesheet, uids);
+                             var actuals = lineRow.GetActualsRows();
+                             foreach (var actual in actuals)
+                             {
+                                 actual.SetTS_ACT_NON_BILLABLE_OVT_VALUENull();
+                                 actual.SetTS_ACT_NON_BILLABLE_VALUENull();
+                                 actual.SetTS_ACT_OVT_VALUENull();
+                                 actual.SetTS_ACT_VALUENull();
+                             }
+                            
+                    }
+
+                         SaveTimesheet(UserGuid, previousTimesheet, TSUID);   
+                   
+                    }
+                }
+                
+                
+            }
+        }
+
+
+        private  List<int> CheckStatusRowErrors(string errorInfo)
+        {
+            List<int> errorList = new List<int>();
+            bool containsError = false;
+
+            XmlTextReader xReader = new XmlTextReader(new System.IO.StringReader(errorInfo));
+            while (xReader.Read())
+            {
+                if (xReader.Name == "errinfo" && xReader.NodeType == XmlNodeType.Element)
+                {
+                    xReader.Read();
+                    if (xReader.Value != string.Empty)
+                    {
+                        containsError = true;
+                    }
+                }
+                if (containsError && xReader.Name == "error" && xReader.NodeType == XmlNodeType.Element)
+                {
+                    while (xReader.Read())
+                    {
+                        if (xReader.Name == "id" && xReader.NodeType == XmlNodeType.Attribute)
+                        {
+                            errorList.Add(Convert.ToInt32(xReader.Value));
+                        }
+                    }
+                }
+            }
+            return errorList;
+        }
+        public  bool WaitForQueueJobCompletion(Guid trackingGuid, int messageType, SvcQueueSystem.QueueSystemClient queueSystemClient)
+        {
+            //System.Threading.Thread.Sleep(2000);
+            SvcQueueSystem.QueueStatusDataSet queueStatusDataSet = new SvcQueueSystem.QueueStatusDataSet();
+            SvcQueueSystem.QueueStatusRequestDataSet queueStatusRequestDataSet =
+                new SvcQueueSystem.QueueStatusRequestDataSet();
+
+            SvcQueueSystem.QueueStatusRequestDataSet.StatusRequestRow statusRequestRow =
+                queueStatusRequestDataSet.StatusRequest.NewStatusRequestRow();
+            statusRequestRow.JobGUID = trackingGuid; //Guid.NewGuid();  
+            statusRequestRow.JobGroupGUID = Guid.NewGuid();
+            statusRequestRow.MessageType = messageType;
+            queueStatusRequestDataSet.StatusRequest.AddStatusRequestRow(statusRequestRow);
+
+            bool inProcess = true;
+            bool result = false;
+            DateTime startTime = DateTime.Now;
+            int successState = (int)SvcQueueSystem.JobState.Success;
+            int failedState = (int)SvcQueueSystem.JobState.Failed;
+            int blockedState = (int)SvcQueueSystem.JobState.CorrelationBlocked;
+
+            List<int> errorList = new List<int>();
+
+
+
+            while (inProcess)
+            {
+
+                queueStatusDataSet = queueSystemClient.ReadJobStatus(queueStatusRequestDataSet, false,
+                SvcQueueSystem.SortColumn.Undefined, SvcQueueSystem.SortOrder.Undefined);
+
+                bool noRow = true;
+                foreach (SvcQueueSystem.QueueStatusDataSet.StatusRow statusRow in queueStatusDataSet.Status)
+                {
+                    noRow = false;
+                    if (statusRow["ErrorInfo"] != System.DBNull.Value)
+                    {
+                        errorList = CheckStatusRowErrors(statusRow["ErrorInfo"].ToString());
+
+                        if (errorList.Count > 0
+                            || statusRow.JobCompletionState == blockedState
+                            || statusRow.JobCompletionState == failedState)
+                        {
+                            inProcess = false;
+
+                        }
+                    }
+                    if (statusRow.JobCompletionState == successState)
+                    {
+                        inProcess = false;
+                        result = true;
+                    }
+                    else
+                    {
+                        inProcess = true;
+                        System.Threading.Thread.Sleep(500);  // Sleep 1/2 second.
+                    }
+                }
+                if (noRow) return true;
+                DateTime endTime = DateTime.Now;
+                TimeSpan span = endTime.Subtract(startTime);
+
+                if (span.Seconds > 20) //Wait for only 20 secs - and then bail out.
+                {
+                    return result;//result = false;
+                }
+            }
+            return result;
+        }
+        private void SaveTimesheet(string userId, SvcTimeSheet.TimesheetDataSet tsDs, Guid tsGuid)
+        {
+
+            try
+            {
+                Guid jobGuid = Guid.NewGuid();
+
+
+                using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+                {
+                    SetImpersonation(userId);
+                    var temp = tsDs.GetChanges();
+                    timesheetClient.QueueUpdateTimesheet(jobGuid,
+                         tsGuid,
+                        (SvcTimeSheet.TimesheetDataSet)tsDs);  //Saves the specified timesheet data to the Published database
+                }
+                bool res = WaitForQueueJobCompletion(jobGuid, (int)SvcQueueSystem.QueueMsgType.TimesheetUpdate, queueSystemClient);
+                if (!res) throw new Exception();
+            }
+            catch (Exception tex) { throw new Exception(); }
+        }
+        [Ignore]
         public void Verify_TaskManagerEnabled_NoReqdLineApproval_NoSingleEntryMode()
         {
             using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
@@ -291,7 +495,7 @@ namespace PSITest
             }
         }
 
-        [TestMethod]
+        [Ignore]
         public void Verify_TaskManagerEnabled_NoReqdLineApproval_SingleEntryMode()
         {
             using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
@@ -306,7 +510,7 @@ namespace PSITest
             }
         }
 
-        [TestMethod]
+        [Ignore]
         public void Verify_TaskManagerEnabled_ReqdLineApproval_SingleEntryMode()
         {
             using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
@@ -322,7 +526,7 @@ namespace PSITest
             }
         }
 
-        [TestMethod]
+        [Ignore]
         public void ApproveTimesheet()
         {
             using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
@@ -336,7 +540,7 @@ namespace PSITest
             }
         }
 
-        [TestMethod] 
+        [Ignore] 
         public void ApproveTasks()
         {
             #region Read status updates

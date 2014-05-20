@@ -433,6 +433,7 @@ namespace TimeSheetMobileWeb.Controllers
             res.AssignementId = selection.RequiredAssignementId;
             res.AssignementName = selection.RequiredAssignementName;
             res.ProjectName = selection.RequiredProjectName;
+            res.ItemId = "";
             if (res.DayTimes == null)
             {
                 res.DayTimes = new List<decimal?>();

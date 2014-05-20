@@ -26,7 +26,15 @@
 	<span class="pull-right">@Context.Session["CurrentUser"].ToString()</span>
 	</h1>
     <div class="date-container">
-			<span></span>
+			<span>
+            @if (!(Model.TimesheetApprovals.Count == 0 && Model.TaskApprovals.Count == 0))
+            {
+                <input type="checkbox" id="selectAll" onclick="Approvals_selectAll();" />
+            }       
+            
+            
+            
+            </span>
              <span>
 			<a href="#" class="btn approve approvals ui-disabled" onclick="ApproveRejectSelectedTimesheets('approve');" >Approve</a>
 			<a href="#" class="btn reject approvals ui-disabled" onclick= "ApproveRejectSelectedTimesheets('reject');" >Reject</a>
@@ -35,7 +43,7 @@
         </div>
         <div class="details-content accordion-wrapper">
          
-        @for (int index = 0; index < Model.TimesheetApprovals.Count;index++)
+        @for (int index = 0; index < Model.TimesheetApprovals.Count; index++)
         {
             var pair = Model.TimesheetApprovals[index];
             
@@ -79,9 +87,9 @@
             </div>
         }
 
-         @for (int index = 0; index < Model.TaskApprovals.Count;index++)
-        {
-            var pair = Model.TaskApprovals[index];
+         @for (int index = 0; index < Model.TaskApprovals.Count; index++)
+         {
+             var pair = Model.TaskApprovals[index];
             
             <div class="accordion">
 			<h2>
@@ -102,8 +110,7 @@
                 var task = pair.TaskApprovals[count];
                 string newUser = @pair.UserNTAccount;
                 var projectId = Model.TaskApprovals[index].TaskApprovals[count].ProjectId.ToString();
-                <li id='@task.ProjectId' onclick='GotoUrl("@Url.Action("Index", "Tasks",
-new { projectId = projectId,user = newUser }, "http")")'>
+                <li id='@task.ProjectId' onclick='GotoUrl("@Url.Action("Index", "Tasks", new { projectId = projectId, user = newUser }, "http")")'>
 						<input  type="checkbox" class="TaskId" data-button-target='@task.ProjectId' />
                                          @string.Format("{0} {1}", "Progress Update", task.ProjectName)
 
@@ -122,11 +129,11 @@ new { projectId = projectId,user = newUser }, "http")")'>
             </div>
              
             
-        }
-         @if(Model.TimesheetApprovals.Count == 0 && Model.TaskApprovals.Count == 0)
-             {
+         }
+         @if (Model.TimesheetApprovals.Count == 0 && Model.TaskApprovals.Count == 0)
+         {
                  <span>There are no new approvals to review at this time.</span>
-             }
+         }
         </div>
         @Html.Action("UpdateSummary", "Tasks")
         <footer>

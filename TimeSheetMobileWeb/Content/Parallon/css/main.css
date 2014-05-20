@@ -1,7 +1,15 @@
 @font-face {
   font-family: 'icomoon';
   src: url("fonts/icomoon.eot");
-  src: url("fonts/icomoon.eot?#iefix") format("embedded-opentype"), url("./fonts/icomoon.woff") format("woff"), url("fonts/icomoon.ttf") format("truetype"), url("fonts/icomoon.svg#icomoon") format("svg");
+  src: url("fonts/icomoon.eot?#iefix") format("embedded-opentype"), url("fonts/icomoon.woff") format("woff"), url("fonts/icomoon.ttf") format("truetype"), url("fonts/icomoon.svg#icomoon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'icomoon';
+  src: url("fonts/icomoon_new.eot");
+  src: url("fonts/icomoon_new.eot?#iefix") format("embedded-opentype"), url("fonts/icomoon_new.woff") format("woff"), url("fonts/icomoon_new.ttf") format("truetype"), url("fonts/icomoon_new.svg#icomoon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -464,7 +472,7 @@ select {
   background: transparent;
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 13px;
-  color: #deefc4;
+  color: #515e66;
   border: none;
   outline: none;
   display: inline-block;
@@ -484,7 +492,7 @@ select {
 /* line 166, ../sass/utilities/_mixins.scss */
 label {
   position: relative;
-  background: #05893d;
+  background: #a8aeb2;
   display: block;
   width: 100%;
   overflow: hidden;
@@ -499,7 +507,7 @@ label {
 label:after {
   content: '>' !important;
   font: 14px "Consolas", monospace;
-  color: #deefc4;
+  color: #515e66;
   -webkit-transform: rotate(90deg);
   -moz-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
@@ -556,7 +564,7 @@ label:after {
   color: white;
 }
 
-/* line 11, ../sass/main.scss */
+/* line 11, ../sass/main-themed.scss */
 .tms {
   background: white;
 }
@@ -622,16 +630,16 @@ label:after {
   content: "\e60b";
 }
 /* line 52, ../sass/components/_fonts.scss */
-.tms .icon-file-settings:before, .tms .container.timesheetContainer .date-container span ul li.icon-show-list:before {
+.tms .icon-file-settings:before, .tms .container.timesheetContainer .date-container span ul li.icon-show-list:before, .tms .container.timesheetContainer .date-container-btn span ul li.icon-show-list:before {
   content: "\e60c";
 }
 /* line 55, ../sass/components/_fonts.scss */
-.tms .icon-file-add:before, .tms .container.timesheetContainer .date-container span ul li.icon-add-timesheet:before {
-  content: "\e60d";
+.tms .icon-file-add:before, .tms .container.timesheetContainer .date-container span ul li.icon-add-timesheet:before, .tms .container.timesheetContainer .date-container-btn span ul li.icon-add-timesheet:before {
+  content: "\f600";
 }
 /* line 4, ../sass/components/_header.scss */
 .tms header {
-  background: white;
+  background: #e5e9ec;
   height: 50px;
   display: block;
   text-align: center;
@@ -639,13 +647,13 @@ label:after {
   top: 0;
   width: 100%;
   z-index: 2;
-  border-bottom: 5px solid #008300;
+  border-bottom: 5px solid #e5e9ec;
 }
 /* line 14, ../sass/components/_header.scss */
 .tms header a {
   border: none;
   text-decoration: none;
-  background: url(../images/global-homepage-bp-logo-image.png) no-repeat 50% 50%;
+  background: url(../images/logo.png) no-repeat 50% 50%;
   width: 284px;
   height: 35px;
   display: block;
@@ -655,23 +663,27 @@ label:after {
   margin-left: auto;
   margin-right: auto;
 }
-/* line 14, ../sass/components/_footer.scss */
+/* line 8, ../sass/components/_footer.scss */
+.tms footer {
+  left: 0;
+}
+/* line 15, ../sass/components/_footer.scss */
 .tms .footerIconsTray, .tms footer {
   position: fixed;
-  background: #005900;
+  background: #e5e9ec;
   display: block;
   bottom: 0;
   width: 100%;
   height: 50px;
 }
-/* line 21, ../sass/components/_footer.scss */
+/* line 22, ../sass/components/_footer.scss */
 .tms .footerIconsTray ul, .tms footer ul {
   list-style: none;
   padding: 0;
   margin: 0 auto;
   text-align: center;
 }
-/* line 28, ../sass/components/_footer.scss */
+/* line 29, ../sass/components/_footer.scss */
 .tms .footerIconsTray ul li, .tms footer ul li {
   float: left;
   overflow: hidden;
@@ -679,13 +691,13 @@ label:after {
   text-align: center;
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 10px;
-  color: #deefc4;
+  color: black;
   text-transform: uppercase;
   padding-top: 10px;
   padding-bottom: 8px;
   width: 58px;
 }
-/* line 41, ../sass/components/_footer.scss */
+/* line 42, ../sass/components/_footer.scss */
 .tms .footerIconsTray ul li a, .tms footer ul li a {
   width: 26px;
   height: 26px;
@@ -695,7 +707,7 @@ label:after {
   position: relative;
   font-size: 26px;
   text-decoration: none;
-  color: #deefc4;
+  color: black;
 }
 /* line 1, ../sass/components/_modal.scss */
 .tms .modalOveray {
@@ -712,7 +724,7 @@ label:after {
   position: fixed;
   width: 100%;
   height: auto;
-  background: white;
+  background: #cddae2;
   padding: 10px;
   z-index: 500;
   left: 0;
@@ -747,7 +759,7 @@ label:after {
   position: fixed;
   width: 60%;
   height: 80px;
-  background: white url(../images/loader.gif) no-repeat 50% 50%;
+  background: #cddae2 url(../images/loader.gif) no-repeat 50% 50%;
   padding: 10px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -779,7 +791,7 @@ label:after {
 }
 /* line 10, ../sass/components/_landing.scss */
 .tms .container .home-bg {
-  background: #deefc4;
+  background: #e5e9ec;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   -ms-border-radius: 6px;
@@ -805,7 +817,7 @@ label:after {
 .tms .container .home-bg a:before {
   content: "\e609";
   font-size: 96px;
-  color: #239a44;
+  color: #fcd148;
 }
 /* line 34, ../sass/components/_landing.scss */
 .tms .container .home-bg a i {
@@ -900,10 +912,10 @@ label:after {
   top: 60px;
   width: 100%;
   z-index: 2;
-  background: #dddee0;
+  background: #cddae2;
   font-family: "Myriad Pro", verdana, sans-serfif;
   font-size: 22px;
-  color: #0d8234;
+  color: #515e66;
   text-transform: uppercase;
   font-weight: normal;
 }
@@ -933,7 +945,7 @@ label:after {
   padding: 8px 5px 5px 5px;
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 13px;
-  color: #005900;
+  color: #ce7f29;
 }
 /* line 129, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .date-container span ul {
@@ -950,7 +962,7 @@ label:after {
   overflow: hidden;
   font-size: 26px;
   cursor: pointer;
-  color: #005900;
+  color: black;
 }
 /* line 152, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .date-container span:nth-child(2) {
@@ -958,62 +970,125 @@ label:after {
   float: right;
 }
 /* line 157, ../sass/components/_landing.scss */
+.tms .container.timesheetContainer .date-container-btn {
+  margin-top: 50px;
+  min-height: 40px;
+}
+/* line 90, ../sass/utilities/_mixins.scss */
+.tms .container.timesheetContainer .date-container-btn:before, .tms .container.timesheetContainer .date-container-btn:after {
+  content: "";
+  display: table;
+}
+/* line 94, ../sass/utilities/_mixins.scss */
+.tms .container.timesheetContainer .date-container-btn:after {
+  clear: both;
+}
+/* line 161, ../sass/components/_landing.scss */
+.tms .container.timesheetContainer .date-container-btn span {
+  float: left;
+  padding: 0px 5px 5px 5px;
+  font-family: "Tahoma", verdana, sans-serfif;
+  font-size: 11px;
+  color: #ce7f29;
+}
+/* line 166, ../sass/components/_landing.scss */
+.tms .container.timesheetContainer .date-container-btn span ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* line 170, ../sass/components/_landing.scss */
+.tms .container.timesheetContainer .date-container-btn span ul li {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  margin: 0px 0px 5px 0px;
+  overflow: hidden;
+  font-size: 26px;
+  cursor: pointer;
+  color: black;
+}
+/* line 189, ../sass/components/_landing.scss */
+.tms .container.timesheetContainer .date-container-btn span:first-child {
+  padding-top: 8px;
+  padding-right: 8px;
+}
+/* line 193, ../sass/components/_landing.scss */
+.tms .container.timesheetContainer .date-container-btn span:nth-child(2) {
+  padding: 0;
+  float: left;
+}
+/* line 197, ../sass/components/_landing.scss */
+.tms .container.timesheetContainer .date-container-btn form {
+  float: left;
+  margin-left: 0px;
+}
+/* line 200, ../sass/components/_landing.scss */
+.tms .container.timesheetContainer .date-container-btn form a:last-child {
+  margin-right: 0;
+}
+/* line 203, ../sass/components/_landing.scss */
+.tms .container.timesheetContainer .date-container-btn form a {
+  font-size: 11px;
+  margin: 0;
+}
+/* line 209, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .table-bg {
-  background: white;
+  background: #cddae2;
   padding: 1px;
   margin-top: 10px;
   border: none;
 }
-/* line 162, ../sass/components/_landing.scss */
+/* line 214, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .table-bg table {
   width: 100%;
 }
-/* line 165, ../sass/components/_landing.scss */
+/* line 217, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .table-bg table thead {
-  background: #023718;
+  background: #ce7f29;
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 12px;
   color: white;
 }
-/* line 169, ../sass/components/_landing.scss */
+/* line 221, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .table-bg table thead th {
   font-weight: normal;
   text-transform: uppercase;
   padding: 10px 10px 10px 10px;
   text-align: left;
 }
-/* line 175, ../sass/components/_landing.scss */
+/* line 227, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .table-bg table thead th:nth-child(1) {
   width: 50%;
   text-align: center;
 }
-/* line 181, ../sass/components/_landing.scss */
+/* line 233, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .table-bg table tbody tr:nth-child(even) {
-  background: #71a277;
+  background: #445159;
 }
-/* line 184, ../sass/components/_landing.scss */
+/* line 236, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .table-bg table tbody tr:nth-child(odd) {
-  background: #e5f1ea;
+  background: #5f6c74;
 }
-/* line 187, ../sass/components/_landing.scss */
+/* line 239, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .table-bg table tbody td {
   padding: 10px 10px 10px 10px;
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 11px;
-  color: #0c2717;
+  color: #cddae2;
   text-transform: uppercase;
-  border-bottom: 1px solid white;
-  border-top: 1px solid white;
+  border-bottom: 1px solid #cddae2;
+  border-top: 1px solid #cddae2;
   border-collapse: collapse;
   cursor: pointer;
 }
-/* line 196, ../sass/components/_landing.scss */
+/* line 248, ../sass/components/_landing.scss */
 .tms .container.timesheetContainer .table-bg table tbody tr:hover, .tms .container.timesheetContainer .table-bg table tbody tr.changed {
-  background: #26754d;
+  background: #244d67;
 }
 /* line 1, ../sass/components/_details.scss */
 .tms .details-content {
-  background: #dddee0;
+  background: #cddae2;
 }
 /* line 3, ../sass/components/_details.scss */
 .tms .details-content h2 {
@@ -1036,7 +1111,7 @@ label:after {
 }
 /* line 12, ../sass/components/_details.scss */
 .tms .details-content h2 strong span:nth-child(2) {
-  color: #005900;
+  color: #ce7f29;
 }
 /* line 16, ../sass/components/_details.scss */
 .tms .details-content h2 strong:nth-child(2) {
@@ -1054,166 +1129,180 @@ label:after {
 /* line 26, ../sass/components/_details.scss */
 .tms .details-content table {
   width: 100%;
-  background: #175f4b;
+  background: #ce7f29;
 }
-/* line 30, ../sass/components/_details.scss */
+/* line 31, ../sass/components/_details.scss */
+.tms .details-content table tr:first-child td {
+  padding-top: 8px;
+}
+/* line 36, ../sass/components/_details.scss */
+.tms .details-content table tr:last-child td {
+  padding-bottom: 8px;
+}
+/* line 40, ../sass/components/_details.scss */
 .tms .details-content table td {
   width: 14.28571%;
   text-align: center;
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 12px;
   color: #cddae2;
+  line-height: 1;
   padding: 8px;
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
-/* line 39, ../sass/components/_details.scss */
+/* line 52, ../sass/components/_details.scss */
 .tms .details-content .listing ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-/* line 43, ../sass/components/_details.scss */
+/* line 56, ../sass/components/_details.scss */
 .tms .details-content .listing ul li {
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 12px;
-  color: #19545f;
+  color: #f4c641;
   padding: 5px;
   padding-left: 10px;
   padding-right: 10px;
   cursor: pointer;
-  background: #71a277;
+  background: #445159;
   text-transform: uppercase;
 }
-/* line 51, ../sass/components/_details.scss */
+/* line 64, ../sass/components/_details.scss */
 .tms .details-content .listing ul li:nth-child(even) {
-  background: #e5f1ea;
+  background: #5f6c74;
 }
-/* line 54, ../sass/components/_details.scss */
+/* line 67, ../sass/components/_details.scss */
 .tms .details-content .listing ul li strong {
   display: block;
   font-weight: normal;
 }
-/* line 58, ../sass/components/_details.scss */
+/* line 71, ../sass/components/_details.scss */
 .tms .details-content .listing ul li span {
-  color: #585a3f;
+  color: #2ed0f0;
   display: block;
   padding-top: 3px;
 }
-/* line 62, ../sass/components/_details.scss */
+/* line 75, ../sass/components/_details.scss */
 .tms .details-content .listing ul li span strong {
   display: block;
   font-weight: normal;
-  color: #19545f;
+  color: #f4c641;
 }
-/* line 69, ../sass/components/_details.scss */
+/* line 82, ../sass/components/_details.scss */
 .tms .details-content .listing ul li:hover, .tms .details-content .listing ul li.changed {
-  background: #26754d;
+  background: #244d67;
 }
-/* line 74, ../sass/components/_details.scss */
+/* line 87, ../sass/components/_details.scss */
 .tms .details-content .listing .rowContainer {
   text-transform: uppercase;
 }
-/* line 76, ../sass/components/_details.scss */
+/* line 89, ../sass/components/_details.scss */
 .tms .details-content .listing .rowContainer.dirty li {
-  background: #a5a5a5 !important;
+  background: #2a2c3a !important;
 }
-/* line 83, ../sass/components/_details.scss */
+/* line 96, ../sass/components/_details.scss */
 .tms .details-content .listing .rowContainer:nth-child(even) li {
-  background: #e5f1ea;
+  background: #5f6c74;
 }
-/* line 85, ../sass/components/_details.scss */
+/* line 98, ../sass/components/_details.scss */
 .tms .details-content .listing .rowContainer:nth-child(even) li:hover, .tms .details-content .listing .rowContainer:nth-child(even) li.changed {
-  background: #26754d;
+  background: #244d67;
 }
-/* line 91, ../sass/components/_details.scss */
+/* line 104, ../sass/components/_details.scss */
 .tms .details-content .listing .rowContainer li {
-  background: #71a277;
+  background: #445159;
 }
-/* line 97, ../sass/components/_details.scss */
+/* line 111, ../sass/components/_details.scss */
 .tms .details-content .accordion {
   margin-bottom: 5px;
 }
-/* line 99, ../sass/components/_details.scss */
+/* line 113, ../sass/components/_details.scss */
 .tms .details-content .accordion h2 {
-  background: #dddee0;
+  background: #cddae2;
+  line-height: 0.8;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
-/* line 103, ../sass/components/_details.scss */
+/* line 120, ../sass/components/_details.scss */
 .tms .details-content .accordion .listing {
   display: none;
 }
-/* line 106, ../sass/components/_details.scss */
+/* line 123, ../sass/components/_details.scss */
 .tms .details-content .accordion .listing li {
   padding: 10px;
 }
-/* line 108, ../sass/components/_details.scss */
+/* line 125, ../sass/components/_details.scss */
 .tms .details-content .accordion .listing li input[type=checkbox] {
   margin-bottom: -3px;
 }
-/* line 116, ../sass/components/_details.scss */
+/* line 133, ../sass/components/_details.scss */
 .tms .accordion-wrapper {
   background: none;
 }
-/* line 119, ../sass/components/_details.scss */
+/* line 136, ../sass/components/_details.scss */
 .tms .modal-content {
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 13px;
   color: #515e66;
   text-transform: uppercase;
 }
-/* line 123, ../sass/components/_details.scss */
+/* line 140, ../sass/components/_details.scss */
 .tms .modal-content h3, .tms .modal-content h4, .tms .modal-content h5 {
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 13px;
-  color: #2c990a;
+  color: #ce7f29;
   font-weight: normal;
   text-transform: uppercase;
   margin: 0;
   padding: 5px 10px 10px 0px;
 }
-/* line 129, ../sass/components/_details.scss */
+/* line 146, ../sass/components/_details.scss */
 .tms .modal-content h3 span, .tms .modal-content h4 span, .tms .modal-content h5 span {
   color: #1e85dc;
   float: right;
   margin-right: 10px;
 }
-/* line 135, ../sass/components/_details.scss */
+/* line 152, ../sass/components/_details.scss */
 .tms .modal-content .descriptiveDetail, .tms .modal-content .timephasedvalues {
   font-size: 13px;
   text-transform: uppercase;
   padding-top: 5px;
 }
-/* line 141, ../sass/components/_details.scss */
+/* line 158, ../sass/components/_details.scss */
 .tms .modal-content h4 {
   color: #515e66;
 }
-/* line 144, ../sass/components/_details.scss */
+/* line 161, ../sass/components/_details.scss */
 .tms .modal-content h5 {
   text-transform: uppercase;
   font-size: 11px;
   color: #515e66;
 }
-/* line 149, ../sass/components/_details.scss */
+/* line 166, ../sass/components/_details.scss */
 .tms .modal-content table {
   margin-top: 10px;
   margin-bottom: 10px;
   width: 100%;
 }
-/* line 154, ../sass/components/_details.scss */
+/* line 171, ../sass/components/_details.scss */
 .tms .modal-content table td {
   width: 14.28571%;
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 11px;
-  color: #2c990a;
+  color: #ce7f29;
   padding: 1px;
   text-transform: uppercase;
 }
-/* line 159, ../sass/components/_details.scss */
+/* line 176, ../sass/components/_details.scss */
 .tms .modal-content table td input[type=text] {
   width: 100%;
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 12px;
   color: #515e66;
 }
-/* line 166, ../sass/components/_details.scss */
+/* line 183, ../sass/components/_details.scss */
 .tms .modal-content .icons-view {
   text-align: center;
   padding-bottom: 20px;
@@ -1229,7 +1318,7 @@ label:after {
 .tms .modal-content .icons-view:after {
   clear: both;
 }
-/* line 172, ../sass/components/_details.scss */
+/* line 189, ../sass/components/_details.scss */
 .tms .modal-content .icons-view a {
   width: 76px;
   height: 76px;
@@ -1240,13 +1329,13 @@ label:after {
   float: left;
   margin: 6px;
 }
-/* line 183, ../sass/components/_details.scss */
+/* line 200, ../sass/components/_details.scss */
 .tms .modal-content .icons-view a:before {
   content: "\e609";
   font-size: 76px;
-  color: #239a44;
+  color: #fcd148;
 }
-/* line 190, ../sass/components/_details.scss */
+/* line 207, ../sass/components/_details.scss */
 .tms .modal-content .icons-view a i:before {
   content: "\e60b";
   font-size: 21px;
@@ -1258,7 +1347,7 @@ label:after {
   opacity: 0.6;
   font-style: normal;
 }
-/* line 203, ../sass/components/_details.scss */
+/* line 220, ../sass/components/_details.scss */
 .tms .modal-content .icons-view a em:before {
   font-style: normal;
   content: "\e60a";
@@ -1269,7 +1358,7 @@ label:after {
   top: 20px;
   opacity: 0.3;
 }
-/* line 214, ../sass/components/_details.scss */
+/* line 231, ../sass/components/_details.scss */
 .tms .modal-content .icons-view a span {
   width: 43px;
   height: 43px;
@@ -1286,19 +1375,19 @@ label:after {
   padding: 8px;
   color: black;
 }
-/* line 225, ../sass/components/_details.scss */
+/* line 242, ../sass/components/_details.scss */
 .tms .modal-content .icons-view a span.recall {
   font-size: 28px;
 }
-/* line 229, ../sass/components/_details.scss */
+/* line 246, ../sass/components/_details.scss */
 .tms .modal-content .icons-view a span.delete {
   font-size: 28px;
 }
-/* line 233, ../sass/components/_details.scss */
+/* line 250, ../sass/components/_details.scss */
 .tms .modal-content .icons-view a span.changeview {
   font-size: 28px;
 }
-/* line 238, ../sass/components/_details.scss */
+/* line 255, ../sass/components/_details.scss */
 .tms .modal-content .icons-view a strong {
   font-weight: normal;
   font-family: Tahoma, verdana, sans-serfif;
@@ -1307,51 +1396,37 @@ label:after {
   text-transform: uppercase;
   display: block;
 }
-/* line 247, ../sass/components/_details.scss */
+/* line 264, ../sass/components/_details.scss */
 .tms .modal-content#view-tab {
   display: none;
 }
-/* line 251, ../sass/components/_details.scss */
+/* line 268, ../sass/components/_details.scss */
 .tms .modal-content .task-controller p {
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 12px;
   color: #515e66;
 }
-/* line 254, ../sass/components/_details.scss */
+/* line 271, ../sass/components/_details.scss */
 .tms .modal-content .task-controller p:first-child {
-  color: #2c990a;
+  color: #ce7f29;
 }
-/* line 257, ../sass/components/_details.scss */
+/* line 274, ../sass/components/_details.scss */
 .tms .modal-content .task-controller p span {
   display: inline-block;
   width: 70%;
 }
-/* line 260, ../sass/components/_details.scss */
+/* line 277, ../sass/components/_details.scss */
 .tms .modal-content .task-controller p span:nth-child(2) {
   width: 25%;
 }
-/* line 262, ../sass/components/_details.scss */
+/* line 279, ../sass/components/_details.scss */
 .tms .modal-content .task-controller p span:nth-child(2) input {
   width: 100%;
   font-family: "Tahoma", verdana, sans-serfif;
   font-size: 12px;
   color: #515e66;
 }
-/* line 268, ../sass/components/_details.scss */
+/* line 285, ../sass/components/_details.scss */
 .tms .modal-content .task-controller p a {
   color: #1e85dc;
-}
-
-.ui-disabled {
-	opacity: 							.3;
-}
-.ui-disabled,
-.ui-disabled a {
-	cursor: default !important;
-	pointer-events: none;
-}
-.ui-disabled .ui-btn-text {
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=30)";
-	filter: alpha(opacity=30);
-	zoom: 1;
 }

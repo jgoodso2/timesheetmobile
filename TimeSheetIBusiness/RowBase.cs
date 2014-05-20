@@ -32,6 +32,8 @@ namespace TimeSheetIBusiness
         {
             return this.MemberwiseClone() as BaseRow;
         }
+
+        public string ItemId { get; set; }
     }
     public class NonBillableActualWorkRow : BaseRow
     {
