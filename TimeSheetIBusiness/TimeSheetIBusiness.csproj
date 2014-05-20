@@ -54,7 +54,7 @@
   <ItemGroup>
     <Reference Include="MVC3ControlsToolkit, Version=1.8.5.0, Culture=neutral, PublicKeyToken=b6277d1c804403e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MVC3ControlsToolkit.1.8.0\lib\MVC3ControlsToolkit.dll</HintPath>
+      <HintPath>..\..\SharedLibrary\MVC3ControlsToolkit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheetMobileWeb", "TimeS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheetBusiness", "TimeSheetBusiness\TimeSheetBusiness.csproj", "{FA1A4B78-5ADE-4C04-A419-0F70DA83F11B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheetFakeBusiness", "TimeSheetFakeBusiness\TimeSheetFakeBusiness.csproj", "{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheetIBusiness", "TimeSheetIBusiness\TimeSheetIBusiness.csproj", "{FD55A39F-3AC7-4F98-A3AB-AE8A1A3EFF8A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheetModules", "TimeSheetModules\TimeSheetModules.csproj", "{8906B8E3-B0CA-41F4-B9B9-522819E2DCC3}"
@@ -21,8 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TimeSheetMobile2.vsmdi = TimeSheetMobile2.vsmdi
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSIWrapper", "PSIWrapper\PSIWrapper.csproj", "{4421DB53-117C-46CF-B21A-06B8A12F3FB6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSIStressTest", "PSIStressTest\PSIStressTest.csproj", "{05C221DC-0335-4B5E-AD4A-FB92B84053C4}"
 EndProject
@@ -71,20 +67,6 @@ Global
 		{FA1A4B78-5ADE-4C04-A419-0F70DA83F11B}.Release|x64.Build.0 = Release|x64
 		{FA1A4B78-5ADE-4C04-A419-0F70DA83F11B}.Release|x86.ActiveCfg = Release|x86
 		{FA1A4B78-5ADE-4C04-A419-0F70DA83F11B}.Release|x86.Build.0 = Release|x86
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Debug|Mixed Platforms.Build.0 = Debug|x64
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Debug|x64.Build.0 = Debug|Any CPU
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Debug|x86.ActiveCfg = Debug|x64
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Release|Mixed Platforms.ActiveCfg = Release|x64
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Release|Mixed Platforms.Build.0 = Release|x64
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Release|x64.ActiveCfg = Release|x64
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Release|x64.Build.0 = Release|x64
-		{1B8A4C8A-D906-4615-A6DA-9F94E410A8AE}.Release|x86.ActiveCfg = Release|x64
 		{FD55A39F-3AC7-4F98-A3AB-AE8A1A3EFF8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FD55A39F-3AC7-4F98-A3AB-AE8A1A3EFF8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD55A39F-3AC7-4F98-A3AB-AE8A1A3EFF8A}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
@@ -137,18 +119,6 @@ Global
 		{08AF0365-5D73-4F97-BEC4-AD60BA9B15DB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{08AF0365-5D73-4F97-BEC4-AD60BA9B15DB}.Release|x64.ActiveCfg = Release|Any CPU
 		{08AF0365-5D73-4F97-BEC4-AD60BA9B15DB}.Release|x86.ActiveCfg = Release|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Release|x64.ActiveCfg = Release|Any CPU
-		{4421DB53-117C-46CF-B21A-06B8A12F3FB6}.Release|x86.ActiveCfg = Release|Any CPU
 		{05C221DC-0335-4B5E-AD4A-FB92B84053C4}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{05C221DC-0335-4B5E-AD4A-FB92B84053C4}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{05C221DC-0335-4B5E-AD4A-FB92B84053C4}.Debug|Mixed Platforms.Build.0 = Debug|x86

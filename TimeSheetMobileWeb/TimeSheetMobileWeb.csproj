@@ -68,7 +68,7 @@
     </Reference>
     <Reference Include="MVC3ControlsToolkit, Version=1.8.5.0, Culture=neutral, PublicKeyToken=b6277d1c804403e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\dlls\MVC3ControlsToolkit.dll</HintPath>
+      <HintPath>..\..\SharedLibrary\MVC3ControlsToolkit.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\dlls\IoC\StructureMap.dll</HintPath>
