@@ -694,11 +694,16 @@
    
       @item.HiddenFor(m => m.LineClass.Id)
     @item.HiddenFor(m => m.LineClass.Name)
+<<<<<<< HEAD
     @item.HiddenFor(m => m.AssignementId, new
 {
     @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" +
         UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code
 })
+=======
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + 
+    UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code })
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
     @item.HiddenFor(m => m.ProjectId)
     @item.HiddenFor(m => m.ProjectName)
     @item.HiddenFor(m => m.AssignementName)

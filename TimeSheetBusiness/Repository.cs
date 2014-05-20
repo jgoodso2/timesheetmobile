@@ -68,6 +68,7 @@ namespace TimeSheetBusiness
         }
         public string GetUserName(string ntAccount)
         {
+<<<<<<< HEAD
             
                 string ntAccountCopy =  ntAccount;
                 object cachedCopy = GetSessionObject(ntAccountCopy + "resName");
@@ -76,13 +77,27 @@ namespace TimeSheetBusiness
                     return cachedCopy.ToString();
                 }
                 SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
+=======
+            ntAccount = "i:0#.w|" + ntAccount;
+            SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
+
+            Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
+            filter.FilterTableName = rds.Resources.TableName;
+
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
 
                 Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
                 filter.FilterTableName = rds.Resources.TableName;
 
 
+<<<<<<< HEAD
                 Microsoft.Office.Project.Server.Library.Filter.Field ntAccountField1 = new Microsoft.Office.Project.Server.Library.Filter.Field(rds.Resources.TableName, rds.Resources.WRES_ACCOUNTColumn.ColumnName);
                 filter.Fields.Add(ntAccountField1);
+=======
+            Microsoft.Office.Project.Server.Library.Filter.FieldOperator op = new Microsoft.Office.Project.Server.Library.Filter.FieldOperator(Microsoft.Office.Project.Server.Library.Filter.FieldOperationType.Equal,
+                rds.Resources.WRES_ACCOUNTColumn.ColumnName, ntAccount);
+            filter.Criteria = op;
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
 
                 Microsoft.Office.Project.Server.Library.Filter.Field ntAccountField2 = new Microsoft.Office.Project.Server.Library.Filter.Field(rds.Resources.TableName, rds.Resources.RES_NAMEColumn.ColumnName);
                 filter.Fields.Add(ntAccountField2);
@@ -119,7 +134,11 @@ namespace TimeSheetBusiness
         {
             using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
             {
+<<<<<<< HEAD
                 SetImpersonation(new Guid(mgrUID));
+=======
+                SetImpersonation(resourceClient.ReadResource(new Guid(mgrUID)).Resources[0].RES_UID);
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
                 if (action.ToUpper() == "APPROVE")
                 {
                     timesheetClient.QueueReviewTimesheet(Guid.NewGuid(), new Guid(tUID), new Guid(mgrUID),
@@ -210,7 +229,11 @@ namespace TimeSheetBusiness
 
             using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
             {
+<<<<<<< HEAD
                 SetImpersonation(new Guid(mgrUID));
+=======
+                SetImpersonation(resourceClient.ReadResource(new Guid(mgrUID)).Resources[0].RES_UID);
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
                 try
                 {
                     statusApprovalDs = pwaClient.ReadStatusApprovalsSubmitted(false);
@@ -851,6 +874,10 @@ namespace TimeSheetBusiness
             var allLines = lineRow.GetActualsRows();
             if (allLines == null || allLines.Length == 0)
             {
+<<<<<<< HEAD
+=======
+                timesheetClient.PrepareTimesheetLine(_tsDS.Headers[0].TS_UID,ref _tsDS,new Guid[]  {lineRow.TS_LINE_UID});
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
                 createActuals(_tsDS, lineRow, Start, Stop);
                 allLines = lineRow.GetActualsRows();
             }
@@ -1536,11 +1563,11 @@ namespace TimeSheetBusiness
             {
                 fres.Add(new Timesheet
                 {
-                    Period = totalCount.ToString() + " (" + t.WPRD_START_DATE.ToShortDateString() + " - " + t.WPRD_FINISH_DATE.ToShortDateString() + ")"
+                    Period = totalCount.ToString() + " (" + t.WPRD_START_DATE.ToShortDateString() + " - " + t.WPRD_FINISH_DATE.AddDays(-1).ToShortDateString() + ")"
                     ,
                     Start = t.WPRD_START_DATE
                     ,
-                    Stop = t.WPRD_FINISH_DATE
+                    Stop = t.WPRD_FINISH_DATE.AddDays(-1)
                     ,
                     Name = t.WPRD_NAME,
                     Id = t.WPRD_UID.ToString()
@@ -1598,12 +1625,17 @@ namespace TimeSheetBusiness
         
         public Guid GetResourceUidFromNtAccount(String ntAccount)
         {
+<<<<<<< HEAD
             string ntAccountCopy =  ntAccount;
             object cachedCopy = GetSessionObject(ntAccountCopy + "resId");
             if (cachedCopy != null)
             {
                 return (Guid)cachedCopy;
             }
+=======
+            ntAccount = "i:0#.w|" + ntAccount;
+            ntAccount = ntAccount.Trim('\"');
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
             SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
 
             Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
@@ -1631,7 +1663,11 @@ namespace TimeSheetBusiness
 
         public Guid GetTimesheetMgrUID(String ntAccount)
         {
+<<<<<<< HEAD
             string ntAccountCopy =  ntAccount;
+=======
+            ntAccount = "i:0#.w|" + ntAccount;
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
             SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
 
             Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
@@ -1667,7 +1703,12 @@ namespace TimeSheetBusiness
             Guid siteId = Guid.Empty;           // Project Web App site ID.
             CultureInfo languageCulture = null; // The language culture is not used.
             CultureInfo localeCulture = null;   // The locale culture is not used.
+<<<<<<< HEAD
             WcfHelpers.SetImpersonationContext(isWindowsUser,
+=======
+            WcfHelpers.SetImpersonationContext(isWindowsUser, 
+                "i:0#.w|" + 
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
                 resourceClient.ReadResource(resourceGuid).Resources[0].RES_NAME, resourceGuid, trackingGuid, siteId,
                                                languageCulture, localeCulture);
             WCFHelpers.WcfHelpers.UseCorrectHeaders(true);
@@ -1795,7 +1836,11 @@ namespace TimeSheetBusiness
                 var tres = new List<BaseRow>();
                 SvcStatusing.StatusApprovalDataSet ds = new SvcStatusing.StatusApprovalDataSet();
                 bool isuser;
+<<<<<<< HEAD
                 var resName = GetUserName(user);
+=======
+                 var resName = resourceClient.ReadResource(GetResourceUidFromNtAccount(user)).Resources[0].RES_NAME;
+>>>>>>> 3e52b0a4860b1395619b0db64fd5fa35622ed80a
                 using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
                 {
                     SetImpersonation(GetResourceUidFromNtAccount(approver));
@@ -2072,7 +2117,7 @@ namespace TimeSheetBusiness
             string periodID = "";
 
 
-            periodID = adminClient.ReadPeriods(SvcAdmin.PeriodState.All).TimePeriods.Single(t => t.WPRD_START_DATE.Date == start.Date && t.WPRD_FINISH_DATE.Date == end.Date).WPRD_UID.ToString();
+            periodID = adminClient.ReadPeriods(SvcAdmin.PeriodState.All).TimePeriods.Single(t => t.WPRD_START_DATE.Date == start.Date && t.WPRD_FINISH_DATE.Date == end.Date.AddDays(1)).WPRD_UID.ToString();
             return periodID;
         }
         public List<Timesheet> GetTimesheets(string user, string periodId, DateTime start, DateTime stop)
