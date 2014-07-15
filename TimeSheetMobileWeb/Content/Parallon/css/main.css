@@ -635,7 +635,7 @@ label:after {
 }
 /* line 55, ../sass/components/_fonts.scss */
 .tms .icon-file-add:before, .tms .container.timesheetContainer .date-container span ul li.icon-add-timesheet:before, .tms .container.timesheetContainer .date-container-btn span ul li.icon-add-timesheet:before {
-  content: "\f600";
+  content: "\f60d";
 }
 /* line 4, ../sass/components/_header.scss */
 .tms header {

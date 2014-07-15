@@ -14,6 +14,7 @@ using SvcAdmin;
 using PSLib = Microsoft.Office.Project.Server.Library;
 using System.Globalization;
 using System.Xml;
+using Microsoft.Office.Project.Server.Library;
 namespace PSITest
 {
     [TestClass]
@@ -34,6 +35,7 @@ namespace PSITest
         public  SvcAdmin.AdminClient adminClient;
         public  SvcQueueSystem.QueueSystemClient queueSystemClient;
         public  SvcResource.ResourceClient resourceClient;
+        public SvcResourcePlan.ResourcePlanClient ppClient;
         public  SvcProject.ProjectClient projectClient;
         public  SvcLookupTable.LookupTableClient lookupTableClient;
         public  SvcCustomFields.CustomFieldsClient customFieldsClient;
@@ -480,6 +482,24 @@ namespace PSITest
             }
             catch (Exception tex) { throw new Exception(); }
         }
+
+
+        [TestMethod]
+        public void Test12()
+        {
+            using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
+            {
+                //SetImpersonation("CONTOSO\\JGOODSON"); Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
+                SvcResourcePlan.ResourcePlanDataSet rds = new SvcResourcePlan.ResourcePlanDataSet();
+                Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
+                filter.FilterTableName = rds.PlanResources.TableName;
+                Microsoft.Office.Project.Server.Library.Filter.FieldOperator op = 
+                    new Microsoft.Office.Project.Server.Library.Filter.FieldOperator(Microsoft.Office.Project.Server.Library.Filter.FieldOperationType.Equal,
+                   rds.PlanResources.RES_UIDColumn.ColumnName, "c25d3d11-384b-440f-8a98-505ed1da0221");
+                filter.Criteria = op;
+                rds = ppClient.ReadResourcePlan("", new Guid("de179bce-59f1-46b8-9ec0-bad07b358ab0"), new DateTime(2014, 6,17), new DateTime(2014, 8,21),(int) TimeScaleClass.TimeScale.Weeks, true, false);
+            }
+        }
         [Ignore]
         public void Verify_TaskManagerEnabled_NoReqdLineApproval_NoSingleEntryMode()
         {
@@ -614,6 +634,12 @@ namespace PSITest
                 securityClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 securityClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+
+
+                ppClient = new SvcResourcePlan.ResourcePlanClient(binding, address);
+                ppClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
+                    = TokenImpersonationLevel.Impersonation;
+                ppClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
                 timesheetClient = new SvcTimeSheet.TimeSheetClient(binding, address);
                 timesheetClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
