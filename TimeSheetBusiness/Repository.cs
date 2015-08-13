@@ -12,15 +12,18 @@ using System.Web.Services.Protocols;
 using System.Xml;
 using MVCControlsToolkit.Controller;
 using SvcProject;
+using System.Data.Linq;
 using TimeSheetIBusiness;
 using PSLib = Microsoft.Office.Project.Server.Library;
+
+
 
 namespace TimeSheetBusiness
 {
 
     public class Repository : IRepository
     {
-        public System.Security.Principal.WindowsIdentity AppPoolUser { get; set; }
+        const string LOGINWINDOWS = "/_vti_bin/PSI/LoginWindows.asmx";
         public SvcAdmin.AdminClient adminClient;
         public SvcQueueSystem.QueueSystemClient queueSystemClient;
         public SvcResource.ResourceClient resourceClient;
@@ -32,6 +35,7 @@ namespace TimeSheetBusiness
         public SvcStatusing.StatusingClient pwaClient;
         public SvcTimeSheet.TimeSheetClient timesheetClient;
         public SvcQueueSystem.QueueSystemClient queueClient;
+        public SvcLoginWindows.LoginWindows loginWindows;
         private String impersonationContextString = String.Empty; 
         public bool isImpersonated = false;
         private bool? allowTopLevel = null;
@@ -39,7 +43,7 @@ namespace TimeSheetBusiness
         private string defaultLineClass = null;
         public Repository()
         {
-            if (DateTime.Today > new DateTime(2014, 12, 12)) throw new Exception("Demo Copy of Mobile Timesheet Expired");
+            if (DateTime.Today > new DateTime(2015, 12, 12)) throw new Exception("Demo Copy of Mobile Timesheet Expired");
 
         }
 
@@ -60,6 +64,19 @@ namespace TimeSheetBusiness
             { return "f"; }
         }
 
+        public bool LogonToProjectServer(string user, string password)
+        {
+
+            loginWindows.Credentials = new NetworkCredential(user, password);
+            try
+            {
+                return loginWindows.Login();
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         public string DefaultLineClass
         {
             get
@@ -78,37 +95,7 @@ namespace TimeSheetBusiness
             }
 
         }
-        public string GetUserName(string ntAccount)
-        {
-            
-                string ntAccountCopy =  ntAccount;
-                object cachedCopy = GetSessionObject(ntAccountCopy + "resName");
-                if (cachedCopy != null)
-                {
-                    return cachedCopy.ToString();
-                }
-                SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
-
-                Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
-                filter.FilterTableName = rds.Resources.TableName;
-
-
-                Microsoft.Office.Project.Server.Library.Filter.Field ntAccountField1 = new Microsoft.Office.Project.Server.Library.Filter.Field(rds.Resources.TableName, rds.Resources.WRES_ACCOUNTColumn.ColumnName);
-                filter.Fields.Add(ntAccountField1);
-
-                Microsoft.Office.Project.Server.Library.Filter.Field ntAccountField2 = new Microsoft.Office.Project.Server.Library.Filter.Field(rds.Resources.TableName, rds.Resources.RES_NAMEColumn.ColumnName);
-                filter.Fields.Add(ntAccountField2);
-
-                Microsoft.Office.Project.Server.Library.Filter.FieldOperator op = new Microsoft.Office.Project.Server.Library.Filter.FieldOperator(Microsoft.Office.Project.Server.Library.Filter.FieldOperationType.Equal,
-                    rds.Resources.WRES_ACCOUNTColumn.ColumnName, ntAccountCopy);
-                filter.Criteria = op;
-
-                rds = resourceClient.ReadResources(filter.GetXml(), false);
-
-                string obj = rds.Resources.Rows[0]["RES_NAME"].ToString();
-                CacheSessionObject(ntAccountCopy + "resName",obj);
-                return obj;
-            }
+        
         
 
         public bool AllowToplevel
@@ -129,9 +116,7 @@ namespace TimeSheetBusiness
 
         public void ApproveTimesheet(string tUID,string mgrUID,string action)
         {
-            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-            {
-                SetImpersonation(new Guid(mgrUID));
+           
                 if (action.ToUpper() == "APPROVE")
                 {
                     timesheetClient.QueueReviewTimesheet(Guid.NewGuid(), new Guid(tUID), new Guid(mgrUID),
@@ -144,19 +129,17 @@ namespace TimeSheetBusiness
                 }
                 bool res = QueueHelper.WaitForQueueJobCompletion(this, Guid.NewGuid(), (int)SvcQueueSystem.QueueMsgType.StatusApproval, queueClient);
                 if (!res) throw new TimesheetUpdateException();
-            }
+            
         }
 
         public void RejectTimesheet(string tUID,string mgrUID)
         {
-            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-            {
-                SetImpersonation(resourceClient.ReadResource(new Guid(mgrUID)).Resources[0].RES_UID);
+            
                 timesheetClient.QueueReviewTimesheet(Guid.NewGuid(), new Guid(tUID), new Guid(mgrUID),
                         "Rejected", SvcTimeSheet.Action.Reject);
                 bool res = QueueHelper.WaitForQueueJobCompletion(this, Guid.NewGuid(), (int)SvcQueueSystem.QueueMsgType.StatusApproval, queueClient);
                 if (!res) throw new TimesheetUpdateException();
-            }
+            
         }
 
         public List<TimesheetApprovalItem> GetTimesheetApprovals(string user)
@@ -164,10 +147,7 @@ namespace TimeSheetBusiness
 
            List<TimesheetApprovalItem> returnValues = new List<TimesheetApprovalItem>();
             SvcTimeSheet.TimesheetListDataSet ds = new SvcTimeSheet.TimesheetListDataSet();
-            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-            {
-                bool temp;
-                SetImpersonation(GetResourceUidFromNtAccount(user));
+           
                 try
                 {
                      ds = timesheetClient.ReadTimesheetsPendingApproval(new DateTime(1984, 1, 1), new DateTime(2049, 12, 1), null);
@@ -176,28 +156,24 @@ namespace TimeSheetBusiness
                 {
                     var sx = new PSLib.PSClientError(ex);
                 }
-            }
+            
 
             // DO a group y user so that one PSI call is made per user for ReadResource
-            var tsGroups = ds.Timesheets.GroupBy(t => t.RES_UID);
-            int count=0;
+            var tsGroups = ds.Timesheets.Rows.Cast<SvcTimeSheet.TimesheetListDataSet.TimesheetsRow>().GroupBy(t => t.RES_UID);
             foreach (var value in tsGroups)
             {
-                string resName;
-                string resNTAcct="";
                 TimesheetApprovalItem item = new TimesheetApprovalItem();
                 item.TimesheetApprovals = new List<MyTimesheetApproval>();
                 var tsList = value.ToList();
                 if (value.ToList().Count > 0)
                 {
-                    var resource  = resourceClient.ReadResource(tsList[0].RES_UID).Resources.First();
+                    var resource  = resourceClient.ReadResource(tsList[0].RES_UID).Resources.Rows.Cast<SvcResource.ResourceDataSet.ResourcesRow>().First();
                     item.UserName = resource.RES_NAME;
                     item.UserNTAccount = resource.WRES_ACCOUNT;
                     
                 }
                 else
                 {
-                    resNTAcct = "";
                     continue;
                 }
                 foreach (var ts in tsList)
@@ -220,9 +196,7 @@ namespace TimeSheetBusiness
         {
             SvcStatusing.StatusApprovalDataSet statusApprovalDs = new SvcStatusing.StatusApprovalDataSet();
 
-            using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
-            {
-                SetImpersonation(new Guid(mgrUID));
+           
                 try
                 {
                     statusApprovalDs = pwaClient.ReadStatusApprovalsSubmitted(false);
@@ -241,16 +215,14 @@ namespace TimeSheetBusiness
                 pwaClient.QueueApplyStatusApprovals(Guid.NewGuid(), "Approved");
                 bool res = QueueHelper.WaitForQueueJobCompletion(this, Guid.NewGuid(), (int)SvcQueueSystem.QueueMsgType.StatusApproval, queueClient);
                 if (!res) throw new StatusUpdateException();
-            }
+            
 
         }
         public void ApproveProjectTasks(string projectID, string mgrUID, string mode)
         {
             SvcStatusing.StatusApprovalDataSet statusApprovalDs = new SvcStatusing.StatusApprovalDataSet();
 
-            using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
-            {
-                SetImpersonation(resourceClient.ReadResource(new Guid(mgrUID)).Resources[0].RES_UID);
+           
                 try
                 {
                     statusApprovalDs = pwaClient.ReadStatusApprovalsSubmitted(false);
@@ -269,18 +241,12 @@ namespace TimeSheetBusiness
                 pwaClient.QueueApplyStatusApprovals(Guid.NewGuid(), "Approved");
                 bool res = QueueHelper.WaitForQueueJobCompletion(this, Guid.NewGuid(), (int)SvcQueueSystem.QueueMsgType.StatusApproval, queueClient);
                 if (!res) throw new StatusUpdateException();
-            }
-            
         }
         public List<TaskApprovalItem> GetTaskApprovals(string user)
         {
 
             List<TaskApprovalItem> returnValues = new List<TaskApprovalItem>();
             SvcStatusing.StatusApprovalDataSet ds = new SvcStatusing.StatusApprovalDataSet();
-            using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
-            {
-                bool temp;
-                SetImpersonation(GetResourceUidFromNtAccount(user));
                 try
                 {
                     ds = pwaClient.ReadStatusApprovalsSubmitted(false);
@@ -289,28 +255,23 @@ namespace TimeSheetBusiness
                 {
                     var sx = new PSLib.PSClientError(ex);
                 }
-            }
 
             // DO a group by user so that one PSI call is made per user for ReadResource
-            var tsGroups = ds.StatusApprovals.GroupBy(t => t.RES_UID);
-            int count = 0;
+            var tsGroups = ds.StatusApprovals.Rows.Cast<SvcStatusing.StatusApprovalDataSet.StatusApprovalsRow>().GroupBy(t => t.RES_UID);
             foreach (var value in tsGroups)
             {
-                string resName;
-                string resNTAcct = "";
                 TaskApprovalItem item = new TaskApprovalItem();
                 item.TaskApprovals = new List<MyTaskApproval>();
                 var tsList = value.ToList();
                 if (value.ToList().Count > 0)
                 {
-                    var resource = resourceClient.ReadResource(tsList[0].RES_UID).Resources.First();
+                    var resource = resourceClient.ReadResource(tsList[0].RES_UID).Resources.Rows.Cast<SvcResource.ResourceDataSet.ResourcesRow>().First();
                     item.UserName = resource.RES_NAME;
                     item.UserNTAccount = resource.WRES_ACCOUNT;
 
                 }
                 else
                 {
-                    resNTAcct = "";
                     continue;
                 }
                 var projectGroups = tsList.GroupBy(t => t.PROJ_UID);
@@ -331,7 +292,7 @@ namespace TimeSheetBusiness
         public List<LineClass> GetAllLineClassifications()
         {
             List<LineClass> lineclasses = new List<LineClass>();
-            var tsLineClassDs = adminClient.ReadLineClasses(SvcAdmin.LineClassType.All, SvcAdmin.LineClassState.Enabled).LineClasses.ToList();
+            var tsLineClassDs = adminClient.ReadLineClasses(SvcAdmin.LineClassType.All, SvcAdmin.LineClassState.Enabled).LineClasses.Rows.Cast<SvcAdmin.TimesheetLineClassDataSet.LineClassesRow>().ToList();
             foreach (var lineclass in tsLineClassDs)
             {
                 lineclasses.Add(new LineClass(lineclass.TS_LINE_CLASS_UID.ToString(), lineclass.TS_LINE_CLASS_NAME));
@@ -341,7 +302,7 @@ namespace TimeSheetBusiness
         public List<LineClass> GetLineClassifications()
         {
             List<LineClass> lineclasses = new List<LineClass>();
-            var tsLineClassDs = adminClient.ReadLineClasses(SvcAdmin.LineClassType.All, SvcAdmin.LineClassState.Enabled).LineClasses.Where(t => t.TS_LINE_CLASS_TYPE == 0)
+            var tsLineClassDs = adminClient.ReadLineClasses(SvcAdmin.LineClassType.All, SvcAdmin.LineClassState.Enabled).LineClasses.Cast<SvcAdmin.TimesheetLineClassDataSet.LineClassesRow>().Where(t => t.TS_LINE_CLASS_TYPE == 0)
                 .OrderBy(t=>t.MOD_DATE);
             foreach (var lineclass in tsLineClassDs)
             {
@@ -604,11 +565,7 @@ namespace TimeSheetBusiness
 
             PSLib.Filter resourceAssignmentFilter = GetResourceAssignmentFilter(resourceUids);
             string resourceAssignmentFilterXml = resourceAssignmentFilter.GetXml();
-            using (OperationContextScope scope = new OperationContextScope(resourceClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
-                return resourceClient.ReadResourceAssignments(resourceAssignmentFilterXml);
-            }
+            return resourceClient.ReadResourceAssignments(resourceAssignmentFilterXml);
         }
         private static PSLib.Filter GetResourceAssignmentFilter(Guid[] resources)
         {
@@ -638,9 +595,7 @@ namespace TimeSheetBusiness
         }
         private TimesheetHeaderInfos GetTimesheetStatus(string user, Guid periodUID, Guid resUID, out Guid tuid, out SvcTimeSheet.TimesheetDataSet tsDS)
         {
-            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
+            
                 tsDS = timesheetClient.ReadTimesheetByPeriod(resUID, periodUID, SvcTimeSheet.Navigation.Current);
 
 
@@ -667,17 +622,12 @@ namespace TimeSheetBusiness
                     tuid = Guid.Empty;
                     return null;
                 }
-            }
+            
         }
 
         private SvcTimeSheet.TimesheetListDataSet GetTimesheetStatus(string user, Guid resUID, DateTime startDate, DateTime endDate, int select)
         {
-            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
-                return timesheetClient.ReadTimesheetList(resUID, startDate, endDate, select);
-            }
-
+            return timesheetClient.ReadTimesheetList(resUID, startDate, endDate, select);
         }
         private void copyToActualRow(WholeLine group, SvcTimeSheet.TimesheetDataSet.ActualsRow day, int i, ViewConfigurationBase configuration)
         {
@@ -748,7 +698,7 @@ namespace TimeSheetBusiness
             string[] subprojects = projectName.Split(",".ToCharArray());
             foreach (string name in subprojects)
             {
-                if (ds.LineClasses.Any(m => m.TS_LINE_CLASS_NAME == name))
+                if (ds.LineClasses.Rows.Cast<SvcAdmin.TimesheetLineClassDataSet.LineClassesRow>().Any(m => m.TS_LINE_CLASS_NAME == name))
                     retVal = true;
                 break;
             }
@@ -778,24 +728,31 @@ namespace TimeSheetBusiness
 
 
                     Guid timeSheetUID = new Guid(_tsDS.Headers[0].TS_UID.ToString());
+                    SvcTimeSheet.TimesheetDataSet.LinesRow line;
+                    if (_tsDS.Lines.AsEnumerable().Any(t => t.Field<Guid>("ASSN_UID") == new Guid(assignementId)))
+                    {
+                        line = _tsDS.Lines.AsEnumerable().First(t => t.Field<Guid>("ASSN_UID") == new Guid(assignementId)) as SvcTimeSheet.TimesheetDataSet.LinesRow;
+                        return;
+                    }
 
+                    
+                        line = _tsDS.Lines.NewLinesRow();  //Create a new row for the timesheet
 
+                        line.TS_UID = timeSheetUID;
+                        line.ASSN_UID = new Guid(assignementId);
 
-                    SvcTimeSheet.TimesheetDataSet.LinesRow line = _tsDS.Lines.NewLinesRow();  //Create a new row for the timesheet
+                        //try if this works, may be we need it when reading the rows; Francesco
 
-                    line.TS_UID = timeSheetUID;
-                    line.ASSN_UID = new Guid(assignementId);
-
-                    //try if this works, may be we need it when reading the rows; Francesco
-                    line.TS_LINE_UID = Guid.NewGuid();
-                    line.TS_LINE_COMMENT = BusisnessResources.InitLineComment;
-
+                        line.TS_LINE_UID = Guid.NewGuid();
+                        line.TS_LINE_COMMENT = BusisnessResources.InitLineComment;
+                    
 
                     if (isAdmin)
                     {
                         line.TS_LINE_CLASS_UID = new Guid(assignementId);
                         line.TS_LINE_STATUS = (byte)PSLib.TimesheetEnum.LineStatus.NotApplicable;
                         line.TS_LINE_VALIDATION_TYPE = (byte)PSLib.TimesheetEnum.ValidationType.Unverified;
+                        
                         SvcAdmin.TimesheetLineClassDataSet.LineClassesRow foundTSClassRow;
                         foundTSClassRow = tsLineClassDs.LineClasses.FindByTS_LINE_CLASS_UID(new Guid(assignementId));
                         line.TS_LINE_CACHED_ASSIGN_NAME = foundTSClassRow.TS_LINE_CLASS_NAME;
@@ -803,7 +760,7 @@ namespace TimeSheetBusiness
                     else
                     {
 
-                        if (LoggedUser(user) == GetTimesheetMgrUID(user))
+                        if (LoggedUser(user) == GetTimesheetMgrUID())
                         {
                             line.TS_LINE_STATUS = (byte)PSLib.TimesheetEnum.LineStatus.Approved;
                         }
@@ -817,7 +774,7 @@ namespace TimeSheetBusiness
                         line.TS_LINE_CACHED_ASSIGN_NAME = tsLineClassDs.LineClasses[0].TS_LINE_CLASS_DESC;
 
 
-                        if (!(_resAssDS.ResourceAssignment.Any(t => t.ASSN_UID == line.ASSN_UID)))
+                        if (!(_resAssDS.ResourceAssignment.Cast<SvcResource.ResourceAssignmentDataSet.ResourceAssignmentRow>().Any(t => t.ASSN_UID == line.ASSN_UID)))
                         {
                             line.TS_LINE_VALIDATION_TYPE = (int)Microsoft.Office.Project.Server.Library.TimesheetEnum.ValidationType.ProjectLevel;
                             line.TASK_UID = Guid.NewGuid();
@@ -837,13 +794,8 @@ namespace TimeSheetBusiness
 
                     Guid[] uids = new Guid[] { line.TS_LINE_UID };
 
-                    using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-                    {
-                        SetImpersonation(GetResourceUidFromNtAccount(user));
-                        timesheetClient.PrepareTimesheetLine(timeSheetUID, ref _tsDS, uids);  //Validates and populates a timesheet line item and preloads actuals table in the dataset
-                    }
-
-                    createActuals(_tsDS, line, Start, Stop);
+                    timesheetClient.PrepareTimesheetLine(timeSheetUID, ref _tsDS, uids);  //Validates and populates a timesheet line item and preloads actuals table in the dataset
+                    //createActuals(_tsDS, line, Start, Stop);
 
 
                 }
@@ -861,50 +813,83 @@ namespace TimeSheetBusiness
 
             bool[] processed = new bool[Convert.ToInt32((Stop.Date - Start.Date).TotalDays) + 1];
             var allLines = lineRow.GetActualsRows();
-            if (allLines == null || allLines.Length == 0)
-            {
-                createActuals(_tsDS, lineRow, Start, Stop);
-                allLines = lineRow.GetActualsRows();
-            }
-            else
-            {
-                foreach (SvcTimeSheet.TimesheetDataSet.ActualsRow day in allLines.OrderBy(m => m.TS_ACT_START_DATE))
-                {
-                    HttpContext.Current.Trace.Warn("Start Date = " + day.TS_ACT_START_DATE);
-                    HttpContext.Current.Trace.Warn("End Date = " + day.TS_ACT_FINISH_DATE);
-                }
-            }
+            //if (allLines == null || allLines.Length == 0)
+            //{
+            //    createActuals(_tsDS, lineRow, Start, Stop);
+            //    allLines = lineRow.GetActualsRows();
+            //}
+            //else
+            //{
+            //    foreach (SvcTimeSheet.TimesheetDataSet.ActualsRow day in allLines.OrderBy(m => m.TS_ACT_START_DATE))
+            //    {
+            //        HttpContext.Current.Trace.Warn("Start Date = " + day.TS_ACT_START_DATE);
+            //        HttpContext.Current.Trace.Warn("End Date = " + day.TS_ACT_FINISH_DATE);
+            //    }
+            //}
             if (allLines != null)
             {
                 int i = 0;
-                foreach (SvcTimeSheet.TimesheetDataSet.ActualsRow day in allLines.OrderBy(m => m.TS_ACT_START_DATE))
+                //foreach (SvcTimeSheet.TimesheetDataSet.ActualsRow day in allLines.OrderBy(m => m.TS_ACT_START_DATE))
+                //{
+                //    if (i >= processed.Length)
+                //    {
+                //        continue;
+                //    }
+                //    processed[i] = true;
+                //    copyToActualRow(group, day, i, configuration);
+                //    i++;
+                //}
+                DateTime day = Start;
+                SvcTimeSheet.TimesheetDataSet.ActualsRow[] days = allLines.OrderBy(m => m.TS_ACT_START_DATE).ToArray();
+                foreach (var actual in group.Actuals[0].TValues)
                 {
-                    if (i >= processed.Length)
+                    if (!group.Actuals[0].TValues[i].Changed)
                     {
+                        
+                        processed[i] = true;
+                        i++;
+                        day = day.AddDays(1);
                         continue;
+
                     }
                     processed[i] = true;
-                    copyToActualRow(group, day, i, configuration);
+                    if (!days.ToList().Any(t => t.TS_ACT_START_DATE.Date == day.Date))
+                    {
+                        var newRow = createActuals(_tsDS, lineRow, day, day.AddDays(1));
+                        copyToActualRow(group, newRow, i, configuration);
+                    }
+                    else
+                    {
+                        copyToActualRow(group, days.ToList().Where(t => t.TS_ACT_START_DATE.Date == day.Date).First(), i, configuration);
+                    }
                     i++;
+                    day = day.AddDays(1);
                 }
             }
 
         }
-        private void createActuals(SvcTimeSheet.TimesheetDataSet _tsDS, SvcTimeSheet.TimesheetDataSet.LinesRow lineRow, DateTime Start, DateTime Stop)
+        private SvcTimeSheet.TimesheetDataSet.ActualsRow createActuals(SvcTimeSheet.TimesheetDataSet _tsDS, SvcTimeSheet.TimesheetDataSet.LinesRow lineRow, DateTime Start, DateTime Stop)
         {
-            DateTime day = Start;
-            while (day <= Stop)
+            if (lineRow.TS_LINE_VALIDATION_TYPE == (byte)PSLib.TimesheetEnum.ValidationType.Unverified)
             {
+               // lineRow.TS_LINE_UID = Guid.NewGuid();
+                //lineRow.TS_LINE_VALIDATION_TYPE = (byte)PSLib.TimesheetEnum.ValidationType.Verified;
+                if (lineRow.TS_LINE_UID == Guid.Empty)
+                {
+                    lineRow.TS_LINE_UID = Guid.NewGuid();
+                }
+            }
+            DateTime day = Start;
+           
                 SvcTimeSheet.TimesheetDataSet.ActualsRow actualsRow = _tsDS.Actuals.NewActualsRow();
                 actualsRow.TS_LINE_UID = lineRow.TS_LINE_UID;
-
-                actualsRow.TS_ACT_START_DATE = day;
-                HttpContext.Current.Trace.Warn("Actual Start Date is " + day); 
-                actualsRow.TS_ACT_FINISH_DATE = day.AddDays(1);
-                HttpContext.Current.Trace.Warn("Actual End Date is " + day.AddDays(1)); 
+                actualsRow.TS_ACT_START_DATE = day.Add((TimeSpan) HttpContext.Current.Application["DeltaStartTime"]);
+                HttpContext.Current.Trace.Warn("Actual Start Date is " + day);
+                actualsRow.TS_ACT_FINISH_DATE = day.AddDays(1).Add((TimeSpan)HttpContext.Current.Application["DeltaEndTime"]); ;
+                HttpContext.Current.Trace.Warn("Actual End Date is " + day.AddDays(1).AddHours(1).AddMinutes(59).AddSeconds(59)); 
                 _tsDS.Actuals.AddActualsRow(actualsRow);
-                day = day.AddDays(1);
-            }
+                return actualsRow;
+            
         }
         private bool GetAllSingleValues(List<LineClass> classses, string currentLineClassId, SvcTimeSheet.TimesheetDataSet timesheetDataSet
             , SvcCustomFields.CustomFieldDataSet customDataSet, string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop
@@ -917,14 +902,9 @@ namespace TimeSheetBusiness
                 return true;
             }
             bool isWindowsUser;
-            var Resuid = GetResourceUidFromNtAccount(user);
             SvcStatusing.StatusingDataSet res;
-            using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
-                res = pwaClient.ReadStatus(new Guid(assignementId), start, stop);
-            }
-            var customfieldValues = res.AssnCustomFields.Where(t => t.ASSN_UID == new Guid(assignementId)).ToList();
+            res = pwaClient.ReadStatus(new Guid(assignementId), start, stop);
+            var customfieldValues = res.AssnCustomFields.Rows.Cast<SvcStatusing.StatusingDataSet.AssnCustomFieldsRow>().Where(t => t.ASSN_UID == new Guid(assignementId)).ToList();
 
             bool result = false;
             if (res.Assignments.Count > 0)
@@ -991,9 +971,9 @@ namespace TimeSheetBusiness
                 }
                 else
                 {
-                    if (timesheetDataSet.Lines.Any(t => t.ASSN_UID.ToString() == assignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (ar.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE))
+                    if (timesheetDataSet.Lines.Rows.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>().Any(t => t.ASSN_UID.ToString() == assignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (ar.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE))
                     {
-                        var line = timesheetDataSet.Lines.First(t => t.ASSN_UID.ToString() == ar.AssignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (ar.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE);
+                        var line = timesheetDataSet.Lines.Rows.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>().First(t => t.ASSN_UID.ToString() == ar.AssignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (ar.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE);
                         if (classses.Any(t => t.Id == line.TS_LINE_CLASS_UID.ToString()))
                         {
                             var lineClass = classses.First(t => t.Id == line.TS_LINE_CLASS_UID.ToString());
@@ -1045,9 +1025,9 @@ namespace TimeSheetBusiness
                     }
                     else
                     {
-                        if (timesheetDataSet.Lines.Any(t => t.ASSN_UID.ToString() == assignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (ar.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE))
+                        if (timesheetDataSet.Lines.Rows.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>().Any(t => t.ASSN_UID.ToString() == assignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (ar.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE))
                         {
-                            var line = timesheetDataSet.Lines.First(t => t.ASSN_UID.ToString() == ar.AssignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() &&  (ar.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE);
+                            var line = timesheetDataSet.Lines.Rows.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>().First(t => t.ASSN_UID.ToString() == ar.AssignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() &&  (ar.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE);
                             if (classses.Any(t => t.Id == line.TS_LINE_CLASS_UID.ToString()))
                             {
                                 var lineClass = classses.First(t => t.Id == line.TS_LINE_CLASS_UID.ToString());
@@ -1077,9 +1057,9 @@ namespace TimeSheetBusiness
                     }
                     else
                     {
-                        if (timesheetDataSet.Lines.Any(t => t.ASSN_UID.ToString() == assignementId &&  !t.IsTS_LINE_ACT_SUM_VALUENull() &&(aor.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE))
+                        if (timesheetDataSet.Lines.Rows.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>().Any(t => t.ASSN_UID.ToString() == assignementId &&  !t.IsTS_LINE_ACT_SUM_VALUENull() &&(aor.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE))
                         {
-                            var line = timesheetDataSet.Lines.First(t => t.ASSN_UID.ToString() == aor.AssignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (aor.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE);
+                            var line = timesheetDataSet.Lines.Rows.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>().First(t => t.ASSN_UID.ToString() == aor.AssignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (aor.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE);
                             if (classses.Any(t => t.Id == line.TS_LINE_CLASS_UID.ToString()))
                             {
                                 var lineClass = classses.First(t => t.Id == line.TS_LINE_CLASS_UID.ToString());
@@ -1128,9 +1108,9 @@ namespace TimeSheetBusiness
                     }
                     else
                     {
-                        if (timesheetDataSet.Lines.Any(t => t.ASSN_UID.ToString() == assignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (sv.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE))
+                        if (timesheetDataSet.Lines.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>().Any(t => t.ASSN_UID.ToString() == assignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (sv.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE))
                         {
-                            var line = timesheetDataSet.Lines.First(t => t.ASSN_UID.ToString() == sv.AssignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (sv.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE);
+                            var line = timesheetDataSet.Lines.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>().First(t => t.ASSN_UID.ToString() == sv.AssignementId && !t.IsTS_LINE_ACT_SUM_VALUENull() && (sv.DayTimes.Sum() * 60000) == t.TS_LINE_ACT_SUM_VALUE);
                             if (classses.Any(t => t.Id == line.TS_LINE_CLASS_UID.ToString()))
                             {
                                 var lineClass = classses.First(t => t.Id == line.TS_LINE_CLASS_UID.ToString());
@@ -1152,19 +1132,17 @@ namespace TimeSheetBusiness
         {
             List<CustomFieldItem> values = new List<CustomFieldItem>();
             var customds = customFieldDataSet.CustomFields;
-            bool isWindowsUser;
-            var Resuid = GetResourceUidFromNtAccount(user);
+            
+            
             SvcStatusing.StatusingDataSet res;
-            using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
+           
                 res = pwaClient.ReadStatus(new Guid(assignementId), start, stop);
-            }
-            var customfieldValues = res.AssnCustomFields.Where(t => t.ASSN_UID == new Guid(assignementId)).ToList();
+            
+            var customfieldValues = res.AssnCustomFields.Cast<SvcStatusing.StatusingDataSet.AssnCustomFieldsRow>().Where(t => t.ASSN_UID == new Guid(assignementId)).ToList();
             foreach (CustomField field in fields)
             {
 
-                var id = customds.First(m => m.MD_PROP_NAME == field.FullName).MD_PROP_UID_SECONDARY;
+                var id = customds.Cast<SvcCustomFields.CustomFieldDataSet.CustomFieldsRow>().First(m => m.MD_PROP_NAME == field.FullName).MD_PROP_UID_SECONDARY;
                 if (customfieldValues.Any(t => !t.IsMD_PROP_UIDNull() && t.MD_PROP_UID == id))
                 {
                     var customfield = customfieldValues.First(t => !t.IsMD_PROP_UIDNull() && t.MD_PROP_UID == id);
@@ -1205,7 +1183,7 @@ namespace TimeSheetBusiness
                         SvcLookupTable.LookupTableDataSet lookups;
 
                         lookups = lookupTableClient.ReadLookupTables("", false, System.Globalization.CultureInfo.InvariantCulture.LCID);
-                        IEnumerable<SvcLookupTable.LookupTableDataSet.LookupTableTreesRow> lookupRows = lookups.LookupTableTrees.Where(t => t.LT_STRUCT_UID == customfield.CODE_VALUE);
+                        IEnumerable<SvcLookupTable.LookupTableDataSet.LookupTableTreesRow> lookupRows = lookups.LookupTableTrees.Cast<SvcLookupTable.LookupTableDataSet.LookupTableTreesRow>().Where(t => t.LT_STRUCT_UID == customfield.CODE_VALUE);
                         string value = "";
                         foreach (SvcLookupTable.LookupTableDataSet.LookupTableTreesRow lookupRow in lookupRows)
                         {
@@ -1235,7 +1213,7 @@ namespace TimeSheetBusiness
                         }
                         item.LookupValue = value.Trim(',');
                         var customDs = customFieldDataSet;
-                        var csfield = customds.First(t => t.MD_PROP_NAME == field.FullName);
+                        var csfield = customds.Cast<SvcCustomFields.CustomFieldDataSet.CustomFieldsRow>().First(t => t.MD_PROP_NAME == field.FullName);
                         item.CustomFieldGuid = csfield.MD_PROP_UID_SECONDARY;
                         if (item.LookupTableGuid.HasValue)
                             item.LookupTableItems = GetLookupTableValuesAsItems(item.LookupTableGuid.Value, item.DataType).ToList();
@@ -1243,7 +1221,7 @@ namespace TimeSheetBusiness
                     else
                     {
                         var customDs = customFieldDataSet;
-                        var csfield = customds.First(t => t.MD_PROP_NAME == field.FullName);
+                        var csfield = customds.Cast<SvcCustomFields.CustomFieldDataSet.CustomFieldsRow>().First(t => t.MD_PROP_NAME == field.FullName);
                         if (!csfield.IsMD_LOOKUP_TABLE_UIDNull())
                         {
                             string value = null;
@@ -1264,7 +1242,7 @@ namespace TimeSheetBusiness
                     item.Name = field.Name;
                     item.FullName = field.FullName;
                     var customDs = customFieldDataSet;
-                    var csfield = customds.First(t => t.MD_PROP_NAME == field.FullName);
+                    var csfield = customds.Cast<SvcCustomFields.CustomFieldDataSet.CustomFieldsRow>().First(t => t.MD_PROP_NAME == field.FullName);
                     switch (csfield.MD_PROP_TYPE_ENUM)
                     {
                         case 4: item.DataType = "Date";
@@ -1401,7 +1379,7 @@ namespace TimeSheetBusiness
                 SvcAdmin.TimesheetLineClassDataSet tslineclassDS = new SvcAdmin.TimesheetLineClassDataSet();
                 tslineclassDS = adminClient.ReadLineClasses(SvcAdmin.LineClassType.AllNonProject, SvcAdmin.LineClassState.Enabled);
 
-                foreach (var x in tslineclassDS.LineClasses)
+                foreach (var x in tslineclassDS.LineClasses.Rows.Cast<SvcAdmin.TimesheetLineClassDataSet.LineClassesRow>())
                 {
                     res.Add(
                         new AssignementInfo()
@@ -1438,15 +1416,15 @@ namespace TimeSheetBusiness
                     var tasks = projectDataSet.Task;
                     if (tasks.Rows.Count > 0)
                     {
-                        if (tasks.Any(t => t.TASK_IS_SUMMARY == true))
+                        if (tasks.Rows.Cast<SvcProject.ProjectDataSet.TaskRow>().Any(t => t.TASK_IS_SUMMARY == true))
                         {
-                            var summaryTask = tasks.First(t => t.TASK_IS_SUMMARY == true);
-                            if (projectDataSet.Assignment.Any(t => t.TASK_UID == summaryTask.TASK_UID))
+                            var summaryTask = tasks.Cast<SvcProject.ProjectDataSet.TaskRow>().First(t => t.TASK_IS_SUMMARY == true);
+                            if (projectDataSet.Assignment.Cast<SvcProject.ProjectDataSet.AssignmentRow>().Any(t => t.TASK_UID == summaryTask.TASK_UID))
                             {
                                 res.Add(
                                     new AssignementInfo()
                                     {
-                                        Id = projectDataSet.Assignment.First(t => t.TASK_UID == summaryTask.TASK_UID).ASSN_UID.ToString(),
+                                        Id = projectDataSet.Assignment.Cast<SvcProject.ProjectDataSet.AssignmentRow>().First(t => t.TASK_UID == summaryTask.TASK_UID).ASSN_UID.ToString(),
                                         Name = summaryTask.TASK_NAME,
                                         IsProjectLineType = true
                                     });
@@ -1481,22 +1459,26 @@ namespace TimeSheetBusiness
             if (set == TimesheetsSets.Default) set = DefaultTimesheetSet;
 
             SvcAdmin.TimePeriodDataSet.TimePeriodsRow period = null;
-            using (OperationContextScope scope = new OperationContextScope(adminClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(AppPoolUser.Name));
-                var periods = adminClient.ReadPeriods(SvcAdmin.PeriodState.All);
+
+            var periods = ReadAdminPeriods();
                 period = periods.TimePeriods[0];
-                if (periods.TimePeriods.Any(t => !t.IsWPRD_START_DATENull() && !t.IsWPRD_FINISH_DATENull()
+                if (periods.TimePeriods.Cast<SvcAdmin.TimePeriodDataSet.TimePeriodsRow>().Any(t => !t.IsWPRD_START_DATENull() && !t.IsWPRD_FINISH_DATENull()
                      && DateTime.Today >= t.WPRD_START_DATE && DateTime.Today <= t.WPRD_FINISH_DATE))
                 {
-                    var currentPeriod = periods.TimePeriods.First(t => !t.IsWPRD_START_DATENull() && !t.IsWPRD_FINISH_DATENull()
+                    var currentPeriod = periods.TimePeriods.Cast<SvcAdmin.TimePeriodDataSet.TimePeriodsRow>().First(t => !t.IsWPRD_START_DATENull() && !t.IsWPRD_FINISH_DATENull()
                          && DateTime.Today >= t.WPRD_START_DATE && DateTime.Today <= t.WPRD_FINISH_DATE);
                     startFrom = currentPeriod.WPRD_START_DATE;
-                    EndWith = currentPeriod.WPRD_FINISH_DATE;
+                    EndWith = currentPeriod.WPRD_FINISH_DATE.AddDays(((((currentPeriod.WPRD_FINISH_DATE.Date - currentPeriod.WPRD_START_DATE.Date).Days) / 7) * -1));
+                    
+                }
+                lock (HttpContext.Current.Application)
+                {
+                    HttpContext.Current.Application["DeltaStartTime"] = period.WPRD_START_DATE.TimeOfDay;
+                    HttpContext.Current.Application["DeltaEndTime"] = period.WPRD_FINISH_DATE.TimeOfDay;
                 }
 
 
-            }
+            
 
             switch (set)
             {
@@ -1517,19 +1499,15 @@ namespace TimeSheetBusiness
                 default: selection = 32; break; //all existing
 
             }
-            bool isWindowsUser;
             Guid resUID = GetResourceUidFromNtAccount(user);
             SvcTimeSheet.TimesheetListDataSet res;
-            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
-                res = timesheetClient.ReadTimesheetList(resUID, new DateTime(1984, 1, 1), new DateTime(2049, 12, 1), selection);
-                HttpContext.Current.Trace.Warn("list Count = " + res.Timesheets.Count().ToString());
+            
+             res = timesheetClient.ReadTimesheetList(resUID, new DateTime(1984, 1, 1), new DateTime(2049, 12, 1), selection);
+             HttpContext.Current.Trace.Warn("list Count = " + res.Timesheets.Count.ToString());
 
-            }
             List<Timesheet> fres = new List<Timesheet>();
 
-            List<SvcTimeSheet.TimesheetListDataSet.TimesheetsRow> filter = res.Timesheets.
+            List<SvcTimeSheet.TimesheetListDataSet.TimesheetsRow> filter = res.Timesheets.Rows.Cast<SvcTimeSheet.TimesheetListDataSet.TimesheetsRow>().
                 Where(t => (t.IsWPRD_START_DATENull() || t.IsWPRD_FINISH_DATENull()) || (t.WPRD_START_DATE >= Start && t.WPRD_FINISH_DATE <= End)
 
                 )
@@ -1548,11 +1526,11 @@ namespace TimeSheetBusiness
             {
                 fres.Add(new Timesheet
                 {
-                    Period = totalCount.ToString() + " (" + t.WPRD_START_DATE.ToShortDateString() + " - " + t.WPRD_FINISH_DATE.ToShortDateString() + ")"
+                    Period = totalCount.ToString() + " (" + t.WPRD_START_DATE.ToShortDateString() + " - " + t.WPRD_FINISH_DATE.AddDays(((((t.WPRD_FINISH_DATE.Date - t.WPRD_START_DATE.Date).Days + 1) % 7)) * -1).ToShortDateString() + ")"
                     ,
                     Start = t.WPRD_START_DATE
                     ,
-                    Stop = t.WPRD_FINISH_DATE
+                    Stop = t.WPRD_FINISH_DATE.AddDays(((((t.WPRD_FINISH_DATE.Date - t.WPRD_START_DATE.Date).Days + 1) % 7)) * -1)
                     ,
                     Name = t.WPRD_NAME,
                     Id = t.WPRD_UID.ToString()
@@ -1568,6 +1546,13 @@ namespace TimeSheetBusiness
             start = Start;
             end = End;
             return fres;
+        }
+
+        
+        public SvcAdmin.TimePeriodDataSet ReadAdminPeriods()
+        {
+            var periods = adminClient.ReadPeriods(SvcAdmin.PeriodState.All);
+            return periods;
         }
 
 
@@ -1610,40 +1595,12 @@ namespace TimeSheetBusiness
         
         public Guid GetResourceUidFromNtAccount(String ntAccount)
         {
-            string ntAccountCopy =  ntAccount;
-            object cachedCopy = GetSessionObject(ntAccountCopy + "resId");
-            if (cachedCopy != null)
-            {
-                return (Guid)cachedCopy;
-            }
-            SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
-
-            Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
-            filter.FilterTableName = rds.Resources.TableName;
-
-
-            Microsoft.Office.Project.Server.Library.Filter.Field ntAccountField1 = new Microsoft.Office.Project.Server.Library.Filter.Field(rds.Resources.TableName, rds.Resources.WRES_ACCOUNTColumn.ColumnName);
-            filter.Fields.Add(ntAccountField1);
-
-            Microsoft.Office.Project.Server.Library.Filter.Field ntAccountField2 = new Microsoft.Office.Project.Server.Library.Filter.Field(rds.Resources.TableName, rds.Resources.RES_IS_WINDOWS_USERColumn.ColumnName);
-            filter.Fields.Add(ntAccountField2);
-
-            Microsoft.Office.Project.Server.Library.Filter.FieldOperator op = new Microsoft.Office.Project.Server.Library.Filter.FieldOperator(Microsoft.Office.Project.Server.Library.Filter.FieldOperationType.Equal,
-                rds.Resources.WRES_ACCOUNTColumn.ColumnName, ntAccountCopy);
-            filter.Criteria = op;
-
-
-
-            rds = resourceClient.ReadResources(filter.GetXml(), false);
-
-            var obj = (Guid)rds.Resources.Rows[0]["RES_UID"];
-            CacheSessionObject(ntAccountCopy + "resId", obj);
-            return obj;
+            return resourceClient.GetCurrentUserUid();
         }
 
-        public Guid GetTimesheetMgrUID(String ntAccount)
+        public Guid GetTimesheetMgrUID()
         {
-            string ntAccountCopy =  ntAccount;
+            Guid Res_UID =  resourceClient.GetCurrentUserUid();
             SvcResource.ResourceDataSet rds = new SvcResource.ResourceDataSet();
 
             Microsoft.Office.Project.Server.Library.Filter filter = new Microsoft.Office.Project.Server.Library.Filter();
@@ -1657,7 +1614,7 @@ namespace TimeSheetBusiness
             filter.Fields.Add(ntAccountField2);
 
             Microsoft.Office.Project.Server.Library.Filter.FieldOperator op = new Microsoft.Office.Project.Server.Library.Filter.FieldOperator(Microsoft.Office.Project.Server.Library.Filter.FieldOperationType.Equal,
-                rds.Resources.WRES_ACCOUNTColumn.ColumnName, ntAccountCopy);
+                rds.Resources.RES_UIDColumn.ColumnName, Res_UID);
             filter.Criteria = op;
 
 
@@ -1669,21 +1626,7 @@ namespace TimeSheetBusiness
             var obj = rds.Resources[0].RES_TIMESHEET_MGR_UID;
             return obj;
         }
-        public void SetImpersonation( Guid resourceGuid)
-        {
-            Guid trackingGuid = Guid.NewGuid();
-
-            HttpContext.Current.Trace.Warn("Resource Name = " + resourceClient.ReadResource(resourceGuid).Resources[0].RES_NAME);
-            
-            bool isWindowsUser = true;
-            Guid siteId = Guid.Empty;           // Project Web App site ID.
-            CultureInfo languageCulture = null; // The language culture is not used.
-            CultureInfo localeCulture = null;   // The locale culture is not used.
-            WCFHelpers.WcfHelpers.SetImpersonationContext(isWindowsUser,
-                resourceClient.ReadResource(resourceGuid).Resources[0].RES_NAME, resourceGuid, trackingGuid, siteId,
-                                               languageCulture, localeCulture);
-            WCFHelpers.WcfHelpers.UseCorrectHeaders(true);
-        }
+       
 
         public  void UseCorrectHeaders(bool isImpersonated)
         {
@@ -1768,6 +1711,46 @@ namespace TimeSheetBusiness
             return customFieldsClient.ReadCustomFields(cfFilter.GetXml(), false);
 
         }
+        public  bool PJQueueUpdateTimesheet(Guid jobUID, Guid tsUID, SvcTimeSheet.TimesheetDataSet dsDelta)
+        {
+            bool flag = false;
+            int num = 0;
+            do
+            {
+                try
+                {
+                    num++;
+                    timesheetClient.QueueUpdateTimesheet(jobUID, tsUID, dsDelta);
+                    break;
+                }
+                catch (Exception exception)
+                {
+                    //PSLib.PSErrorInfo[] allGeneralErrors = new PSLib.PSClientError(exception).GetAllGeneralErrors();
+                    //if ((allGeneralErrors.Length != 0))
+                    //{
+                    //    if (num == 1)
+                    //    {
+                    //        //pwaClient.TimeSheetCancelFailedTimesheetCorrelation(tsUID);
+                    //    }
+                    //    else
+                    //    {
+                    //        flag = true;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    flag = true;
+                    //}
+                    //if (flag)
+                    //{
+                    //    break;
+                    //}
+                }
+            }
+            while (num < 2);
+            return !flag;
+        }
+
 
         public List<BaseRow> GetRows(string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, out int status, out bool canDelete, out bool canRecall, out TimesheetHeaderInfos tInfos, out decimal[] totals)
         {
@@ -1820,14 +1803,12 @@ namespace TimeSheetBusiness
             {
 
 
-                using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-                {
-                    SetImpersonation(GetResourceUidFromNtAccount(user)); tsDs = timesheetClient.ReadTimesheet(tuid);
+                
                     if (tsDs.Lines.Count < 1)
                     {
                         timesheetClient.PrepareTimesheetLine(tuid, ref tsDs, new Guid[0] { });
                     }
-                }
+                
                 iscreate = true;
                 prepopulateForHours = true;
             }
@@ -1857,14 +1838,11 @@ namespace TimeSheetBusiness
                 var tres = new List<BaseRow>();
                 SvcStatusing.StatusApprovalDataSet ds = new SvcStatusing.StatusApprovalDataSet();
                 bool isuser;
-                var resName = GetUserName(user);
-                using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
-                {
-                    SetImpersonation(GetResourceUidFromNtAccount(approver));
-                    ds = pwaClient.ReadStatusApprovalsSubmitted(false);
-                }
+                var resName = user;
+                
+                 ds = pwaClient.ReadStatusApprovalsSubmitted(false);
 
-                var projectTasks = ds.StatusApprovals.Where(t => t.PROJ_UID.ToString() == projectId && t.RES_NAME == resName);
+                var projectTasks = ds.StatusApprovals.Cast<SvcStatusing.StatusApprovalDataSet.StatusApprovalsRow>().Where(t => t.PROJ_UID.ToString() == projectId && t.RES_NAME == resName);
                 var lineclassifications = GetLineClassifications();
                 var customFieldDataSet = GetCustomFields(configuration);
                 foreach (var row in projectTasks)
@@ -1907,7 +1885,7 @@ namespace TimeSheetBusiness
         private void ReadTimePhasedData(string user, ViewConfigurationBase configuration, string periodId, DateTime start, DateTime stop, bool iscreate, SvcCustomFields.CustomFieldDataSet customfieldDataSet, List<LineClass> lineClasses, SvcTimeSheet.TimesheetDataSet timesheetDS, int dayCount, SvcTimeSheet.TimesheetDataSet tsDs, List<BaseRow> res, decimal[] alltotalsarray)
         {
             
-            foreach (var row in tsDs.Lines)
+            foreach (var row in tsDs.Lines.Rows.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>())
             {
                 ActualWorkRow actual = null;
                 ActualOvertimeWorkRow overtime = null;
@@ -2049,28 +2027,20 @@ namespace TimeSheetBusiness
             tsDs.Headers.AddHeadersRow(headersRow);
             status = 0;
 
-            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
+           
                 timesheetClient.CreateTimesheet(tsDs, SvcTimeSheet.PreloadType.Default);
-            }
+            
             iscreate = true;
-            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
+           
                 tsDs = timesheetClient.ReadTimesheet(tuid); //calling ReadTimesheet to pre populate with default server settings
                 timesheetDS = tsDs;
-            }
+            
             GetTimesheetAction(status, out canDelete, out canRecall);
         }
 
         private SvcTimeSheet.TimesheetDataSet GetTimesheet(string user, Guid ruid, Guid periodUID)
         {
-            using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
                 return timesheetClient.ReadTimesheetByPeriod(ruid, periodUID, SvcTimeSheet.Navigation.Current);
-            }
         }
 
         private List<BaseRow> GetTasks(List<LineClass> lineClasses
@@ -2083,11 +2053,9 @@ namespace TimeSheetBusiness
 
             /// Reading Assignements //////
             /// 
-            bool isWindowsUser;
-            var resUid = GetResourceUidFromNtAccount(user);
             SvcStatusing.StatusingDataSet ds = GetAssignments(user, start, stop);
 
-            foreach (var row in ds.Assignments)
+            foreach (var row in ds.Assignments.Rows.Cast < SvcStatusing.StatusingDataSet.AssignmentsRow>())
             {
                 if (configuration.NoTPData)
                 {
@@ -2121,11 +2089,7 @@ namespace TimeSheetBusiness
 
         private SvcStatusing.StatusingDataSet GetAssignments(string user, DateTime start, DateTime stop)
         {
-            using (OperationContextScope scope = new OperationContextScope(pwaClient.InnerChannel))
-            {
-                SetImpersonation(GetResourceUidFromNtAccount(user));
-                return pwaClient.ReadStatus(Guid.Empty, start, stop);
-            }
+            return pwaClient.ReadStatus(Guid.Empty, start, stop);
         }
 
 
@@ -2134,7 +2098,7 @@ namespace TimeSheetBusiness
             string periodID = "";
 
 
-            periodID = adminClient.ReadPeriods(SvcAdmin.PeriodState.All).TimePeriods.Single(t => t.WPRD_START_DATE.Date == start.Date && t.WPRD_FINISH_DATE.Date == end.Date).WPRD_UID.ToString();
+            periodID = adminClient.ReadPeriods(SvcAdmin.PeriodState.All).TimePeriods.Rows.Cast<SvcAdmin.TimePeriodDataSet.TimePeriodsRow>().Single(t => t.WPRD_START_DATE.Date == start.Date && t.WPRD_FINISH_DATE.Date.AddDays((((t.WPRD_FINISH_DATE.Date - t.WPRD_START_DATE.Date).Days + 1) % 7) * -1) == end.Date).WPRD_UID.ToString();
             return periodID;
         }
         public List<Timesheet> GetTimesheets(string user, string periodId, DateTime start, DateTime stop)
@@ -2170,11 +2134,7 @@ namespace TimeSheetBusiness
             Guid periodUID;
             if (Guid.TryParse(periodId, out periodUID))
             {
-                using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-                {
-                    SetImpersonation(GetResourceUidFromNtAccount(user));
                     timesheetDS = timesheetClient.ReadTimesheetByPeriod(ruid, periodUID, SvcTimeSheet.Navigation.Current);
-                }
             }
 
             SvcCustomFields.CustomFieldDataSet customFieldDataSet = GetCustomFields(configuration);
@@ -2295,15 +2255,12 @@ namespace TimeSheetBusiness
             try
             {
                 Guid jobGuid = Guid.NewGuid();
-                using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-                {
-                    SetImpersonation(resourceClient.ReadResource(tsDs.Headers[0].RES_TIMESHEET_MGR_UID).Resources[0].RES_UID);
+               
                     var temp = tsDs.GetChanges();
-                    timesheetClient.QueueUpdateTimesheet(jobGuid,
+                    bool res = PJQueueUpdateTimesheet(jobGuid,
                          tsGuid,
                         (SvcTimeSheet.TimesheetDataSet)tsDs.GetChanges());  //Saves the specified timesheet data to the Published database
-                }
-                bool res = QueueHelper.WaitForQueueJobCompletion(this, jobGuid, (int)SvcQueueSystem.QueueMsgType.TimesheetUpdate, queueClient);
+                 res = QueueHelper.WaitForQueueJobCompletion(this, jobGuid, (int)SvcQueueSystem.QueueMsgType.TimesheetUpdate, queueClient);
                 if (!res) throw new TimesheetUpdateException();
             }
             catch (TimesheetUpdateException tex) { throw new TimesheetUpdateException(); }
@@ -2316,25 +2273,35 @@ namespace TimeSheetBusiness
                 Guid jobGuid = Guid.NewGuid();
                 HttpContext.Current.Trace.Warn("User = " + user);
                 HttpContext.Current.Trace.Warn("tsGuid = " + tsGuid.ToString());
-
-                using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
+                
+               
+                var temp = tsDs.GetChanges();
+                try
                 {
-                    SetImpersonation(GetResourceUidFromNtAccount(user));
-                    var temp = tsDs.GetChanges();
                     timesheetClient.QueueUpdateTimesheet(jobGuid,
-                         tsGuid,
-                        (SvcTimeSheet.TimesheetDataSet)tsDs);  //Saves the specified timesheet data to the Published database
+                        tsGuid,
+                     (SvcTimeSheet.TimesheetDataSet)temp);  //Saves the specified timesheet data to the Published database
                 }
-                bool res = QueueHelper.WaitForQueueJobCompletion(this, jobGuid, (int)SvcQueueSystem.QueueMsgType.TimesheetUpdate, queueClient);
+                catch (SoapException ex2)
+                {
+                }
+                catch (FaultException ex)
+                {
+                }
+                catch (CommunicationException ex1)
+                {
+                }
+                bool res = QueueHelper.WaitForQueueJobCompletion(this, tsDs.Headers[0].TS_UID, (int)SvcQueueSystem.QueueMsgType.TimesheetUpdate, queueClient);
                 if (!res) throw new TimesheetUpdateException();
             }
-            catch(TimesheetUpdateException tex) { throw new TimesheetUpdateException(); }
+            catch (TimesheetUpdateException tex) { 
+                var s = new Microsoft.Office.Project.Server.Library.PSClientError(tex.Message); throw new TimesheetUpdateException(); }
         }
 
         private void ProcessTimeLines(ViewConfigurationBase configuration, DateTime start, DateTime stop, IDictionary<string, WholeLine> dict, SvcTimeSheet.TimesheetDataSet tsDs, List<SvcTimeSheet.TimesheetDataSet.LinesRow> rowsToDelete)
         {
             //Microsoft.Office.Project.Server.Library.TimesheetEnum.Status
-            foreach (var row in tsDs.Lines)
+            foreach (var row in tsDs.Lines.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>())
             {
                 string assignementId = row.ASSN_UID != null ? row.ASSN_UID.ToString() + "_" + row.TS_LINE_CLASS_UID.ToString() : row.TS_LINE_CLASS_UID.ToString();  //John; this line sets the assignmentUID?
                 WholeLine group = null;
@@ -2365,16 +2332,16 @@ namespace TimeSheetBusiness
                 var actuals = row.GetActualsRows();
                 foreach (var ac in actuals)
                 {
-                    ac.Delete();
+                    //ac.Delete();
                 }
-                row.Delete();
+                //row.Delete();
 
             }
         }
 
         private void ProcessGroups(string user, ViewConfigurationBase configuration, DateTime start, DateTime stop, IDictionary<string, WholeLine> dict, List<WholeLine> list, ref SvcResource.ResourceAssignmentDataSet _resAssDS, ref SvcTimeSheet.TimesheetDataSet tsDs)
         {
-            foreach (var row in tsDs.Lines)
+            foreach (var row in tsDs.Lines.Rows.Cast<SvcTimeSheet.TimesheetDataSet.LinesRow>())
             {
                 string assignementId = row.ASSN_UID.ToString();
 
@@ -2402,11 +2369,7 @@ namespace TimeSheetBusiness
             {
                 Guid jobGuid = Guid.NewGuid();
                 var tsGuid = (Guid)(tsDs.Headers[0].TS_UID);
-                using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-                {
-                    SetImpersonation(GetResourceUidFromNtAccount(user));
-                    timesheetClient.QueueSubmitTimesheet(jobGuid, tsGuid, GetTimesheetMgrUID(user), BusisnessResources.ApprovalComment);
-                }
+                timesheetClient.QueueSubmitTimesheet(jobGuid, tsGuid, GetTimesheetMgrUID(), BusisnessResources.ApprovalComment);
                 bool res = QueueHelper.WaitForQueueJobCompletion(this, jobGuid, (int)SvcQueueSystem.QueueMsgType.TimesheetSubmit, queueClient);
                 if (!res) throw new TimesheetSubmitException();
             }
@@ -2424,15 +2387,10 @@ namespace TimeSheetBusiness
             }
             try
             {
-                bool isWindowsUser;
-                var resID = GetResourceUidFromNtAccount(user);
+               
                 if (changedAssignements.Count > 0)
                 {
-                    using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
-                    {
-                        SetImpersonation(GetResourceUidFromNtAccount(user));
                         statusingClient.SubmitStatus(changedAssignements.ToArray(), BusisnessResources.StausApprovalComment);
-                    }
                 }
             }
             catch { throw new StatusSubmitException(); }
@@ -2446,13 +2404,9 @@ namespace TimeSheetBusiness
                 if (_resAssDS == null) _resAssDS = GetResourceAssignmentDataSet(user);
                 // weed out top level tasks since they are not intended for statusing
                 var statuslist = list.Where(t => (t.IsTopLevelTask == false) && (t.Changed == true)).ToList();
-                statuslist = statuslist.Where(t => (_resAssDS.ResourceAssignment.Any(s => s.ASSN_UID == new Guid(t.Key.Split("_".ToCharArray())[0])))).ToList();
+                statuslist = statuslist.Where(t => (_resAssDS.ResourceAssignment.Rows.Cast<SvcResource.ResourceAssignmentDataSet.ResourceAssignmentRow>().Any(s => s.ASSN_UID == new Guid(t.Key.Split("_".ToCharArray())[0])))).ToList();
                   string xml = new ChangeXml(_resAssDS, statuslist, configuration, start, stop, this).Get(customfields);
-                using (OperationContextScope scope = new OperationContextScope(statusingClient.InnerChannel))
-                {
-                    SetImpersonation(GetResourceUidFromNtAccount(user));
                     if (xml != null) statusingClient.UpdateStatus(xml);
-                }
             }
             catch(StatusUpdateException sex) { throw new StatusUpdateException(); }
             return _resAssDS;
@@ -2496,11 +2450,9 @@ namespace TimeSheetBusiness
                 try
                 {
                     Guid jobUID = Guid.NewGuid();
-                    using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-                    {
-                        SetImpersonation(GetResourceUidFromNtAccount(user));
+                   
                         timesheetClient.QueueRecallTimesheet(jobUID, tuid);
-                    }
+                    
                     bool res = QueueHelper.WaitForQueueJobCompletion(this, jobUID, (int)SvcQueueSystem.QueueMsgType.TimesheetRecall, queueClient);
 
 
@@ -2515,11 +2467,7 @@ namespace TimeSheetBusiness
                 try
                 {
                     Guid jobUID = Guid.NewGuid();
-                    using (OperationContextScope scope = new OperationContextScope(timesheetClient.InnerChannel))
-                    {
-                        SetImpersonation(GetResourceUidFromNtAccount(user));
-                        timesheetClient.QueueDeleteTimesheet(jobUID, tuid);
-                    }
+                    timesheetClient.QueueDeleteTimesheet(jobUID, tuid);
                     bool res = QueueHelper.WaitForQueueJobCompletion(this, jobUID, (int)SvcQueueSystem.QueueMsgType.TimesheetDelete, queueClient);
                 }
                 catch
@@ -2609,64 +2557,87 @@ namespace TimeSheetBusiness
                 // The endpoint address is the ProjectServer.svc router for all public PSI calls.
                 EndpointAddress address = new EndpointAddress(pwaUrl + SVC_ROUTER);
 
+                 loginWindows = new SvcLoginWindows.LoginWindows();
+                loginWindows.Url = pwaUrl + LOGINWINDOWS;
+                loginWindows.CookieContainer = new CookieContainer();
+                loginWindows.Credentials = new NetworkCredential(HttpContext.Current.Session["UserName"].ToString(), HttpContext.Current.Session["Password"].ToString());
+                if (!loginWindows.Login()) { throw new System.Security.SecurityException("User Invalid"); }
+                 
 
+                 binding.AllowCookies = true;
+                   
 
                 adminClient = new SvcAdmin.AdminClient(binding, address);
                 adminClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 adminClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
 
+                adminClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
 
                 projectClient = new SvcProject.ProjectClient(binding, address);
                 projectClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 projectClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+                projectClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
 
                 queueSystemClient = new SvcQueueSystem.QueueSystemClient(binding, address);
                 queueSystemClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 queueSystemClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+                queueSystemClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
 
                 resourceClient = new SvcResource.ResourceClient(binding, address);
                 resourceClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 resourceClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+                resourceClient.ClientCredentials.Windows.ClientCredential =  (NetworkCredential) loginWindows.Credentials;
+                
+              
 
                 lookupTableClient = new SvcLookupTable.LookupTableClient(binding, address);
                 lookupTableClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 lookupTableClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+                lookupTableClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
 
 
                 customFieldsClient = new SvcCustomFields.CustomFieldsClient(binding, address);
                 customFieldsClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 customFieldsClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+                customFieldsClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
+
 
                 calendarClient = new SvcCalendar.CalendarClient(binding, address);
                 calendarClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 calendarClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+                calendarClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
 
                 archiveClient = new SvcArchive.ArchiveClient(binding, address);
                 archiveClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 archiveClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+                archiveClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
 
                 pwaClient = new SvcStatusing.StatusingClient(binding, address);
                 pwaClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 pwaClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+                pwaClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
 
                 timesheetClient = new SvcTimeSheet.TimeSheetClient(binding, address);
+                
                 timesheetClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 timesheetClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
-
+                timesheetClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
+                
                 queueClient = new SvcQueueSystem.QueueSystemClient(binding, address);
                 queueClient.ChannelFactory.Credentials.Windows.AllowedImpersonationLevel
                     = TokenImpersonationLevel.Impersonation;
                 queueClient.ChannelFactory.Credentials.Windows.AllowNtlm = true;
+                queueClient.ClientCredentials.Windows.ClientCredential = (NetworkCredential)loginWindows.Credentials;
             }
             catch (Exception ex)
             {

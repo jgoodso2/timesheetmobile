@@ -1,0 +1,854 @@
+﻿@model TimeSheetMobileWeb.Models.UpdateViewBase
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+@using System.Globalization
+@using System.Text
+@using System.Linq
+@using MVCControlsToolkit.Controller
+@{bool isTask = Model is UpdateTasksView;}
+@if (this.ViewContext.FormContext == null)
+{
+    this.ViewContext.FormContext = new FormContext();
+}
+@{  
+    List<object> ltemplates = new List<object>();
+
+    bool editEnabled = isTask || Model == null || (Model as UpdateTimesheetsView).CanDelete || Model.ApprovalMode;
+    int rc = 0;
+    int aw_index = -1;
+    int aow_index = -1;
+    int nbw_index = -1;
+    int nbow_index = -1;
+    int ad_index = -1;
+    int sv_index = -1;
+    string decimalFormat = "{0:n}";
+    if ((isTask && ViewConfigurationTask.Default.ActualWorkA && (!ViewConfigurationTask.Default.NoTPData)) ||
+         (!isTask && ViewConfigurationRow.Default.ActualWorkA))
+    {
+        ltemplates.Add(_S.H<ActualWorkRow>(
+             @<text>
+            <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' 
+            data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code">
+					<span id='@(item.PrefixedId(m => m.ProjectName) + "_display")'><strong>@item.FormattedDisplay(m => m.ProjectName)</strong></span>
+					<span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class=''>@item.FormattedDisplay(m => m.AssignementName)</span>
+                    @if (@item.ValueFor(m => m.LineClass.Name) != Model.DefaultLineClass)
+                    {
+                    <span id='@(item.PrefixedId(m => m.LineClass.Name) + "_display")' class=''>@item.FormattedDisplay(m => m.LineClass.Name)</span>
+                    }
+                    <table style="background:none">
+                <tr>
+                @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
+    {
+        <td>
+        <span class="">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
+        <br />
+        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code + "_header" })
+        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")' >@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
+         </td>
+    }
+    </tr>
+    </table>
+				</li>
+              	
+                </ul>
+    
+    
+    
+    @if ((isTask && ViewConfigurationTask.Default.WorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.WorkA))
+    {
+        @item.HiddenFor(m => m.WorkA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RegularWorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.RegularWorkA))
+    {
+        @item.HiddenFor(m => m.RegularWorkA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RemainingWorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingWorkA))
+    {
+        @item.HiddenFor(m => m.RemainingWorkA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.StartA) ||
+                        (!isTask && ViewConfigurationRow.Default.StartA))
+    {
+        @item.HiddenFor(m => m.StartA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.FinishA) ||
+                        (!isTask && ViewConfigurationRow.Default.FinishA))
+    {
+        @item.HiddenFor(m => m.FinishA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ActualStartA) ||
+                        (!isTask && ViewConfigurationRow.Default.ActualStartA))
+    {
+        @item.HiddenFor(m => m.ActualStartA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ActualFinishA) ||
+                        (!isTask && ViewConfigurationRow.Default.ActualFinishA))
+    {
+        @item.HiddenFor(m => m.ActualStartA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.PercentWorkCompleteA) ||
+                        (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteA))
+    {
+        @item.HiddenFor(m => m.PercentWorkCompleteA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.AssignmentUnitsA) ||
+                        (!isTask && ViewConfigurationRow.Default.AssignmentUnitsA))
+    {
+        @item.HiddenFor(m => m.AssignmentUnitsA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ConfirmedA) ||
+                    (!isTask && ViewConfigurationRow.Default.ConfirmedA))
+    {
+        @item.HiddenFor(m => m.ConfirmedA)
+    }
+    else
+    {
+        @item.HiddenFor(m => m.ConfirmedA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.CommentsA) ||
+                        (!isTask && ViewConfigurationRow.Default.CommentsA))
+    {
+        @item.HiddenFor(m => m.CommentsA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.WorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.WorkT))
+    {
+        @item.HiddenFor(m => m.WorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RegularWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.RegularWorkT))
+    {
+        @item.HiddenFor(m => m.RegularWorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RemainingWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingWorkT))
+    {
+        @item.HiddenFor(m => m.RemainingWorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ActualWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.ActualWorkT))
+    {
+        @item.HiddenFor(m => m.ActualWorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.StartT) ||
+                        (!isTask && ViewConfigurationRow.Default.StartT))
+    {
+        @item.HiddenFor(m => m.StartT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.FinishT) ||
+                        (!isTask && ViewConfigurationRow.Default.FinishT))
+    {
+        @item.HiddenFor(m => m.FinishT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ResumeT) ||
+                        (!isTask && ViewConfigurationRow.Default.ResumeT))
+    {
+        @item.HiddenFor(m => m.ResumeT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.DeadlineT) ||
+                        (!isTask && ViewConfigurationRow.Default.DeadlineT))
+    {
+        @item.HiddenFor(m => m.DeadlineT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.DurationT) ||
+                        (!isTask && ViewConfigurationRow.Default.DurationT))
+    {
+        @item.HiddenFor(m => m.DurationT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RemainingDurationT) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingDurationT))
+    {
+        @item.HiddenFor(m => m.RemainingDurationT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.TaskNameT) ||
+                        (!isTask && ViewConfigurationRow.Default.TaskNameT))
+    {
+        @item.HiddenFor(m => m.TaskNameT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.PercentCompleteT) ||
+                        (!isTask && ViewConfigurationRow.Default.PercentCompleteT))
+    {
+        @item.HiddenFor(m => m.PercentCompleteT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.PercentWorkCompleteT) ||
+                        (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteT))
+    {
+        @item.HiddenFor(m => m.PercentWorkCompleteT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.PhysicalPercentCompleteT) ||
+                        (!isTask && ViewConfigurationRow.Default.PhysicalPercentCompleteT))
+    {
+        @item.HiddenFor(m => m.PhysicalPercentCompleteT)
+    }
+    @if ((ViewConfigurationRow.Default.CustomFields != null)
+                                    )
+    {
+        List<CustomFieldItem> list = new List<CustomFieldItem>();
+        foreach (var feld in ViewConfigurationRow.Default.CustomFields)
+        {
+            CustomFieldItem cfitem = Model.GetCustomField(@item.ValueFor(m => m.AssignementId), feld.Name);
+            if (cfitem != null)
+            {
+                list.Add(cfitem);
+            }
+        }
+    
+        <span id='@item.PrefixedId("")'>
+            @item.Partial("CustomFieldDetail", new CustomFieldsView() { CustomFieldItems = list })
+        </span>
+    }
+    @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
+    @item.HiddenFor(m => m.AssignementId, new
+{
+    @class = item.ViewData.Model == null ? "p-guid-container" : "p-"
+        + (item.ViewData.Model.AssignementName != "Top Level" ? (item.ViewData.Model.AssignementId + "_" + item.ViewData.Model.LineClass.Id) : ("TopLevel_" + item.ViewData.Model.LineClass.Id + item.ViewData.Model.ProjectId)) + "-" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code
+})
+    @item.HiddenFor(m => m.ProjectName)
+    @item.HiddenFor(m => m.AssignementName)
+    @item.HiddenFor(m => m.ProjectId, new { @class = item.ViewData.Model == null ? "p-project-container" : "p-" + (item.ViewData.Model.AssignementId + item.ViewData.Model.ProjectId) + "-" + UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code })
+     </text>
+            ));
+        aw_index = rc;
+        rc++;
+
+    }
+
+    if ((isTask && ViewConfigurationTask.Default.ActualOvertimeWorkA && (!ViewConfigurationTask.Default.NoTPData)) ||
+       (!isTask && ViewConfigurationRow.Default.ActualOvertimeWorkA))
+    {
+        ltemplates.Add(_S.H<ActualOvertimeWorkRow>(
+    @<text> 
+    <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' 
+    data-button-selection="@UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code">
+					<span id='@(item.PrefixedId(m => m.ProjectName) + "_display")'><strong>@item.FormattedDisplay(m => m.ProjectName)</strong></span>
+					<span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class=''>@item.FormattedDisplay(m => m.AssignementName)</span>
+                    <span class="">@(isTask ? ViewConfigurationTask.Default.ActualOvertimeWorkA_Name : ViewConfigurationRow.Default.ActualOvertimeWorkA_Name)</span>
+                    @if (@item.ValueFor(m => m.LineClass.Name) != Model.DefaultLineClass)
+                    {
+                    <span id='@(item.PrefixedId(m => m.LineClass.Name) + "_display")' class=''>@item.FormattedDisplay(m => m.LineClass.Name)</span>
+                    }
+				<table style="background:none">
+                <tr>
+                @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
+    {
+        <td>
+        <span class="">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
+        <br />
+        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code + "_header" })
+        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")' >@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
+         </td>
+    }
+    </tr>
+    </table>
+                </li>
+                </ul>
+    
+    &nbsp;
+    
+   
+    @if ((isTask && ViewConfigurationTask.Default.OvertimeWorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.OvertimeWorkA))
+    {
+        @item.HiddenFor(m => m.OvertimeWorkA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.OvertimeWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.OvertimeWorkT))
+    {
+        @item.HiddenFor(m => m.OvertimeWorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RemainingOvertimeWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingOvertimeWorkT))
+    {
+        @item.HiddenFor(m => m.RemainingOvertimeWorkT)
+    }
+    
+      @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + (item.ViewData.Model.AssignementName != "Top Level" ? 
+    (item.ViewData.Model.AssignementId + "_" + item.ViewData.Model.LineClass.Id) : ("TopLevel_" + item.ViewData.Model.LineClass.Id + item.ViewData.Model.ProjectId)) + "-" + 
+    UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code })
+    @item.HiddenFor(m => m.ProjectName)
+    @item.HiddenFor(m => m.AssignementName)
+    @item.HiddenFor(m => m.ProjectId, new { @class = item.ViewData.Model == null ? "p-project-container" : "p-" + 
+    (item.ViewData.Model.AssignementId + item.ViewData.Model.ProjectId) + "-" + UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code })
+     
+   
+    </text>
+));
+        aow_index = rc;
+        rc++;
+    }
+    if (isTask && !Model.ApprovalMode && ViewConfigurationTask.Default.ActualWorkA && ViewConfigurationTask.Default.NoTPData)
+    {
+        bool aNewLine = true;
+        ltemplates.Add(_S.H<SingleValuesRow>(
+    @<text>  <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code">
+					<strong>@item.FormattedDisplay(m => m.ProjectName)</strong>
+					<span>@item.FormattedDisplay(m => m.AssignementName)</span>
+				</li></ul>
+    @if ((isTask && ViewConfigurationTask.Default.WorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.WorkA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.WorkA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RegularWorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.RegularWorkA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.RegularWorkA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RemainingWorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingWorkA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.RemainingWorkA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.StartA) ||
+                        (!isTask && ViewConfigurationRow.Default.StartA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.StartA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.FinishA) ||
+                        (!isTask && ViewConfigurationRow.Default.FinishA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.FinishA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ActualStartA) ||
+                        (!isTask && ViewConfigurationRow.Default.ActualStartA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.ActualStartA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ActualFinishA) ||
+                        (!isTask && ViewConfigurationRow.Default.ActualFinishA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.ActualStartA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.PercentWorkCompleteA) ||
+                        (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.PercentWorkCompleteA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.AssignmentUnitsA) ||
+                        (!isTask && ViewConfigurationRow.Default.AssignmentUnitsA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.AssignmentUnitsA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ConfirmedA) ||
+                    (!isTask && ViewConfigurationRow.Default.ConfirmedA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.ConfirmedA)
+    }
+    else
+    {
+        @item.HiddenFor(m => m.ConfirmedA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.CommentsA) ||
+                        (!isTask && ViewConfigurationRow.Default.CommentsA))
+    {
+           
+        @item.HiddenFor(m => m.CommentsA)
+                        
+    }
+    @if ((isTask && ViewConfigurationTask.Default.WorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.WorkT))
+    {
+        @item.HiddenFor(m => m.WorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RegularWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.RegularWorkT))
+    {
+        @item.HiddenFor(m => m.RegularWorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RemainingWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingWorkT))
+    {
+        @item.HiddenFor(m => m.RemainingWorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ActualWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.ActualWorkT))
+    {
+        @item.HiddenFor(m => m.ActualWorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.StartT) ||
+                        (!isTask && ViewConfigurationRow.Default.StartT))
+    {
+        @item.HiddenFor(m => m.StartT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.FinishT) ||
+                        (!isTask && ViewConfigurationRow.Default.FinishT))
+    {
+        @item.HiddenFor(m => m.FinishT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.ResumeT) ||
+                        (!isTask && ViewConfigurationRow.Default.ResumeT))
+    {
+        @item.HiddenFor(m => m.ResumeT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.DeadlineT) ||
+                        (!isTask && ViewConfigurationRow.Default.DeadlineT))
+    {
+        @item.HiddenFor(m => m.DeadlineT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.DurationT) ||
+                        (!isTask && ViewConfigurationRow.Default.DurationT))
+    {
+        @item.HiddenFor(m => m.DurationT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RemainingDurationT) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingDurationT))
+    {
+        @item.HiddenFor(m => m.RemainingDurationT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.TaskNameT) ||
+                        (!isTask && ViewConfigurationRow.Default.TaskNameT))
+    {
+        @item.HiddenFor(m => m.TaskNameT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.PercentCompleteT) ||
+                        (!isTask && ViewConfigurationRow.Default.PercentCompleteT))
+    {
+        @item.HiddenFor(m => m.PercentCompleteT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.PercentWorkCompleteT) ||
+                        (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteT))
+    {
+        @item.HiddenFor(m => m.PercentWorkCompleteT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.PhysicalPercentCompleteT) ||
+                        (!isTask && ViewConfigurationRow.Default.PhysicalPercentCompleteT))
+    {
+        @item.HiddenFor(m => m.PhysicalPercentCompleteT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.OvertimeWorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.OvertimeWorkA))
+    {
+        @item.HiddenFor(m => m.OvertimeWorkA)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.OvertimeWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.OvertimeWorkT))
+    {
+        @item.HiddenFor(m => m.OvertimeWorkT)
+    }
+    @if ((isTask && ViewConfigurationTask.Default.RemainingOvertimeWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingOvertimeWorkT))
+    {
+        @item.HiddenFor(m => m.RemainingOvertimeWorkT)
+    }
+     @if (isTask && (ViewConfigurationTask.Default.CustomFields != null)
+                                    )
+     {
+         List<CustomFieldItem> list = new List<CustomFieldItem>();
+         foreach (var feld in ViewConfigurationTask.Default.CustomFields)
+         {
+             CustomFieldItem cfitem = Model.GetCustomField(@item.ValueFor(m => m.AssignementId), feld.Name);
+             if (cfitem != null)
+             {
+                 list.Add(cfitem);
+             }
+         }
+    
+        <span id='@item.PrefixedId("")'>
+            @item.Partial("CustomFieldDetail", new CustomFieldsView() { CustomFieldItems = list })
+        </span>
+     }
+    @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + (item.ViewData.Model.AssignementName != "Top Level" ? (item.ViewData.Model.AssignementId + "_" + item.ViewData.Model.LineClass.Id) : ("TopLevel_" + item.ViewData.Model.LineClass.Id + item.ViewData.Model.ProjectId)) + "-" + UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code })
+    @item.HiddenFor(m => m.ProjectId)
+    @item.HiddenFor(m => m.ProjectName)
+    @item.HiddenFor(m => m.AssignementName)
+    </text>
+            ));
+        sv_index = rc;
+        rc++;
+    }
+    if (isTask && Model.ApprovalMode && ViewConfigurationApproval.Default.NoTPData)
+    {
+        bool aNewLine = true;
+        ltemplates.Add(_S.H<SingleValuesRow>(
+    @<text>  <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code">
+					<input type="checkbox" class="taskapprovals" data-row-from="@item.ValueFor(mbox => mbox.AssignementId)" />
+                    <strong>@item.FormattedDisplay(m => m.ProjectName)</strong>
+					<span>@item.FormattedDisplay(m => m.AssignementName)</span>
+				</li></ul>
+    @if ((isTask && ViewConfigurationApproval.Default.WorkA) ||
+                        (!isTask && ViewConfigurationApproval.Default.WorkA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.WorkA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.RegularWorkA) ||
+                        (!isTask && ViewConfigurationApproval.Default.RegularWorkA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.RegularWorkA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.RemainingWorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingWorkA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.RemainingWorkA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.StartA) ||
+                        (!isTask && ViewConfigurationRow.Default.StartA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.StartA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.FinishA) ||
+                        (!isTask && ViewConfigurationRow.Default.FinishA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.FinishA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.ActualStartA) ||
+                        (!isTask && ViewConfigurationRow.Default.ActualStartA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.ActualStartA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.ActualFinishA) ||
+                        (!isTask && ViewConfigurationRow.Default.ActualFinishA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.ActualStartA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.PercentWorkCompleteA) ||
+                        (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.PercentWorkCompleteA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.AssignmentUnitsA) ||
+                        (!isTask && ViewConfigurationRow.Default.AssignmentUnitsA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.AssignmentUnitsA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.ConfirmedA) ||
+                    (!isTask && ViewConfigurationRow.Default.ConfirmedA))
+    {
+        aNewLine = false;
+        @item.HiddenFor(m => m.ConfirmedA)
+    }
+    else
+    {
+        @item.HiddenFor(m => m.ConfirmedA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.CommentsA) ||
+                        (!isTask && ViewConfigurationRow.Default.CommentsA))
+    {
+           
+        @item.HiddenFor(m => m.CommentsA)
+                        
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.WorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.WorkT))
+    {
+        @item.HiddenFor(m => m.WorkT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.RegularWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.RegularWorkT))
+    {
+        @item.HiddenFor(m => m.RegularWorkT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.RemainingWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingWorkT))
+    {
+        @item.HiddenFor(m => m.RemainingWorkT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.ActualWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.ActualWorkT))
+    {
+        @item.HiddenFor(m => m.ActualWorkT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.StartT) ||
+                        (!isTask && ViewConfigurationRow.Default.StartT))
+    {
+        @item.HiddenFor(m => m.StartT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.FinishT) ||
+                        (!isTask && ViewConfigurationRow.Default.FinishT))
+    {
+        @item.HiddenFor(m => m.FinishT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.ResumeT) ||
+                        (!isTask && ViewConfigurationRow.Default.ResumeT))
+    {
+        @item.HiddenFor(m => m.ResumeT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.DeadlineT) ||
+                        (!isTask && ViewConfigurationRow.Default.DeadlineT))
+    {
+        @item.HiddenFor(m => m.DeadlineT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.DurationT) ||
+                        (!isTask && ViewConfigurationRow.Default.DurationT))
+    {
+        @item.HiddenFor(m => m.DurationT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.RemainingDurationT) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingDurationT))
+    {
+        @item.HiddenFor(m => m.RemainingDurationT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.TaskNameT) ||
+                        (!isTask && ViewConfigurationRow.Default.TaskNameT))
+    {
+        @item.HiddenFor(m => m.TaskNameT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.PercentCompleteT) ||
+                        (!isTask && ViewConfigurationRow.Default.PercentCompleteT))
+    {
+        @item.HiddenFor(m => m.PercentCompleteT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.PercentWorkCompleteT) ||
+                        (!isTask && ViewConfigurationRow.Default.PercentWorkCompleteT))
+    {
+        @item.HiddenFor(m => m.PercentWorkCompleteT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.PhysicalPercentCompleteT) ||
+                        (!isTask && ViewConfigurationRow.Default.PhysicalPercentCompleteT))
+    {
+        @item.HiddenFor(m => m.PhysicalPercentCompleteT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.OvertimeWorkA) ||
+                        (!isTask && ViewConfigurationRow.Default.OvertimeWorkA))
+    {
+        @item.HiddenFor(m => m.OvertimeWorkA)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.OvertimeWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.OvertimeWorkT))
+    {
+        @item.HiddenFor(m => m.OvertimeWorkT)
+    }
+    @if ((isTask && ViewConfigurationApproval.Default.RemainingOvertimeWorkT) ||
+                        (!isTask && ViewConfigurationRow.Default.RemainingOvertimeWorkT))
+    {
+        @item.HiddenFor(m => m.RemainingOvertimeWorkT)
+    }
+     @if (isTask && (ViewConfigurationApproval.Default.CustomFields != null)
+                                    )
+     {
+         List<CustomFieldItem> list = new List<CustomFieldItem>();
+         foreach (var feld in ViewConfigurationApproval.Default.CustomFields)
+         {
+             CustomFieldItem cfitem = Model.GetCustomField(@item.ValueFor(m => m.AssignementId), feld.Name);
+             if (cfitem != null)
+             {
+                 list.Add(cfitem);
+             }
+         }
+    
+        <span id='@item.PrefixedId("")'>
+            @item.Partial("CustomFieldDetail", new CustomFieldsView() { CustomFieldItems = list })
+        </span>
+     }
+    @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + (item.ViewData.Model.AssignementName != "Top Level" ? (item.ViewData.Model.AssignementId + "_" + item.ViewData.Model.LineClass.Id) : ("TopLevel_" + item.ViewData.Model.LineClass.Id + item.ViewData.Model.ProjectId)) + "-" + UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code })
+    @item.HiddenFor(m => m.ProjectId)
+    @item.HiddenFor(m => m.ProjectName)
+    @item.HiddenFor(m => m.AssignementName)
+    </text>
+            ));
+        sv_index = rc;
+        rc++;
+    }
+
+    if (!isTask && ViewConfigurationRow.Default.ActualWorkA)
+    {
+        ltemplates.Add(_S.H<AdministrativeRow>(
+    @<text>  <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' 
+    data-button-selection="@UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code">
+					<span id='@(item.PrefixedId(m => m.ProjectName) + "_display")'><strong>@item.FormattedDisplay(m => m.ProjectName)</strong></span>
+					<span id='@(item.PrefixedId(m => m.AssignementName) + "_display")' class=''>@item.FormattedDisplay(m => m.AssignementName)</span>
+				<table style="background:none">
+                <tr>
+                @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
+                {
+        <td>
+        <span class="">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
+        <br />
+        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code + "_header" })
+        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")' >@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
+         </td>
+                }
+    </tr>
+    </table>
+                </li>
+                </ul>
+
+   
+      @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
+
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + 
+    UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code })
+
+    @item.HiddenFor(m => m.AssignementId, new
+{
+    @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" +
+        UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code
+})
+
+    @item.HiddenFor(m => m.ProjectId)
+    @item.HiddenFor(m => m.ProjectName)
+    @item.HiddenFor(m => m.AssignementName)
+    </text>
+            ));
+        ad_index = rc;
+        rc++;
+    }
+    if (!isTask && ViewConfigurationRow.Default.ActualNonBillableWorkA)
+    {
+        ltemplates.Add(_S.H<NonBillableActualWorkRow>(
+    @<text> <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask()"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code">
+					<strong>@item.FormattedDisplay(m => m.ProjectName)</strong>
+					<span>@item.FormattedDisplay(m => m.AssignementName)</span>
+				<table style="background:none">
+                <tr>
+                @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
+                {
+        <td>
+        <span class="">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
+        <br />
+        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code + "_header" })
+        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")' >@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
+         </td>
+                }
+    </tr>
+    </table>
+                </li>
+                </ul>
+    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays + 1); i++)
+    {
+        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code + "_header" })
+        
+    }
+      @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)
+    @item.HiddenFor(m => m.AssignementId, new { @class = item.ViewData.Model == null ? "p-guid-container" : "p-" + item.ViewData.Model.AssignementId + "-" + UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code })
+    @item.HiddenFor(m => m.ProjectId)
+    @item.HiddenFor(m => m.ProjectName)
+    @item.HiddenFor(m => m.AssignementName)
+    </text>
+            ));
+        nbw_index = rc;
+        rc++;
+    }
+    if (!isTask && ViewConfigurationRow.Default.ActualNonBillableOvertimeWorkA)
+    {
+        ltemplates.Add(_S.H<NonBillableOvertimeWorkRow>(
+    @<text> <ul><li data-role="modal" class="goto" data-target="#basedetail" data-callback ="TSM_OpenTask"  data-row-from='@item.PrefixedId("")' data-button-selection="@UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code">
+					<strong>@item.FormattedDisplay(m => m.ProjectName)</strong>
+					<span>@item.FormattedDisplay(m => m.AssignementName)</span>
+				 <table style="background:none">
+                <tr>
+                @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
+                {
+        <td>
+        <span class="">@DateHelpers.DateRowLabel(Model.CurrentPeriodStart, i)</span>
+        <br />
+        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code + "_header" })
+        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")' >@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
+         </td>
+                }
+    </tr>
+    </table>
+                </li>
+                </ul>
+    
+    @for (int i = 0; i < Convert.ToInt32(Model.CurrentPeriodStop.Subtract(Model.CurrentPeriodStart).TotalDays) + 1; i++)
+    {
+        @item.HiddenFor(m => m.DayTimes[i], new { @class = UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code + "_header" })
+        <span id='@(item.PrefixedId(m => m.DayTimes[i]) + "_display")'>@item.FormattedDisplay(m => m.DayTimes[i], decimalFormat)</span>
+    }
+    
+      @item.HiddenFor(m => m.LineClass.Id)
+    @item.HiddenFor(m => m.LineClass.Name)@item.HiddenFor(m => m.AssignementId, new
+                                     {
+                                         @class = (item.ViewData.Model == null ? "p-guid-container" : "p-"
+                                             + (item.ViewData.Model.AssignementName != "Top Level" ? (item.ViewData.Model.AssignementId + "_" + item.ViewData.Model.LineClass.Id) :
+                                             ("TopLevel_" + item.ViewData.Model.LineClass.Id + item.ViewData.Model.ProjectId))) + "-" + UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code
+                                     })
+    @item.HiddenFor(m => m.ProjectId)
+    @item.HiddenFor(m => m.ProjectName)
+    @item.HiddenFor(m => m.AssignementName)
+    </text>
+            ));
+        nbow_index = rc;
+
+    }
+    object[] templates = ltemplates.ToArray();
+    
+}
+<script type="text/javascript">
+    function TSM_ChooseTemplate(x) {
+        if (x == "@UpdateViewBase.GetRowType(typeof(ActualWorkRow)).Code") return @aw_index;
+        if (x == "@UpdateViewBase.GetRowType(typeof(ActualOvertimeWorkRow)).Code") return @aow_index;
+        if (x == "@UpdateViewBase.GetRowType(typeof(NonBillableActualWorkRow)).Code") return @nbw_index;
+        if (x == "@UpdateViewBase.GetRowType(typeof(NonBillableOvertimeWorkRow)).Code") return @nbow_index;
+        if (x == "@UpdateViewBase.GetRowType(typeof(SingleValuesRow)).Code") return @sv_index;
+        if (x == "@UpdateViewBase.GetRowType(typeof(AdministrativeRow)).Code") return @ad_index;
+        return 0;
+    }
+</script>
+<form id="mainform" data-ajax-url='@Url.Action("Edit", (isTask ? "Tasks" : "Timesheet"))' data-ajax-target='allTimesheetsEdit' data-ajax-oncomplete='timesheetsSubmittedOk' >
+@{var h = Html.ExtTrackedListRendering(m => m.PeriodRows);
+  Func<BaseRow, int> selector = x =>
+  {
+      if (x is ActualWorkRow) return aw_index;
+      if (x is ActualOvertimeWorkRow) return aow_index;
+      if (x is NonBillableActualWorkRow) return nbw_index;
+      if (x is NonBillableOvertimeWorkRow) return nbow_index;
+      if (x is SingleValuesRow) return sv_index;
+      if (x is AdministrativeRow) return ad_index;
+      return 0;
+  };
+      
+}
+@h.SortableListFor(m => m.Values,
+        templates,
+        canSort: false,
+        allItemsContainer: ExternalContainerType.div,
+        itemContainer: ExternalContainerType.div,
+                htmlAttributesContainer: new RouteValueDictionary { { "data-rows-prefix", h.PrefixedId(m => m.Values) }, { "class", "innerRowsContainer" } },
+                htmlAttributesItems: new RouteValueDictionary { { "class", "rowContainer" } },
+        templateSelector: selector)
+@if (!isTask)
+{
+    @Html.HiddenFor(m => m.Period, new { @class = "currentperiodid" })
+    @Html.HiddenFor(m => m.CurrentPeriodStart, new { @class = "currentperiodstart" })
+    @Html.HiddenFor(m => m.CurrentPeriodStop, new { @class = "currentperiodstop" })
+    @Html.HiddenFor(m => m.PeriodLength)
+    @Html.HiddenFor(m => m.Status, new { @class = "currstatus" })
+}
+@Html.HiddenFor(m => m.ApprovalMode, new { @class = "approvalmode" })
+@Html.HiddenFor(m => m.CanDelete, new { @class = "candelete" })
+@Html.HiddenFor(m => m.CanRecall, new { @class = "canrecall" })
+@Html.HiddenFor(m => m.ErrorMessage, new { @class = "updateerrormessage" })
+
+@if (!isTask)
+{
+    @Html.HiddenFor(m => m.HeaderInfos.Name, new { @class = "currname" })
+    @Html.HiddenFor(m => m.HeaderInfos.Comments, new { @class = "currcomments" })
+    @Html.HiddenFor(m => m.HeaderInfos.TotalActualWork, new { @class = "currtotalact" })
+    @Html.HiddenFor(m => m.HeaderInfos.TotalOverTimeWork, new { @class = "currtotalovertime" })
+    @Html.HiddenFor(m => m.HeaderInfos.TotalNonBillable, new { @class = "currtotalnonbill" })
+    @Html.HiddenFor(m => m.HeaderInfos.TotalNonBillableOvertime, new { @class = "currtotalovertimenonbill" })
+}
+@Html.HiddenFor(m => m.Submit)
+</form>

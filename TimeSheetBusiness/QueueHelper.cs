@@ -12,6 +12,7 @@ using PSLib = Microsoft.Office.Project.Server.Library;
 using System.ServiceModel;
 using System.Xml;
 
+
 namespace TimeSheetBusiness
 {
     public  static class QueueHelper
@@ -65,16 +66,19 @@ namespace TimeSheetBusiness
             int successState = (int)SvcQueueSystem.JobState.Success;
             int failedState = (int)SvcQueueSystem.JobState.Failed;
             int blockedState = (int)SvcQueueSystem.JobState.CorrelationBlocked;
-
+             DateTime toDate = DateTime.Now + new TimeSpan(1, 0, 0, 0);
+                        DateTime fromDate = DateTime.Now - new TimeSpan(7, 0, 0, 0);
             List<int> errorList = new List<int>();
 
-           
+            SvcQueueSystem.QueueMsgType[] messageTypes = new SvcQueueSystem.QueueMsgType[] { (SvcQueueSystem.QueueMsgType)Enum.Parse(typeof(SvcQueueSystem.QueueMsgType), messageType.ToString()) };
+            SvcQueueSystem.JobState[] jobCompletionStates = new SvcQueueSystem.JobState[] { SvcQueueSystem.JobState.ReadyForProcessing, SvcQueueSystem.JobState.Processing };
+            Guid[] uids = new Guid[] { trackingGuid };
 
                 while (inProcess)
                 {
-                    
-                        queueStatusDataSet = queueSystemClient.ReadJobStatus(queueStatusRequestDataSet, false,
-                        SvcQueueSystem.SortColumn.Undefined, SvcQueueSystem.SortOrder.Undefined);
+
+                    queueStatusDataSet = queueSystemClient.ReadMyJobStatus(messageTypes, jobCompletionStates, fromDate, toDate, -1, false, SvcQueueSystem.SortColumn.QueueEntryTime, SvcQueueSystem.SortOrder.Descending);
+                        
                     
                     bool noRow = true;
                     foreach (SvcQueueSystem.QueueStatusDataSet.StatusRow statusRow in queueStatusDataSet.Status)

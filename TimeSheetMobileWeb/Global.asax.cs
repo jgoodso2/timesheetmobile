@@ -15,6 +15,7 @@ namespace TimeSheetMobileWeb
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            
         }
 
         public static void RegisterRoutes(RouteCollection routes)
@@ -36,10 +37,7 @@ namespace TimeSheetMobileWeb
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
-            lock (new object())
-            {
-                Application["AppUser"] = System.Security.Principal.WindowsIdentity.GetCurrent();
-            }
+            
         }
 
         protected void Session_Start()

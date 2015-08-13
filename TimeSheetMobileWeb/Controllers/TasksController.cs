@@ -9,6 +9,7 @@ using MVCControlsToolkit.Controller;
 
 namespace TimeSheetMobileWeb.Controllers
 {
+    [Authorize]
     public class TasksController : Controller
     {
         //
@@ -41,16 +42,16 @@ namespace TimeSheetMobileWeb.Controllers
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             base.OnActionExecuting(filterContext);
-            Session["CurrentUser"] = repository.GetUserName((User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            Session["CurrentUser"] = (User.Identity as System.Web.Security.FormsIdentity).Name;
         }
         public ActionResult Index(string projectId,string user)
         {
-            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Web.Security.FormsIdentity).Name);
             this.HttpContext.Trace.Warn("starting Index of TasksController");
             UpdateTasksView model = new UpdateTasksView(repository.DefaultLineClass);
             model.PrepareRowTypes();
             Timesheet selection = null;
-            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name, out selection,TimesheetsSets.All);
+            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Web.Security.FormsIdentity).Name, out selection,TimesheetsSets.All);
            
             model.PeriodSelectionInfos.IsTask = true;
             
@@ -68,10 +69,10 @@ namespace TimeSheetMobileWeb.Controllers
                 TimesheetHeaderInfos tInfos;
                 decimal[] totals;
                 string timesheetUser;
-                timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name : Session["user"].ToString();
+                timesheetUser = Session["user"] == null ? (User.Identity as System.Web.Security.FormsIdentity).Name : Session["user"].ToString();
                 if (!string.IsNullOrEmpty(user))
                 {
-                    model.ReceiveRows(repository.GetSubmittedRows(projectId, (User.Identity as System.Security.Principal.WindowsIdentity).Name,user.Replace("i:0#.w|",""), ViewConfigurationApproval.Default));
+                    model.ReceiveRows(repository.GetSubmittedRows(projectId, (User.Identity as System.Web.Security.FormsIdentity).Name,user.Replace("i:0#.w|",""), ViewConfigurationApproval.Default));
                     model.ApprovalMode = true;
                 }
                 else
@@ -95,12 +96,12 @@ namespace TimeSheetMobileWeb.Controllers
         [HttpPost]
         public ActionResult Refresh(PeriodSelectedView period)
         {
-            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Web.Security.FormsIdentity).Name);
             this.HttpContext.Trace.Warn("Starting Refresh of TasksController");
             UpdateTasksView model = new UpdateTasksView(repository.DefaultLineClass);
             model.PrepareRowTypes();
             Timesheet selection = null;
-            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name, out selection, TimesheetsSets.All);
+            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Web.Security.FormsIdentity).Name, out selection, TimesheetsSets.All);
             if (period != null && period.SelectedPeriodId != null)
             {
                 selection = new Timesheet();
@@ -124,7 +125,7 @@ namespace TimeSheetMobileWeb.Controllers
                 TimesheetHeaderInfos tInfos;
                 decimal[] totals;
                 string timesheetUser;
-                timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name
+                timesheetUser = Session["user"] == null ? (User.Identity as System.Web.Security.FormsIdentity).Name
                     : Session["user"].ToString();
                 model.ReceiveRows(repository.GetRows(
                     timesheetUser,
@@ -152,7 +153,7 @@ namespace TimeSheetMobileWeb.Controllers
             this.HttpContext.Trace.Warn("Starting TaskSelection of TasksController");
             TaskSelectionView model = new TaskSelectionView();
             model.Title = SiteResources.HomeMenuAddTask;
-            model.Projects = repository.UserProjects((User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            model.Projects = repository.UserProjects((User.Identity as System.Web.Security.FormsIdentity).Name);
             model.IsInTask = true;
             model.PrepareRowTypes();
             this.HttpContext.Trace.Warn("Returning from TaskSelection of TasksController");
@@ -162,7 +163,7 @@ namespace TimeSheetMobileWeb.Controllers
         {
             this.HttpContext.Trace.Warn("Starting ProjectTasks of TasksController");
               var assignments = repository.ProjectAssignements(
-                    (User.Identity as System.Security.Principal.WindowsIdentity).Name,
+                    (User.Identity as System.Web.Security.FormsIdentity).Name,
                     projectId);
             string returnValue = "<select id='assignments' class='dynamictasks'>";
             returnValue += "<option value='' name=''>" + SiteResources.AssignementPrompt + "</option>";
@@ -185,7 +186,7 @@ namespace TimeSheetMobileWeb.Controllers
         [HttpPost]
         public ActionResult Edit(UpdateTasksView model)
         {
-            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Web.Security.FormsIdentity).Name);
             this.HttpContext.Trace.Warn("Starting Edit of TasksController");
             if (ModelState.IsValid)
             {
@@ -200,7 +201,7 @@ namespace TimeSheetMobileWeb.Controllers
                 }
                 model.PeriodRows = toUpdate;
                 Timesheet selection = null;
-                model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name, out selection, TimesheetsSets.All);
+                model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Web.Security.FormsIdentity).Name, out selection, TimesheetsSets.All);
                if (selection != null)
                {
                    model.PeriodSelectionInfos.TimesheetId = selection.Value;
@@ -213,7 +214,7 @@ namespace TimeSheetMobileWeb.Controllers
                 try
                 {
                     ErrorHandlingHelpers.UpdateRows(model.ApprovalMode, repository, model,
-                        (User.Identity as System.Security.Principal.WindowsIdentity).Name,
+                        (User.Identity as System.Web.Security.FormsIdentity).Name,
                         ViewConfigurationTask.Default,
                         model.Period,
                         model.CurrentPeriodStart,
@@ -225,7 +226,7 @@ namespace TimeSheetMobileWeb.Controllers
                     TimesheetHeaderInfos tInfos;
                     decimal[] totals;
                      string timesheetUser;
-                     timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name : Session["user"].ToString();
+                     timesheetUser = Session["user"] == null ? (User.Identity as System.Web.Security.FormsIdentity).Name : Session["user"].ToString();
                     model.ReceiveRows(repository.GetRows(
                         timesheetUser,
                         ViewConfigurationTask.Default,
@@ -252,10 +253,10 @@ namespace TimeSheetMobileWeb.Controllers
         [HttpPost]
         public ActionResult RowSingleValues(RowSelectionInfosView selection)
         {
-            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Web.Security.FormsIdentity).Name);
             this.HttpContext.Trace.Warn("Starting RowSingleValues of TasksController");
             BaseRow res = repository.GetRowSingleValues(
-                (User.Identity as System.Security.Principal.WindowsIdentity).Name,
+                (User.Identity as System.Web.Security.FormsIdentity).Name,
                 ViewConfigurationTask.Default,
                 selection.RequiredProgectId,
                 selection.RequiredPeriodIStart,
@@ -291,7 +292,7 @@ namespace TimeSheetMobileWeb.Controllers
                     
                     try
                     {
-                        repository.ApproveTasks(assignments, repository.GetResourceUidFromNtAccount((User.Identity as System.Security.Principal.WindowsIdentity).Name).ToString(), mode);
+                        repository.ApproveTasks(assignments, repository.GetResourceUidFromNtAccount((User.Identity as System.Web.Security.FormsIdentity).Name).ToString(), mode);
                         
                             errorMessage = SiteResources.ApprovalSuccessful;
                             success = true;

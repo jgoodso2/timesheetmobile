@@ -1,0 +1,43 @@
+﻿@model TimeSheetIBusiness.Logon
+
+@{
+    ViewBag.Title = "Logon";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<html>
+<head></head>
+<body class="tms time-details">
+<h2>Logon</h2>
+<div class='container'>
+        <div class="home-bg">
+@Html.ValidationSummary(true, "Login was unsuccessful. Please correct the errors and try again.")
+
+@using (Html.BeginForm()) {
+    <div>
+            <div>
+                <strong> User Name</strong>
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.UserName)
+                @Html.ValidationMessageFor(m => m.UserName)
+            </div>
+
+            <div>
+                <strong> Password</strong>
+            </div>
+            <div>
+                @Html.PasswordFor(m => m.Password)
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
+
+            <p>
+                <input type="submit" value="Log On" />
+            </p>
+        
+    </div>
+    }
+     </div>
+
+     </div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -15,6 +16,13 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>false</UseIISExpress>
+    <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,14 +74,19 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="MVC3ControlsToolkit, Version=1.8.5.0, Culture=neutral, PublicKeyToken=b6277d1c804403e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SharedLibrary\MVC3ControlsToolkit.dll</HintPath>
+    <Reference Include="MVC3ControlsToolkit">
+      <HintPath>..\..\..\SharedLibrary-master (1)\SharedLibrary-master\MVC3ControlsToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Mvc3ControlsToolkitExt">
+      <HintPath>..\..\..\SharedLibrary-master (1)\SharedLibrary-master\Mvc3ControlsToolkitExt.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\dlls\IoC\StructureMap.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -83,25 +96,22 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebActivator">
       <HintPath>..\packages\WebActivator.1.4.4\lib\net40\WebActivator.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\MySuperPackage.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Controllers\TimesheetController.cs" />
@@ -117,6 +127,7 @@
     <Compile Include="Models\Helpers\ConfigurationHelper.cs" />
     <Compile Include="Models\Helpers\DateHelpers.cs" />
     <Compile Include="Models\Helpers\ErrorHandlingHelpers.cs" />
+    <Compile Include="Models\Logon.cs" />
     <Compile Include="Models\LookupTableDisplayItemsView.cs" />
     <Compile Include="Models\MyApprovalView.cs" />
     <Compile Include="Models\RecallDeleteView.cs" />
@@ -220,6 +231,9 @@
     <Content Include="Content\MenuStyle.css" />
     <Content Include="Content\Parallon\css\fonts\icomoon.svg" />
     <Content Include="Content\Parallon\css\main-themed.css" />
+    <Content Include="Content\Parallon\images\global-homepage-bp-logo-image.png" />
+    <Content Include="Content\Parallon\images\icon-add-approve-26x26.png" />
+    <Content Include="Content\Parallon\images\icon-add-reject-26x26.png" />
     <Content Include="Content\Parallon\images\icon-add-timesheet-26x26.png" />
     <Content Include="Content\Parallon\images\icon-approval-32x32.png" />
     <Content Include="Content\Parallon\images\icon-bulk-save-26X26.png" />
@@ -759,6 +773,8 @@
     <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon_new.svg" />
     <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon_new.ttf" />
     <None Include="Content\Parallon\css\__MACOSX\fonts\._icomoon_new.woff" />
+    <Content Include="Views\Account\Logon.cshtml" />
+    <None Include="Content\Parallon\images\.DS_Store" />
     <None Include="_bin_deployableAssemblies\System.Web.Mvc.dll" />
     <None Include="_bin_deployableAssemblies\WebMatrix.WebData.xml" />
     <None Include="_bin_deployableAssemblies\WebMatrix.WebData.dll" />
@@ -775,7 +791,9 @@
     <None Include="_bin_deployableAssemblies\System.Web.WebPages.Administration.dll" />
     <None Include="_bin_deployableAssemblies\System.Web.Razor.xml" />
     <None Include="_bin_deployableAssemblies\System.Web.Razor.dll" />
-    <None Include="_bin_deployableAssemblies\System.Web.Helpers.xml" />
+    <None Include="_bin_deployableAssemblies\System.Web.Helpers.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="_bin_deployableAssemblies\System.Web.Helpers.dll" />
     <None Include="_bin_deployableAssemblies\NuGet.Core.dll" />
     <None Include="_bin_deployableAssemblies\Microsoft.Web.Infrastructure.xml" />
@@ -842,8 +860,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

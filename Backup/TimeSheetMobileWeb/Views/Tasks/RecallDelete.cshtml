@@ -1,0 +1,50 @@
+﻿@model TimeSheetMobileWeb.Models.RecallDeleteView
+@using TimeSheetMobileWeb.Models
+<div id="updaterecallsummary" class="modal">
+<a href="#" class="pull-right close" data-role="dismiss" data-target="#updaterecallsummary">Close</a>
+    <div class="modal-content">
+                <form id="rDRequest" data-ajax-url= '@Url.Action("RecallDelete", "Timesheet")'  data-ajax-oncomplete='TSM_CompleteRD'>
+                 <div class="icons-view">
+                 @if (!Model.IsTask)
+                 {
+                     <span id = id="btnRecall">
+        <a href="#"  class="main-submit  loadConfirm" data-button-target='recalldelete' data-action-confirm ="@SiteResources.RecallMessage"
+                        data-action-value='True' data-action-container='@Html.PrefixedId(m => m.IsRecall)'>
+				<span class="recall"> </span>
+				@SiteResources.Recall
+			</a>
+            </span>
+                     <span id="btnDelete">
+            <a href="#"  class="main-submit  loadConfirm" data-button-target='recalldelete' data-action-confirm ="@SiteResources.RecallMessage"
+                        data-action-value='False'   data-action-container='@Html.PrefixedId(m => m.IsRecall)'>
+				<span class="delete"></span>
+				@SiteResources.Delete
+			</a>
+            </span>
+                 }
+                 <span id="btnView">
+            <a href="#"  class="main-submit loadview goto" onclick="CloseDialog('#updaterecallsummary');OpenDialog('#viewselection');"
+                data-action-container='@Html.PrefixedId(m => m.IsRecall)' data-target="#viewselection">
+				<span class="changeview"></span>
+				@SiteResources.ChangeView
+			</a>
+            </span>
+        </div>
+                @Html.HiddenFor(m => m.RDPeriodId, new { @class = "currentperiodid" })
+                @Html.HiddenFor(m => m.RDPeriodIStart, new { @class = "currentperiodstart" })
+                @Html.HiddenFor(m => m.RDPeriodIStop, new { @class = "currentperiodstop" })
+                @Html.HiddenFor(m => m.IsRecall)
+                </form>
+                <form id="periodform" action = '@Url.Action("Index", (Model.IsTask ? "Tasks" : "Timesheet"))'
+                     data-ajax-url='@Url.Action("Refresh", "Timesheet")' data-ajax-target='allTimesheetsEdit' 
+                                            data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false" >
+                @if(Model != null) 
+                {
+                    <input id="SelectedPeriod" name="SelectedPeriod"  class = 'currentperiodstop' type="hidden" value='@string.Format("({0} -{1})", Model.RDPeriodIStart.ToShortDateString(), Model.RDPeriodIStop.ToShortDateString())'/>
+                }
+                </form>
+                <p class="buttons-container">
+			<a href="#" data-role="dismiss" data-target="#updaterecallsummary" class="btn cancel main-submit">Cancel</a>
+		</p>
+            </div>
+        </div>

@@ -1,0 +1,167 @@
+﻿@model TimeSheetMobileWeb.Models.UpdateTimesheetsView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+@{
+    ViewBag.Title = SiteResources.HomeMenuTimesheet;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section head{
+<script src="@Url.Content("~/Scripts/TimesheetsScript-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        TSM.initPreloader('hide');
+
+    })
+    </script>
+}
+
+
+
+<div  id='timesheet' class='container timesheetContainer'>
+        
+        <h1>@SiteResources.HomeMenuTimesheet
+	<span class="pull-right">@Context.Session["CurrentUser"].ToString()</span>
+	</h1>
+    <div class="date-container">
+
+    <span id="indexPeriod" class='currenttimesheet'>@Model.PeriodString</span>
+
+    @if (Model.ApprovalMode)
+    {
+       <span>
+         <ul>
+        <li class="icon-add-timesheet" data-role="modal" data-target="#taskselection">add</li>
+        </ul>
+        </span>
+        
+    }
+    <span>
+			<ul>
+				
+                 @if (!Model.ApprovalMode)
+                 {
+                     <li class="icon-add-timesheet" data-role="modal" data-target="#taskselection">add</li>
+				<li class="icon-show-list" data-role="modal" data-target="#recallDelete">List</li>
+                 }
+                 else
+                 {
+                 
+                     var curUid = Model.CurrentUserGuid.ToString();
+                     var tsuid = Model.TSUID.ToString();
+                     <div>
+                     @Html.Partial("TimesheetApprovalView", new TimesheetApprovalView() { MGRUID = curUid, TSUID = tsuid })
+                     </div>
+                 }
+			</ul>
+		</span>
+        </div>
+           
+               <!-- <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
+                <h2><span>Status:</span><span class="currstatus-d">@Model.Status ,</span>&nbsp;
+                <span>Total</span><span>:</span><span id='allTotal' class='combinedValue'>@Math.Round(Model.Totals.Sum(), 2)</span> </h2>-->
+            <div class="details-content">
+            <h2>
+            <strong><span>Status:</span> <span class="currstatus-d">@Model.Status</span></strong>
+            <strong><span>Total: </span> <span id='allTotal' class='combinedValue'>@Math.Round(Model.Totals.Sum(), 2)</span></strong>
+            </h2>
+            </div>
+          <input id  = 'periodid' type = "hidden" value = '@Model.Period' />
+                                           
+<div class="details-content">
+           
+             @if (Model.Totals != null)
+             {
+                 int i = 0;
+                 int j = 0;
+			<table>
+			<tbody>
+            <tr>
+             @foreach (var value in Model.Totals)
+             {
+                                              
+       
+                            <td>
+                             <span class='combinedValue'>@Model.CurrentPeriodStart.AddDays(i).DayOfWeek.ToString().Substring(0, 3)</span>
+                            </td>
+                 i++;
+             }
+                 
+                
+
+            </tr>
+            <tr>
+            @foreach (var value in Model.Totals)
+            {
+                            <td>
+                            <span class='combinedValue grandtotals' id = '@string.Format("DayTimes_Total_{0}", j)'>@Math.Round(value, 2)</span>
+                            </td>
+                           
+                j++;
+            }
+                         </tr>
+		</tbody></table>
+
+             }
+                    
+
+<div class="listing">
+ <form id="periodform" action = '@Url.Action("Index", "Timesheet")' 
+                     data-ajax-url='@Url.Action("Index", "Timesheet")' data-ajax-target='allTimesheetsEdit' 
+                                            data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
+                                           @*<input id="SelectedPeriod" name="SelectedPeriod"  class = 'currentperiodstop' type="hidden" value='@string.Format("({0} -{1})", Model.CurrentPeriodStart.ToShortDateString(), Model.CurrentPeriodStop.ToShortDateString())'/>*@
+             </form>
+             <div class='allrowsContainer' id='allTimesheetsEdit'>
+                  @Html.Partial("Edit", Model)
+                  <input type = "hidden" id="periodstart" value = '@Model.CurrentPeriodStart' />
+                  <input type = "hidden" id="periodend" value = '@Model.CurrentPeriodStop' />
+    
+                </div>
+
+</div>                        
+                </div>
+           </div> 
+          <footer>
+	<ul>
+		@*icon-approvals*@
+        @if (Model.ApprovalMode)
+        {
+            <li>
+            <a href="#"   data-target='@Url.Action("MyApprovals", "Timesheet")'  class="icon-footer-approval leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>
+            @SiteResources.MyApprovals</li>
+        }
+        else
+        {
+        <li><a href="#"   data-target='@Url.Action("TimesheetHistory", "Timesheet")'  class="icon-footer-time leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>
+        @SiteResources.HomeMenuTimesheets</li>
+        }
+		<li><a href='#'  data-target='@Url.Action("Index", "Home")' class="icon-footer-home leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.Home</li>
+		<li><a href="" class="main-icon-submit main-icon-save submit csubmit-mainform submit-mainform icon-footer-save" data-action-confirm ="@SiteResources.ConfirmSave"
+                        data-action-value='False' data-action-container='@Html.PrefixedId(m => m.Submit)'></a>@SiteResources.Save</li>
+                        @if (!Model.ApprovalMode)
+                        {
+		<li><a href="" class="main-icon-submit main-icon-send submit fsubmit-mainform submit-mainform icon-footer-submit" data-action-confirm ="@SiteResources.ConfirmSubmit"
+                        data-action-value='True' data-action-container='@Html.PrefixedId(m => m.Submit)'></a>@SiteResources.Submit</li>
+                        }
+	</ul>
+</footer>    
+@Html.Action("TaskSelection", "Timesheet")
+@Html.Partial("ViewSelection", new ViewDataDictionary<ViewSelectionView>(
+    new ViewSelectionView { TaskUpdatorViewId = ViewConfigurationTask.Default.Id, TimesheetViewId = ViewConfigurationRow.Default.Id }))
+@Html.Action("RecallDelete", "Timesheet")
+@Html.Partial("UpdateSummary")
+@Html.Action("UpdateSummary", "Tasks")
+@Html.Partial("Detail", new ViewDataDictionary<BaseRowView>(new BaseRowView
+{
+    TaskRow = false,
+    Title = SiteResources.HomeMenuTimesheetDetail,
+    PeriodStart = Model.CurrentPeriodStart.ToString(),
+    PeriodLength = Model.PeriodLength,
+    Status = Model.Status,
+    ApprovalMode = Model.ApprovalMode
+}))
+<div id="rowChoice" style="display:none">
+    @Html.Partial("RowChoice", new ViewDataDictionary<RowType[]>(Model.RowTypes))
+    </div>
+    <div id="timeInput" style="display:none">
+@Html.Partial("TimeInput", new ViewDataDictionary<TimeInputView>())
+</div>

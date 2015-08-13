@@ -20,14 +20,17 @@ namespace TimeSheetMobileWeb.IoC
             {
                 TimesheetController timsheetController = controller as TimesheetController;
                 timsheetController.Repository.SetClientEndpointsProg(HttpContext.Current.Items["PWAURL"].ToString());
-                timsheetController.Repository.AppPoolUser = (System.Security.Principal.WindowsIdentity)HttpContext.Current.Application["AppUser"];
             }
 
             if (controllerType == typeof(TasksController))
             {
                 TasksController timsheetController = controller as TasksController;
                 timsheetController.Repository.SetClientEndpointsProg(HttpContext.Current.Items["PWAURL"].ToString());
-                timsheetController.Repository.AppPoolUser = (System.Security.Principal.WindowsIdentity)HttpContext.Current.Application["AppUser"];
+            }
+
+            if (controllerType == typeof(AccountController))
+            {
+                AccountController accountController = controller as AccountController;
             }
             return controller;
         }

@@ -1,0 +1,52 @@
+﻿@model TimeSheetMobileWeb.Models.PeriodSelectionView
+@using TimeSheetMobileWeb.Models
+
+<div  id='periodselection' class='wrapper' data-title="@SiteResources.HomeMenuPeriods"  >
+    <div>
+        <div class='header' >
+            <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" ></div>
+            <h2>@SiteResources.HomeMenuPeriods</h2>
+        </div>
+        <div  >
+                <div  class='periodHeader'><span class='currenttimesheet'>period of time</span></div>
+                <div>
+                    
+                    @Html.DropDownListFor(m => m.TimesheetSet,
+                                           new Dictionary<string, object> 
+                                           { { "class", "mobilegadget updatetimesheets" }, 
+                                           { "data-native-menu", "false" },
+                                           {"data-action", Url.Action("Timesheets", "Timesheet")}},
+                    ChoiceListHelper.Create(
+                        Model.AllTimesheetsSets,
+                        m => m.Key,
+                        m => m.Value,
+                        usePrompt: false))
+                    
+                       @* @Html.LabelFor(m => m.TimesheetId, SiteResources.HomeMenuPeriods)
+                        @Html.DropDownListFor(m => m.TimesheetId,
+                                               new Dictionary<string, object> 
+                                               { { "class", "mobilegadget dynamicperiods" }, 
+                                               { "data-native-menu", "false" },
+                                               {"data-novalue-message", SiteResources.NoPeriodSelected}, },
+                        ChoiceListHelper.Create(
+                            Model.TimesheetsSets,
+                            m => m.Value,
+                            m => m.Description,
+                            usePrompt: false))*@
+                       
+                    <form id="periodform" action = '@Url.Action("TimesheetHistory", "Timesheet")' 
+                    data-ajax-url='@Url.Action("TimesheetHistory", "Timesheet")' data-ajax-target='allTimesheetsEdit' 
+                                            data-ajax-oncomplete='TSM_ConfirmPeriodCallBack' data-ajax="false">
+                        <input id="SelectedPeriodStart" name="SelectedPeriodStart" class = 'currentperiodstart' type="hidden" />
+                        <input id="SelectedPeriodStop" name="SelectedPeriodStop"  class = 'currentperiodstop' type="hidden" />
+                        <input id="SelectedPeriodId" name="SelectedPeriodId" class = 'currentperiodid' type="hidden" />
+                        <input id="SelectedPeriodSet" name="SelectedPeriodSet" class = 'currentperiodSet' type="hidden" />
+                    </form>
+                   
+                </div>
+        </div>
+        <div class='footer'>
+            <hr />
+        </div>
+    </div>
+</div>

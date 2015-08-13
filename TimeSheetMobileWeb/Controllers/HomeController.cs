@@ -4,14 +4,19 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using TimeSheetIBusiness;
+using TimeSheetMobileWeb.Models;
+using System.Web.Security;
 
-namespace TimeSheetMobile.Controllers
+namespace TimeSheetMobileWeb.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         //
         // GET: /Home/
        
+
+        
         public ActionResult Index()
         {
             this.HttpContext.Trace.Warn("starting Index of HomeController");
@@ -19,5 +24,7 @@ namespace TimeSheetMobile.Controllers
             return View();
             
         }
+
+       
     }
 }

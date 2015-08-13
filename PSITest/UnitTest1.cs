@@ -15,6 +15,20 @@ using PSLib = Microsoft.Office.Project.Server.Library;
 using System.Globalization;
 using System.Xml;
 using Microsoft.Office.Project.Server.Library;
+using System.Data.Linq;
+using System.Data;
+using System;
+using System.CodeDom.Compiler;
+using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Data;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 namespace PSITest
 {
     [TestClass]

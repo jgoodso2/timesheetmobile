@@ -1,0 +1,86 @@
+﻿@model TimeSheetMobileWeb.Models.UpdateTasksView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+@{
+    ViewBag.Title = SiteResources.HomeMenuTasks;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section head{
+<script src="@Url.Content("~/Scripts/TasksScripts-1.0.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/main.js")" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        TSM.init();
+        TSM.initPreloader('hide');
+    });
+    </script>
+}
+<div  id='tasks' class='container timesheetContainer'>
+ <h1>@SiteResources.HomeMenuTasks
+	<span class="pull-right">@Context.Session["CurrentUser"].ToString()</span>
+	</h1>
+    <div class="date-container">
+    @if (Model.ApprovalMode)
+    {
+       
+            var curUid = "";
+             var tsuid = "";
+        @Html.Partial("TaskApprovalView",new TimesheetApprovalView() { MGRUID = curUid,TSUID = tsuid})
+    }
+    <span>
+			<ul>
+				<li class="icon-show-list" data-role="modal" data-target="#updaterecallsummary">List</li>
+			</ul>
+		</span>
+        </div>
+   
+    <div class="details-content">
+        <div class="listing">
+                <div class='maininfocontent allrowsContainer'  id="allTimesheetsEdit">
+                @if (Model != null && Model.PeriodRows != null)
+                {
+                    @Html.Partial("Edit", Model)
+                }
+    
+                </div>
+            </div>
+        </div>
+    </div>
+     <footer>
+	<ul>
+		<li><a href='#' data-target='@Url.Action("Index", "Home")' class="icon-footer-home leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.Home</li>
+         @if (Model.ApprovalMode)
+        {
+            <li><a href="#"   data-target='@Url.Action("MyApprovals", "Timesheet")'  class="icon-approvals icon-footer-approval leaveapp" data-leave-application='@SiteResources.LeaveApplication'></a>@SiteResources.MyApprovals</li>
+        }
+        
+        @if (!Model.ApprovalMode)
+        {
+		<li><a href="" class="main-icon-submit main-icon-save submit csubmit-mainform submit-mainform icon-footer-save" data-action-confirm ="@SiteResources.ConfirmSave"
+                        data-action-value='False' data-action-container='@Html.PrefixedId(m => m.Submit)'></a>@SiteResources.Save</li>
+		<li><a href="" class="main-icon-submit main-icon-send submit fsubmit-mainform submit-mainform icon-footer-submit" data-action-confirm ="@SiteResources.ConfirmSubmit"
+                        data-action-value='True' data-action-container='@Html.PrefixedId(m => m.Submit)' ></a>@SiteResources.Submit</li>
+        }
+	</ul>
+</footer>  
+@Html.Action("TaskSelection", "Tasks")
+@Html.Partial("ViewSelection", new ViewDataDictionary<ViewSelectionView>(
+    new ViewSelectionView {TaskUpdatorViewId=ViewConfigurationTask.Default.Id,  TimesheetViewId=ViewConfigurationRow.Default.Id, 
+        ApprovalViewId = ViewConfigurationApproval.Default.Id , IsTask=true, IsApprovalMode = Model.ApprovalMode}))
+@Html.Action("RecallDelete", "Tasks")
+@Html.Partial("UpdateSummary")
+@Html.Partial("Detail", new ViewDataDictionary<BaseRowView>(new BaseRowView { TaskRow = true, Title = SiteResources.HomeMenuTaskDetail, PeriodLength = Model.PeriodLength,
+    ApprovalMode = Model.ApprovalMode }))
+<div id="rowChoice" style="display:none">
+@if (Model != null && Model.RowTypes != null && Model.RowTypes.Length > 1)
+{
+    @Html.Partial("RowChoice", new ViewDataDictionary<RowType[]>(Model.RowTypes))
+}
+</div>
+<div id="timeInput" style="display:none">
+@Html.Partial("TimeInput", new ViewDataDictionary<TimeInputView>())
+</div>
+
+
+

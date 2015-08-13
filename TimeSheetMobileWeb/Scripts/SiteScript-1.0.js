@@ -721,7 +721,7 @@ function TSM_CompleteAddRow(data) {
                     $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
                     TSM.init();
                     TSM.initPreloader('hide');
-                    TSM_OpenTask(item[0].children[2].id, true);
+                    //TSM_OpenTask(item[0].children[2].id, true);
 
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -794,7 +794,7 @@ function TSM_CompleteAddRow(data) {
                         $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
                         TSM.init();
                         TSM.initPreloader('hide');
-                        TSM_OpenTask(item[0].children[2].id, true);
+                        //TSM_OpenTask(item[0].children[2].id, true);
                     }
                     
                 }
@@ -806,7 +806,7 @@ function TSM_CompleteAddRow(data) {
         $(".p-guid-container").removeClass("p-guid-container").addClass("p-" + data.AssignementId + "-" + rowType);
         $(".p-project-container").removeClass("p-project-container").addClass("p-" + data.ProjectId + data.AssignementName + "-" + rowType);
         TSM.init();
-        TSM_OpenTask(item[0].children[2].id, true);
+        //TSM_OpenTask(item[0].children[2].id, true);
     }
     TSM.init();
     CloseDialog('#taskselection');

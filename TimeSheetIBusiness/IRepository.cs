@@ -25,8 +25,7 @@ namespace TimeSheetIBusiness
         LookupTableDisplayItem[] GetLookupTableValuesAsItems(Guid tableUid, string dataType);
 
         List<LineClass> GetLineClassifications();
-        WindowsIdentity AppPoolUser { get; set; }
-        string GetUserName(string name);
+        
         List<TimesheetApprovalItem> GetTimesheetApprovals(string user);
         void ApproveTimesheet(string tUID, string mgrUID,string action);
         void RejectTimesheet(string tUID, string mgrUID);
@@ -39,5 +38,6 @@ namespace TimeSheetIBusiness
         void ApproveProjectTasks(string projectID, string mgrUID, string mode);
         void ApproveTasks(string[] assnid, string mgrUID, string mode);
         List<BaseRow> GetSubmittedRows(string projectId, string approver,string user, ViewConfigurationBase configuration);
+        bool LogonToProjectServer(string user, string password);
     }
 }

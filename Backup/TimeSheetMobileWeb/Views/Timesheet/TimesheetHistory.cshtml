@@ -1,0 +1,71 @@
+﻿@model TimeSheetMobileWeb.Models.TimeSheetHistoryView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = SiteResources.HomeMenuTimesheet;
+}
+@section head{
+   @* <script type="text/javascript" src="@Url.Content("~/Scripts/MVCControlToolkit.Controls.Grid-1.8.0.min.js")"></script>*@
+    <script src="@Url.Content("~/Scripts/MVCControlToolkit.Controls.Grid-1.8.1.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/TimesheetsScript-1.0.js")" type="text/javascript"></script> 
+     
+    <script type="text/javascript">
+        $(document).ready(function () {
+            TSM.initPreloader('hide');
+
+        })
+    </script>
+
+}
+
+<div  id='timesheet' data-title="@SiteResources.HomeMenuTimesheets" data-leave-application='@SiteResources.LeaveApplication' class = 'container timesheetContainer'>
+<div>
+                <div class='leaveApplication' data-button-target="@Url.Action("Index", "Home")" >
+                </div>
+               
+            </div>
+<h1>@SiteResources.HomeMenuTimesheets 
+	<span class="pull-right">@Context.Session["CurrentUser"].ToString()</span>
+	</h1>
+    <div id="periodselection">
+    <label class="date-container">
+    <select id='timesheetPeriods' class = "updatetimesheets" data-action = "@Url.Action("Timesheets", "Timesheet")">
+    @foreach (var value in Model.PeriodSelectionInfos.AllTimesheetsSets)
+    {
+        <option value="@value.Key">@value.Value</option>
+    }
+    </select>
+		
+	</label>
+                <input id  = 'periodid' type = "hidden" value = '@Model.Period' />
+                         <form id="periodform" action = '@Url.Action("TimesheetHistory", "Timesheet")' 
+                    data-ajax-url='@Url.Action("TimesheetHistoryRefresh", "Timesheet")' data-ajax-target='allTimesheetsEdit' 
+                                             data-ajax="false">
+                        <input id="SelectedPeriodStart" name="SelectedPeriodStart" class = 'currentperiodstart' type="hidden" />
+                        <input id="SelectedPeriodStop" name="SelectedPeriodStop"  class = 'currentperiodstop' type="hidden" />
+                        <input id="SelectedPeriodId" name="SelectedPeriodId" class = 'currentperiodid' type="hidden" />
+                        <input id="SelectedPeriodSet" name="SelectedPeriodSet" class = 'currentperiodSet' type="hidden" />
+                    </form> 
+                    </div>
+    <div data-role='header' class='wrapper updatemainlayout' data-theme='a' data-position='fixed'>
+        
+            </div>
+        
+               
+                <div class='table-bg' id='allTimesheetsEdit'>
+                    @Html.Partial("TSGridTemplate", Model)
+                </div>
+           
+        <footer>
+
+    <ul>
+		<li><a href="#" onclick='GotoUrl("@Url.Action("Index", "Home")")' class="icon-footer-home"></a>@SiteResources.Home</li>
+	</ul>
+
+</footer>
+    </div>
+        
+        
+    
+

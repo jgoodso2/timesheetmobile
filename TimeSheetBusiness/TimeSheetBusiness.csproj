@@ -66,21 +66,18 @@
       <HintPath>..\..\..\..\..\Program Files\Microsoft Office Servers\14.0\Bin\Microsoft.Office.Project.Server.Library.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
-    <Reference Include="MVC3ControlsToolkit, Version=1.8.5.0, Culture=neutral, PublicKeyToken=b6277d1c804403e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SharedLibrary\MVC3ControlsToolkit.dll</HintPath>
+    <Reference Include="MVC3ControlsToolkit">
+      <HintPath>..\..\..\SharedLibrary-master (1)\SharedLibrary-master\MVC3ControlsToolkit.dll</HintPath>
     </Reference>
-    <Reference Include="Mvc3ControlsToolkitExt, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SharedLibrary\Mvc3ControlsToolkitExt.dll</HintPath>
+    <Reference Include="Mvc3ControlsToolkitExt">
+      <HintPath>..\..\..\SharedLibrary-master (1)\SharedLibrary-master\Mvc3ControlsToolkitExt.dll</HintPath>
     </Reference>
-    <Reference Include="ProjectServerServices, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SharedLibrary\ProjectServerServices.dll</HintPath>
+    <Reference Include="ProjectServerServices">
+      <HintPath>.\ProjectServerServices.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Activities.Core.Presentation" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
@@ -88,13 +85,8 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WCFHelpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6d9db02ebb67c839, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SharedLibrary\WCFHelpers.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BusisnessResources.Designer.cs">

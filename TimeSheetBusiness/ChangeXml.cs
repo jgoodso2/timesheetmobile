@@ -138,7 +138,7 @@ namespace TimeSheetIBusiness
                         foreach (var tracker in x.TValues)
                         {
                             var work = tracker.Value;
-                            if (!work.HasValue || !tracker.Changed)
+                            if (!tracker.Changed)
                             {
                                 day = day.AddDays(1);
                                 continue;
@@ -165,9 +165,9 @@ namespace TimeSheetIBusiness
                     foreach (string property in changedPropeties)
                     {
                         CustomFieldInfo info = new CustomFieldInfo();
-                        if (customfields.CustomFields.Any(m => m.MD_PROP_NAME == property))
+                        if (customfields.CustomFields.Rows.Cast<SvcCustomFields.CustomFieldDataSet.CustomFieldsRow>().Any(m => m.MD_PROP_NAME == property))
                         {
-                            var csfield = customfields.CustomFields.First(m => m.MD_PROP_NAME == property);
+                            var csfield = customfields.CustomFields.Rows.Cast<SvcCustomFields.CustomFieldDataSet.CustomFieldsRow>().First(m => m.MD_PROP_NAME == property);
                             info = repository.GetCustomFieldType(csfield.MD_PROP_UID_SECONDARY, csfield.MD_PROP_TYPE_ENUM, property);
                         }
                         string type = info.DataType;

@@ -9,6 +9,7 @@ using MVCControlsToolkit.Controller;
 
 namespace TimeSheetMobileWeb.Controllers
 {
+    [Authorize]
     public class TimesheetController : Controller
     {
         //
@@ -39,9 +40,10 @@ namespace TimeSheetMobileWeb.Controllers
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             base.OnActionExecuting(filterContext);
-            Session["CurrentUser"] = repository.GetUserName((User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            Session["CurrentUser"] = (User.Identity as System.Web.Security.FormsIdentity).Name;
         }
         [HttpGet()]
+        
         public ActionResult Index(string speriod, string user)
         {
             PeriodSelectedView period = new PeriodSelectedView();
@@ -79,12 +81,12 @@ namespace TimeSheetMobileWeb.Controllers
                 }
             }
             string timesheetUser;
-            timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name
+            timesheetUser = Session["user"] == null ? (User.Identity as System.Web.Security.FormsIdentity).Name
                 : Session["user"].ToString();
             this.HttpContext.Trace.Warn("Starting Index of TimesheetController");
             ConfigurationHelper.UserConfiguration(repository, timesheetUser);
             UpdateTimesheetsView model = new UpdateTimesheetsView(repository.DefaultLineClass);
-            model.CurrentUserGuid = repository.GetResourceUidFromNtAccount((User.Identity as System.Security.Principal.WindowsIdentity).Name).ToString();
+            model.CurrentUserGuid = repository.GetResourceUidFromNtAccount((User.Identity as System.Web.Security.FormsIdentity).Name).ToString();
             model.PrepareRowTypes();
             Timesheet selection = null;
             model.PeriodString = speriod;
@@ -146,9 +148,9 @@ namespace TimeSheetMobileWeb.Controllers
 
             this.HttpContext.Trace.Warn("Starting MyApprovals of TimesheetController");
             MyApprovalView model = new MyApprovalView();
-            model.TimesheetApprovals = Repository.GetTimesheetApprovals((User.Identity as System.Security.Principal.WindowsIdentity).Name);
-            model.TaskApprovals = Repository.GetTaskApprovals((User.Identity as System.Security.Principal.WindowsIdentity).Name);
-            model.NextMgr = repository.GetResourceUidFromNtAccount((User.Identity as System.Security.Principal.WindowsIdentity).Name).ToString();
+            model.TimesheetApprovals = Repository.GetTimesheetApprovals((User.Identity as System.Web.Security.FormsIdentity).Name);
+            model.TaskApprovals = Repository.GetTaskApprovals((User.Identity as System.Web.Security.FormsIdentity).Name);
+            model.NextMgr = repository.GetResourceUidFromNtAccount((User.Identity as System.Web.Security.FormsIdentity).Name).ToString();
             this.HttpContext.Trace.Warn("Returning from MyApprovals of TimesheetController");
             return View("../Approvals/MyApprovals", model);
         }
@@ -156,11 +158,11 @@ namespace TimeSheetMobileWeb.Controllers
         public ActionResult TimesheetHistory(string speriod)
         {
             this.HttpContext.Trace.Warn("Starting Index of TimesheetController");
-            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Web.Security.FormsIdentity).Name);
             PeriodSelectedView period = new PeriodSelectedView();
             TimeSheetHistoryView model = new TimeSheetHistoryView();
             Timesheet selection = null;
-            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name, out selection, TimesheetsSets.Default);
+            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Web.Security.FormsIdentity).Name, out selection, TimesheetsSets.Default);
             if (period != null && period.SelectedPeriodId != null)
             {
                 selection = new Timesheet();
@@ -178,8 +180,9 @@ namespace TimeSheetMobileWeb.Controllers
 
                 DateTime start, end;
                 model.ReceiveRows(repository.SelectTimesheets(
-                      (User.Identity as System.Security.Principal.WindowsIdentity).Name,
+                      (User.Identity as System.Web.Security.FormsIdentity).Name,
                      TimesheetsSets.Last3, out start, out end));
+
                 selection.Start = start;
                 selection.Stop = end;
 
@@ -192,12 +195,12 @@ namespace TimeSheetMobileWeb.Controllers
         public ActionResult TimesheetHistoryRefresh(string speriod)
         {
             this.HttpContext.Trace.Warn("Starting Index of TimesheetController");
-            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Web.Security.FormsIdentity).Name);
             PeriodSelectedView period = new PeriodSelectedView();
             TimeSheetHistoryView model = new TimeSheetHistoryView();
             Timesheet selection = null;
             int selctedset = Convert.ToInt32(speriod);
-            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name, out selection, TimesheetsSets.Default);
+            model.PeriodSelectionInfos = PeriodSelectionView.GetInstance(repository, (User.Identity as System.Web.Security.FormsIdentity).Name, out selection, TimesheetsSets.Default);
             if (period != null && period.SelectedPeriodId != null)
             {
                 selection = new Timesheet();
@@ -215,7 +218,7 @@ namespace TimeSheetMobileWeb.Controllers
 
                 DateTime start, end;
                 model.ReceiveRows(repository.SelectTimesheets(
-                      (User.Identity as System.Security.Principal.WindowsIdentity).Name,
+                      (User.Identity as System.Web.Security.FormsIdentity).Name,
                      (TimesheetsSets)selctedset, out start, out end));
                 selection.Start = start;
                 selection.Stop = end;
@@ -227,7 +230,7 @@ namespace TimeSheetMobileWeb.Controllers
         [HttpPost]
         public ActionResult Refresh(string speriod)
         {
-            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Web.Security.FormsIdentity).Name);
             PeriodSelectedView pmodel = new PeriodSelectedView();
             if (!string.IsNullOrEmpty(speriod))
             {
@@ -259,13 +262,13 @@ namespace TimeSheetMobileWeb.Controllers
             model.CurrentPeriodStart = pmodel.SelectedPeriodStart;
             model.CurrentPeriodStop = pmodel.SelectedPeriodStop;
             model.Period = pmodel.SelectedPeriodId;
-            model.CurrentUserGuid = repository.GetResourceUidFromNtAccount((User.Identity as System.Security.Principal.WindowsIdentity).Name).ToString();
+            model.CurrentUserGuid = repository.GetResourceUidFromNtAccount((User.Identity as System.Web.Security.FormsIdentity).Name).ToString();
             int status;
             bool canDelete;
             bool canRecall;
             TimesheetHeaderInfos tInfos;
             decimal[] totals;
-            string timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name
+            string timesheetUser = Session["user"] == null ? (User.Identity as System.Web.Security.FormsIdentity).Name
                     : Session["user"].ToString();
             if (Session["user"] != null)
             {
@@ -297,7 +300,7 @@ namespace TimeSheetMobileWeb.Controllers
             TaskSelectionView model = new TaskSelectionView();
             model.Title = SiteResources.HomeMenuAddRow;
             model.Period = Session["period"] != null ? Session["period"].ToString() : string.Empty;
-            string timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name
+            string timesheetUser = Session["user"] == null ? (User.Identity as System.Web.Security.FormsIdentity).Name
                    : Session["user"].ToString();
             model.Projects = new List<ProjectInfo>() { new ProjectInfo { Id = "-1", Name = ViewConfigurationRow.Default.AdminDescription } }
                 .Concat(repository.UserProjects(timesheetUser));
@@ -317,7 +320,7 @@ namespace TimeSheetMobileWeb.Controllers
             if (iset.HasValue) set = (TimesheetsSets)iset.Value;
             DateTime start, end;
             var res = MVCControlsToolkit.Controls.ChoiceListHelper.Create(repository.SelectTimesheets(
-                    (User.Identity as System.Security.Principal.WindowsIdentity).Name,
+                    (User.Identity as System.Web.Security.FormsIdentity).Name,
                     set, out start, out end).OrderByDescending(m => m.Start),
                                 m => m.Value,
                                 m => m.Description).PrepareForJson();
@@ -339,7 +342,7 @@ namespace TimeSheetMobileWeb.Controllers
         [HttpPost]
         public ActionResult Edit(UpdateTimesheetsView model)
         {
-            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Web.Security.FormsIdentity).Name);
             this.HttpContext.Trace.Warn("Starting Edit of TimesheetController");
             var erors = DebugHelper.ModelStateErrors(ModelState);
             if (ModelState.IsValid)
@@ -366,7 +369,7 @@ namespace TimeSheetMobileWeb.Controllers
                 try
                 {
 
-                    string timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name
+                    string timesheetUser = Session["user"] == null ? (User.Identity as System.Web.Security.FormsIdentity).Name
                   : Session["user"].ToString();
 
                     if (Session["user"] != null)
@@ -414,9 +417,9 @@ namespace TimeSheetMobileWeb.Controllers
         [HttpPost]
         public ActionResult RowSingleValues(RowSelectionInfosView selection)
         {
-            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Security.Principal.WindowsIdentity).Name);
+            ConfigurationHelper.UserConfiguration(repository, (User.Identity as System.Web.Security.FormsIdentity).Name);
             this.HttpContext.Trace.Warn("Starting RowSingleValues of TimesheetController");
-            string timesheetUser = Session["user"] == null ? (User.Identity as System.Security.Principal.WindowsIdentity).Name
+            string timesheetUser = Session["user"] == null ? (User.Identity as System.Web.Security.FormsIdentity).Name
                 : Session["user"].ToString();
             BaseRow res = repository.GetRowSingleValues(
                 timesheetUser,
@@ -565,7 +568,7 @@ namespace TimeSheetMobileWeb.Controllers
             try
             {
                 repository.RecallDelete(
-                        (User.Identity as System.Security.Principal.WindowsIdentity).Name,
+                        (User.Identity as System.Web.Security.FormsIdentity).Name,
                         model.RDPeriodId,
                         model.RDPeriodIStart,
                         model.RDPeriodIStop,

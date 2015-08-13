@@ -1,0 +1,15 @@
+﻿@using TimeSheetMobileWeb.Models
+@using MVCControlsToolkit.Controls
+@using MVCControlsToolkit.Core
+
+@model LookupTableDisplayItemsView
+           
+         
+        
+ @Html.DropDownListFor(m => m.Name,new {@class = Model.Name + "lkp"},
+                         ChoiceListHelper.Create(
+                             Model.LookupTableItems.AsEnumerable(),
+                        m => m.ValueMember.ToString(),
+                        m => m.DisplayMember,
+                        usePrompt: false))
+                        

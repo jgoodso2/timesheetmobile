@@ -1,0 +1,24 @@
+﻿@model TimeSheetMobileWeb.Models.UpdateTasksView
+@using TimeSheetMobileWeb.Models
+@using TimeSheetIBusiness
+<div id="tskupdateSummary" class="modal">
+       
+        <div class="modal-content">
+        
+               
+                        <p><span class='updateerrormessage-d'></span></p>
+
+             <p class="buttons-container">
+            @if (HttpContext.Current.Session["user"] != null)
+            {
+                <input id="btnTaskDone" type="button" value="@SiteResources.OK" class='main-submit cancel btn' data-role="dismiss" 
+                data-target='#tskupdateSummary' data-callback='GotoUrl' data-row-from='@Url.Action("MyApprovals","Timesheet")'/>   
+            }
+            else
+            {
+            <input id="btnTaskDone" type="button" value="@SiteResources.OK" class='main-submit cancel btn' data-role="dismiss" 
+            data-target='#tskupdateSummary'  data-callback='GotoUrl' data-row-from="@HttpContext.Current.Request.Url"/>  
+            }
+             </p> 
+        </div>
+    </div>
